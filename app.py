@@ -3,118 +3,36 @@ import pandas as pd
 import plotly.express as px
 from datetime import date
 
-# =========================================================
-# AB SCHOOL LOOP AI — THEME A / MIXED / ULTRA GLOW
-# =========================================================
+# ==========================================
+# AB SCHOOL LOOP AI
+# Cyber AI Theme
+# Midnight Blue + Electric Cyan + Neon Mint
+# ==========================================
 
 st.set_page_config(
-    page_title="AB SCHOOL LOOP AI | Student Growth Studio",
+    page_title="AB SCHOOL LOOP AI",
     page_icon="🎓",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# -------------------- CORE LOGIC -------------------------
-
-def classify_topic(score):
-    if score < 40:
-        return "Critical Support", "🔴"
-    elif score < 60:
-        return "Needs Practice", "🟠"
-    elif score < 80:
-        return "Developing", "🟡"
-    return "Strong", "🟢"
-
-
-def make_plan(scores, study_minutes, screen_minutes, activity_minutes):
-    recommendations = []
-
-    for topic, score in scores.items():
-        status, _ = classify_topic(score)
-
-        if score < 40:
-            practice = 35
-            message = "Start with fundamentals and solve guided examples."
-        elif score < 60:
-            practice = 25
-            message = "Revise concepts, then solve 5–10 targeted questions."
-        elif score < 80:
-            practice = 15
-            message = "Practise mixed questions and review mistakes."
-        else:
-            practice = 10
-            message = "Maintain your strength with spaced revision."
-
-        recommendations.append({
-            "Topic": topic,
-            "Score (%)": score,
-            "Status": status,
-            "Suggested Practice (min)": practice,
-            "Action": message
-        })
-
-    recommendations.sort(key=lambda item: item["Score (%)"])
-
-    routine = []
-
-    if study_minutes < 60:
-        routine.append(
-            "📚 Study: Try one distraction-free 25-minute focus session."
-        )
-    elif study_minutes < 120:
-        routine.append(
-            "📚 Study: Keep focused sessions and short breaks consistent."
-        )
-    else:
-        routine.append(
-            "📚 Study: Protect breaks and review whether your sessions are effective."
-        )
-
-    if screen_minutes > 180:
-        routine.append(
-            "📱 Screen balance: Consider replacing some recreational screen "
-            "time with reading, hobbies, or offline activities."
-        )
-    else:
-        routine.append(
-            "📱 Screen balance: Keep checking that screen time supports your goals."
-        )
-
-    if activity_minutes < 30:
-        routine.append(
-            "🏃 Movement: Add a comfortable walk, outdoor play, or another "
-            "enjoyable movement break."
-        )
-    else:
-        routine.append(
-            "🏃 Movement: Keep making room for enjoyable physical activity."
-        )
-
-    return recommendations, routine
-
-
-# -------------------- ULTRA THEME CSS ---------------------
+# ------------------------------------------
+# CYBER AI COLOUR THEME — ULTRA GLOW
+# ------------------------------------------
 
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-    --bg: #050816;
-    --panel: rgba(13, 24, 48, 0.78);
-    --panel-strong: rgba(9, 18, 38, 0.96);
-    --cyan: #00E5FF;
-    --cyan-soft: #73F5FF;
-    --mint: #00FFB3;
-    --mint-soft: #9BFFD9;
-    --blue: #246BFD;
-    --text: #ECF8FF;
-    --muted: #9BB3CF;
-    --border: rgba(0, 229, 255, 0.30);
-    --glow-cyan: 0 0 12px rgba(0,229,255,.50),
-                 0 0 30px rgba(0,229,255,.20);
-    --glow-mint: 0 0 12px rgba(0,255,179,.42),
-                 0 0 30px rgba(0,255,179,.17);
+    --midnight: #050816;
+    --navy: #0B1230;
+    --cyan: #00D6FF;
+    --mint: #00F5B8;
+    --white: #F4FAFF;
+    --muted: #A8B9D4;
+    --glass: rgba(12, 24, 55, 0.78);
+    --border: rgba(0, 214, 255, 0.32);
 }
 
 html, body, [class*="css"] {
@@ -122,673 +40,749 @@ html, body, [class*="css"] {
 }
 
 .stApp {
-    color: var(--text);
     background:
-        radial-gradient(ellipse at 8% 8%, rgba(0,229,255,.17), transparent 35%),
-        radial-gradient(ellipse at 92% 16%, rgba(0,255,179,.13), transparent 33%),
-        radial-gradient(ellipse at 50% 100%, rgba(36,107,253,.20), transparent 45%),
-        linear-gradient(135deg, #030611 0%, #07152B 45%, #041D27 100%);
-    background-attachment: fixed;
+        radial-gradient(ellipse at 10% 5%,
+            rgba(0, 214, 255, 0.17), transparent 34%),
+        radial-gradient(ellipse at 90% 20%,
+            rgba(0, 245, 184, 0.13), transparent 35%),
+        radial-gradient(ellipse at 50% 100%,
+            rgba(75, 70, 255, 0.16), transparent 40%),
+        linear-gradient(135deg, #050816 0%, #0B1230 48%, #050816 100%);
+    color: var(--white);
 }
 
 .stApp::before {
     content: "";
     position: fixed;
-    inset: 0;
-    pointer-events: none;
     z-index: 0;
-    background:
-        linear-gradient(115deg,
-            transparent 0%,
-            rgba(0,229,255,.035) 35%,
-            transparent 55%,
-            rgba(0,255,179,.035) 80%,
-            transparent 100%);
-    background-size: 250% 250%;
-    animation: auroraFlow 12s ease-in-out infinite alternate;
+    width: 420px;
+    height: 420px;
+    top: 8%;
+    right: -8%;
+    border-radius: 50%;
+    background: rgba(0, 214, 255, 0.10);
+    filter: blur(85px);
+    pointer-events: none;
 }
 
-@keyframes auroraFlow {
-    0% { background-position: 0% 20%; }
-    100% { background-position: 100% 80%; }
-}
-
-[data-testid="stAppViewContainer"],
-[data-testid="stHeader"],
-[data-testid="stMain"],
-.main {
-    background: transparent !important;
+.stApp::after {
+    content: "";
+    position: fixed;
+    z-index: 0;
+    width: 350px;
+    height: 350px;
+    bottom: 4%;
+    left: -8%;
+    border-radius: 50%;
+    background: rgba(0, 245, 184, 0.09);
+    filter: blur(80px);
+    pointer-events: none;
 }
 
 [data-testid="stHeader"] {
-    background: rgba(5,8,22,.55) !important;
+    background: rgba(5, 8, 22, 0.4);
+}
+
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0B1230, #060A1C);
+    border-right: 1px solid var(--border);
+}
+
+[data-testid="stSidebar"] * {
+    color: var(--white);
 }
 
 .block-container {
-    max-width: 1450px;
-    padding-top: 1.6rem;
-    padding-bottom: 3rem;
     position: relative;
     z-index: 1;
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+    max-width: 1450px;
 }
 
-h1, h2, h3, h4, p, label, li {
-    color: var(--text);
+h1, h2, h3, h4 {
+    color: var(--white) !important;
+    letter-spacing: -0.5px;
 }
 
-h1, h2, h3 {
-    letter-spacing: -.5px;
-}
-
-p, li {
-    line-height: 1.7;
-}
-
-small, .muted {
+p, label, .stMarkdown, [data-testid="stCaptionContainer"] {
     color: var(--muted);
 }
 
-/* HERO */
 .hero {
     position: relative;
     overflow: hidden;
-    padding: 36px 34px;
-    margin: 0 0 26px 0;
+    padding: 38px 32px;
     border-radius: 25px;
+    border: 1px solid rgba(0, 214, 255, 0.40);
     background:
-        radial-gradient(ellipse at 0% 0%, rgba(0,229,255,.20), transparent 48%),
-        radial-gradient(ellipse at 100% 100%, rgba(0,255,179,.18), transparent 45%),
-        linear-gradient(135deg, rgba(12,28,59,.96), rgba(4,27,38,.92));
-    border: 1px solid rgba(0,229,255,.48);
+        linear-gradient(120deg,
+            rgba(0, 214, 255, 0.13),
+            rgba(11, 18, 48, 0.92) 45%,
+            rgba(0, 245, 184, 0.10));
     box-shadow:
-        0 0 0 1px rgba(0,255,179,.08),
-        0 0 25px rgba(0,229,255,.25),
-        0 0 65px rgba(0,229,255,.10),
-        inset 0 0 35px rgba(0,229,255,.055);
+        0 0 22px rgba(0, 214, 255, 0.20),
+        0 0 65px rgba(0, 214, 255, 0.09),
+        inset 0 0 25px rgba(0, 214, 255, 0.04);
+    margin-bottom: 25px;
 }
 
 .hero::before {
     content: "";
     position: absolute;
-    width: 350px;
-    height: 350px;
-    right: -90px;
-    top: -180px;
+    z-index: 0;
+    width: 400px;
+    height: 400px;
+    right: -10%;
+    top: 10%;
     border-radius: 50%;
-    background: rgba(0,229,255,.13);
-    filter: blur(10px);
-    box-shadow: 0 0 80px rgba(0,229,255,.18);
+    background: rgba(0, 214, 185, 0.10);
+    filter: blur(55px);
     pointer-events: none;
 }
 
-.hero::after {
-    content: "";
-    position: absolute;
-    width: 230px;
-    height: 230px;
-    right: 18%;
-    bottom: -190px;
-    border-radius: 50%;
-    background: rgba(0,255,179,.15);
-    filter: blur(10px);
-    pointer-events: none;
+.hero-content {
+    position: relative;
+    z-index: 1;
 }
 
 .hero h1 {
     font-size: clamp(2rem, 5vw, 3.4rem);
     font-weight: 900;
-    margin: 8px 0 10px;
     line-height: 1.12;
-    background: linear-gradient(90deg, #FFFFFF, #73F5FF, #00FFB3);
+    margin: 0;
+    background: linear-gradient(90deg, #FFFFFF, #00D6FF, #00F5B8);
     -webkit-background-clip: text;
-    background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 13px rgba(0,229,255,.28));
+    filter: drop-shadow(0 0 13px rgba(0, 214, 255, 0.30));
 }
 
-.hero p {
-    color: #B9D9EE;
-    max-width: 800px;
-    margin-bottom: 0;
+.hero-subtitle {
+    font-size: 1.02rem;
+    margin-top: 14px;
+    color: #C2D6F3;
+    max-width: 760px;
+    line-height: 1.7;
 }
 
 .eyebrow {
-    color: var(--mint-soft);
-    text-transform: uppercase;
-    font-size: .76rem;
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 30px;
+    border: 1px solid rgba(0, 245, 184, 0.45);
+    background: rgba(0, 245, 184, 0.08);
+    color: #00F5B8;
+    font-size: 0.75rem;
     font-weight: 800;
-    letter-spacing: 2.5px;
+    letter-spacing: 1.4px;
+    margin-bottom: 16px;
 }
 
-/* GLASS CARDS */
-.glass-card, [data-testid="stMetric"] {
-    background:
-        linear-gradient(145deg, rgba(16,35,66,.80), rgba(5,19,35,.84));
+.glass-card {
+    background: var(--glass);
     border: 1px solid var(--border);
     border-radius: 19px;
-    padding: 20px;
+    padding: 22px;
     box-shadow:
-        0 0 18px rgba(0,229,255,.10),
-        inset 0 1px 0 rgba(255,255,255,.045);
-    transition: transform .25s ease, box-shadow .25s ease,
-                border-color .25s ease;
+        0 0 16px rgba(0, 214, 255, 0.08),
+        inset 0 0 18px rgba(0, 214, 255, 0.025);
+    margin-bottom: 16px;
+    transition: all 0.25s ease;
 }
 
-.glass-card:hover, [data-testid="stMetric"]:hover {
-    transform: translateY(-3px);
-    border-color: rgba(0,255,179,.60);
-    box-shadow: var(--glow-cyan), var(--glow-mint);
+.glass-card:hover {
+    border-color: rgba(0, 245, 184, 0.55);
+    box-shadow:
+        0 0 24px rgba(0, 214, 255, 0.14),
+        0 0 42px rgba(0, 245, 184, 0.06);
+    transform: translateY(-2px);
 }
 
-.section-heading {
+.card-title {
+    color: #00D6FF;
+    font-size: 1.02rem;
     font-weight: 800;
-    font-size: 1.28rem;
-    margin: 24px 0 12px;
-    color: #F0FCFF;
+    margin-bottom: 10px;
 }
 
-.section-heading span {
-    color: var(--cyan);
-    text-shadow: 0 0 13px rgba(0,229,255,.48);
+.card-description {
+    color: #A8B9D4;
+    line-height: 1.65;
+    font-size: 0.9rem;
 }
 
-/* SIDEBAR */
-[data-testid="stSidebar"] {
-    background:
-        radial-gradient(ellipse at 15% 0%, rgba(0,229,255,.13), transparent 45%),
-        linear-gradient(180deg, #08162D, #07101F 65%, #061B20);
-    border-right: 1px solid rgba(0,229,255,.30);
+div[data-testid="stMetric"] {
+    background: linear-gradient(135deg,
+        rgba(0, 214, 255, 0.10),
+        rgba(12, 24, 55, 0.82));
+    border: 1px solid rgba(0, 214, 255, 0.30);
+    border-radius: 17px;
+    padding: 18px 20px;
+    box-shadow: 0 0 18px rgba(0, 214, 255, 0.07);
 }
 
-[data-testid="stSidebar"] > div:first-child {
-    background: transparent;
+div[data-testid="stMetricLabel"] {
+    color: #A8B9D4 !important;
 }
 
-[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
-    color: #C7E1F5;
+div[data-testid="stMetricValue"] {
+    color: #00F5B8 !important;
+    font-weight: 900;
+    text-shadow: 0 0 12px rgba(0, 245, 184, 0.22);
 }
 
-/* INPUTS */
+.stButton > button {
+    background: linear-gradient(100deg, #00D6FF, #00F5B8);
+    color: #04101F !important;
+    border: 0;
+    border-radius: 12px;
+    padding: 0.72rem 1.25rem;
+    font-weight: 900;
+    box-shadow: 0 0 18px rgba(0, 214, 255, 0.24);
+    transition: all 0.2s ease;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 0 25px rgba(0, 214, 255, 0.40),
+        0 0 35px rgba(0, 245, 184, 0.16);
+    border: 1px solid #FFFFFF;
+}
+
 .stTextInput input,
 .stNumberInput input,
-.stTextArea textarea,
-.stSelectbox div[data-baseweb="select"],
-.stMultiSelect div[data-baseweb="select"] {
-    color: var(--text) !important;
-    background-color: rgba(5,15,32,.88) !important;
-    border-radius: 12px !important;
+.stTextArea textarea {
+    background: rgba(5, 8, 22, 0.85) !important;
+    color: #F4FAFF !important;
+    border: 1px solid rgba(0, 214, 255, 0.32) !important;
+    border-radius: 10px !important;
 }
 
-.stTextInput input:focus,
-.stNumberInput input:focus,
-.stTextArea textarea:focus {
-    border-color: var(--cyan) !important;
-    box-shadow: var(--glow-cyan) !important;
+.stSelectbox [data-baseweb="select"] > div {
+    background: #0B1230;
+    color: #F4FAFF;
+    border-color: rgba(0, 214, 255, 0.32);
 }
 
-[data-baseweb="slider"] [role="slider"] {
-    background-color: var(--mint) !important;
-    border: 2px solid #D8FFF2 !important;
-    box-shadow: var(--glow-mint) !important;
+.stSlider [data-baseweb="slider"] div[role="slider"] {
+    background: #00F5B8;
 }
 
-.stSlider [data-testid="stTickBar"] {
-    background: rgba(0,229,255,.45);
-}
-
-/* BUTTONS */
-.stButton > button,
-.stDownloadButton > button,
-[data-testid="stFormSubmitButton"] button {
-    color: #03131C !important;
-    font-weight: 800 !important;
-    border: 1px solid rgba(125,255,239,.95) !important;
-    border-radius: 13px !important;
-    background: linear-gradient(100deg, #00E5FF 0%, #55F4DD 48%, #00FFB3 100%) !important;
-    box-shadow: var(--glow-cyan), var(--glow-mint) !important;
-    transition: all .22s ease !important;
-    min-height: 43px;
-}
-
-.stButton > button:hover,
-.stDownloadButton > button:hover,
-[data-testid="stFormSubmitButton"] button:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.12);
-    box-shadow:
-        0 0 18px rgba(0,229,255,.75),
-        0 0 42px rgba(0,255,179,.42) !important;
-}
-
-.stButton > button:focus,
-.stDownloadButton > button:focus {
-    outline: 2px solid #FFFFFF !important;
-    outline-offset: 3px !important;
-}
-
-/* TABS */
 .stTabs [data-baseweb="tab-list"] {
     gap: 8px;
-    background: rgba(7,18,36,.75);
-    padding: 8px;
-    border: 1px solid rgba(0,229,255,.20);
-    border-radius: 15px;
+    background: rgba(8, 15, 37, 0.7);
+    padding: 7px;
+    border: 1px solid rgba(0, 214, 255, 0.20);
+    border-radius: 14px;
 }
 
 .stTabs [data-baseweb="tab"] {
-    border-radius: 10px;
-    color: #BBD6EA;
-    padding: 10px 16px;
+    background: transparent;
+    color: #A8B9D4;
+    border-radius: 9px;
+    font-weight: 700;
 }
 
 .stTabs [aria-selected="true"] {
-    color: #03131C !important;
-    background: linear-gradient(100deg, #00E5FF, #00FFB3) !important;
-    font-weight: 800;
+    background: rgba(0, 214, 255, 0.15) !important;
+    color: #00F5B8 !important;
 }
 
-/* METRICS */
-[data-testid="stMetricLabel"] {
-    color: #9ED9F0 !important;
-    font-weight: 700;
-}
-
-[data-testid="stMetricValue"] {
-    color: #F1FFFF !important;
-    text-shadow: 0 0 15px rgba(0,229,255,.35);
-    font-weight: 900;
-}
-
-[data-testid="stMetricDelta"] {
-    color: var(--mint-soft) !important;
-}
-
-/* CHART & TABLE */
-[data-testid="stDataFrame"],
-[data-testid="stTable"] {
-    border: 1px solid rgba(0,229,255,.22);
-    border-radius: 14px;
+[data-testid="stDataFrame"] {
+    border: 1px solid var(--border);
+    border-radius: 13px;
     overflow: hidden;
 }
 
-.js-plotly-plot {
-    border-radius: 17px;
-    overflow: hidden;
-    border: 1px solid rgba(0,229,255,.23);
-    box-shadow: 0 0 20px rgba(0,229,255,.08);
-}
-
-/* ALERTS */
-[data-testid="stAlert"] {
-    border-radius: 14px;
-    border: 1px solid rgba(0,229,255,.35);
-    background: rgba(8,27,46,.84);
-    box-shadow: 0 0 16px rgba(0,229,255,.08);
-}
-
-/* EXPANDERS */
-[data-testid="stExpander"] {
-    background: rgba(7,19,38,.65);
-    border: 1px solid rgba(0,229,255,.24);
-    border-radius: 15px;
-    overflow: hidden;
-}
-
-[data-testid="stExpander"] summary {
-    color: var(--cyan-soft);
-    font-weight: 700;
-}
-
-/* RADIO / CHECKBOX */
-.stRadio label, .stCheckbox label {
-    color: #D8EDFA !important;
-}
-
-/* DIVIDER */
 hr {
-    border-color: rgba(0,229,255,.24) !important;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
+    border-color: rgba(0, 214, 255, 0.22);
 }
 
-/* BADGES */
-.badge {
-    display: inline-block;
-    padding: 6px 11px;
-    margin: 4px 4px 4px 0;
-    border-radius: 999px;
-    font-size: .75rem;
-    font-weight: 800;
-    color: #DFFFF8;
-    border: 1px solid rgba(0,255,179,.42);
-    background: rgba(0,255,179,.08);
-    box-shadow: 0 0 12px rgba(0,255,179,.10);
+div[data-testid="stAlert"] {
+    border-radius: 13px;
+    border: 1px solid rgba(0, 214, 255, 0.25);
 }
 
-/* FOOTER */
 .footer {
     text-align: center;
-    color: #8EADC6;
-    font-size: .83rem;
-    padding: 24px 12px 10px;
-    border-top: 1px solid rgba(0,229,255,.20);
+    padding: 25px 10px;
+    color: #7F95B7;
+    font-size: 0.8rem;
+    border-top: 1px solid rgba(0, 214, 255, 0.17);
     margin-top: 35px;
 }
 
-.footer strong {
-    color: var(--cyan-soft);
+.small-tag {
+    color: #00F5B8;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
 }
 
-/* MOBILE */
-@media (max-width: 768px) {
-    .block-container {
-        padding-top: 1rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    .hero {
-        padding: 24px 20px;
-        border-radius: 19px;
-    }
-
-    .glass-card {
-        padding: 15px;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation-duration: .01ms !important;
-        transition-duration: .01ms !important;
-    }
+div[data-testid="stExpander"] {
+    border: 1px solid rgba(0, 214, 255, 0.25);
+    border-radius: 13px;
+    background: rgba(10, 19, 45, 0.55);
 }
 </style>
 """, unsafe_allow_html=True)
 
 
-# -------------------- HERO -------------------------------
+# ------------------------------------------
+# LEARNING LOGIC
+# ------------------------------------------
+
+def classify_topic(score):
+    if score < 40:
+        return "Needs Support"
+    elif score < 60:
+        return "Building"
+    elif score < 80:
+        return "Developing"
+    return "Strong"
+
+
+def make_plan(scores, study_minutes, screen_minutes, activity_minutes):
+    recommendations = []
+
+    for topic, score in scores.items():
+        if score < 40:
+            priority = "High"
+            practice = 30
+            action = "Revise fundamentals and solve guided examples."
+        elif score < 60:
+            priority = "Medium"
+            practice = 20
+            action = "Review key concepts and practise basic questions."
+        elif score < 80:
+            priority = "Normal"
+            practice = 15
+            action = "Practise mixed questions and correct mistakes."
+        else:
+            priority = "Maintain"
+            practice = 10
+            action = "Use spaced revision and challenge questions."
+
+        recommendations.append({
+            "Topic": topic,
+            "Score (%)": score,
+            "Status": classify_topic(score),
+            "Priority": priority,
+            "Practice (min)": practice,
+            "Suggested Action": action
+        })
+
+    plan_df = pd.DataFrame(recommendations)
+    plan_df = plan_df.sort_values("Score (%)", ascending=True)
+
+    balance = {
+        "Study minutes": study_minutes,
+        "Screen minutes": screen_minutes,
+        "Activity minutes": activity_minutes
+    }
+
+    return plan_df, balance
+
+
+# ------------------------------------------
+# HERO
+# ------------------------------------------
 
 st.markdown("""
 <div class="hero">
-    <div class="eyebrow">✦ Student Growth Studio · AI Research Prototype</div>
+  <div class="hero-content">
+    <div class="eyebrow">AI-POWERED STUDENT LEARNING SUPPORT</div>
     <h1>AB SCHOOL LOOP AI</h1>
-    <p>
-        Learn smarter. Practise intentionally. Reflect continuously.
-        A student-centred learning support prototype that converts topic
-        scores and daily routine inputs into clear practice suggestions.
-    </p>
-    <div style="margin-top:18px;">
-        <span class="badge">⚡ ULTRA GLOW</span>
-        <span class="badge">◈ CYBER AI</span>
-        <span class="badge">✧ ELECTRIC CYAN</span>
-        <span class="badge">⬡ NEON MINT</span>
-        <span class="badge">◉ MIXED AURORA</span>
+    <div class="hero-subtitle">
+      Measure learning. Understand progress. Practise with purpose.
+      Build a healthier and more balanced learning routine.
     </div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div class="glass-card">
+  <div class="card-title">✦ Your Personal Learning Dashboard</div>
+  <div class="card-description">
+    Explore topic performance, receive practice suggestions and reflect on
+    your daily learning habits. This is a student research prototype, not a
+    diagnostic or fully trained machine-learning system.
+  </div>
 </div>
 """, unsafe_allow_html=True)
 
 
-# -------------------- TRANSPARENCY -----------------------
+# ------------------------------------------
+# SIDEBAR
+# ------------------------------------------
 
-with st.expander("🔬 About this AI prototype — read before using"):
-    st.write(
-        "This version uses transparent, rule-based recommendations. "
-        "It does not train a machine-learning model, diagnose a student, "
-        "or guarantee academic improvement. Recommendations depend on "
-        "the scores and routine values entered by the user."
-    )
+st.sidebar.markdown("""
+<div style="padding:10px 0 18px 0;">
+  <div style="color:#00F5B8;font-size:0.75rem;font-weight:900;
+  letter-spacing:1.5px;">AB SCHOOL LOOP AI</div>
+  <h2 style="color:#F4FAFF;margin-top:5px;">Control Panel</h2>
+  <div style="color:#A8B9D4;font-size:0.85rem;">
+    Personalise your learning session
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
-
-# -------------------- SIDEBAR -----------------------------
-
-with st.sidebar:
-    st.markdown("## 🎓 Student Studio")
-    st.caption("Your learning journey starts here.")
-
-    st.markdown("---")
-    st.markdown("### 👤 Student Profile")
-
-    student_name = st.text_input(
-        "Student name",
-        value="Student"
-    )
-
-    student_class = st.selectbox(
-        "Class / level",
-        ["Class 9", "Class 10", "Class 11", "Class 12", "Other"],
-        index=2
-    )
-
-    st.markdown("---")
-    st.markdown("### ⏱️ Daily Rhythm")
-
-    study_minutes = st.slider(
-        "Focused study (minutes/day)",
-        min_value=0,
-        max_value=480,
-        value=120,
-        step=15
-    )
-
-    screen_minutes = st.slider(
-        "Non-study screen time (minutes/day)",
-        min_value=0,
-        max_value=600,
-        value=120,
-        step=15
-    )
-
-    activity_minutes = st.slider(
-        "Physical activity (minutes/day)",
-        min_value=0,
-        max_value=180,
-        value=30,
-        step=5
-    )
-
-    st.markdown("---")
-    st.caption("Theme A · Mixed Aurora · Ultra Glow")
-    st.caption("Midnight Blue × Electric Cyan × Neon Mint")
-
-
-# -------------------- TOPIC INPUTS -----------------------
-
-st.markdown(
-    '<div class="section-heading"><span>01 /</span> Learning Snapshot</div>',
-    unsafe_allow_html=True
+student_name = st.sidebar.text_input("Student name", value="Student")
+student_class = st.sidebar.selectbox(
+    "Class",
+    ["Class 8", "Class 9", "Class 10", "Class 11", "Class 12"],
+    index=3
 )
 
-st.write(
-    "Enter your current topic scores from 0 to 100. "
-    "Use recent tests or your own revision checks."
+st.sidebar.markdown("---")
+st.sidebar.markdown("### Daily Rhythm")
+
+study_minutes = st.sidebar.slider(
+    "Focused study (minutes)",
+    min_value=0,
+    max_value=600,
+    value=180,
+    step=15
 )
 
-c1, c2, c3, c4 = st.columns(4)
+screen_minutes = st.sidebar.slider(
+    "Non-study screen time (minutes)",
+    min_value=0,
+    max_value=600,
+    value=120,
+    step=15
+)
 
-with c1:
-    physics = st.number_input(
-        "⚛️ Physics — Motion",
-        min_value=0, max_value=100, value=42, step=1
+activity_minutes = st.sidebar.slider(
+    "Physical activity (minutes)",
+    min_value=0,
+    max_value=240,
+    value=45,
+    step=5
+)
+
+st.sidebar.markdown("---")
+st.sidebar.caption("Cyber AI theme • Ultra Glow")
+
+
+# ------------------------------------------
+# TOPIC SCORE INPUTS
+# ------------------------------------------
+
+st.markdown("## 📊 Learning Performance")
+st.caption("Enter your recent test or practice scores as percentages.")
+
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    physics_score = st.number_input(
+        "Physics — Motion",
+        min_value=0,
+        max_value=100,
+        value=42,
+        step=1
     )
 
-with c2:
-    chemistry = st.number_input(
-        "🧪 Chemistry — Bonding",
-        min_value=0, max_value=100, value=68, step=1
+with col2:
+    chemistry_score = st.number_input(
+        "Chemistry — Bonding",
+        min_value=0,
+        max_value=100,
+        value=68,
+        step=1
     )
 
-with c3:
-    mathematics = st.number_input(
-        "📐 Mathematics — Trigonometry",
-        min_value=0, max_value=100, value=81, step=1
+with col3:
+    maths_score = st.number_input(
+        "Mathematics — Trigonometry",
+        min_value=0,
+        max_value=100,
+        value=81,
+        step=1
     )
 
-with c4:
-    english = st.number_input(
-        "📖 English — Comprehension",
-        min_value=0, max_value=100, value=55, step=1
+with col4:
+    english_score = st.number_input(
+        "English — Comprehension",
+        min_value=0,
+        max_value=100,
+        value=55,
+        step=1
     )
 
 scores = {
-    "Physics — Motion": physics,
-    "Chemistry — Bonding": chemistry,
-    "Mathematics — Trigonometry": mathematics,
-    "English — Comprehension": english
+    "Physics — Motion": physics_score,
+    "Chemistry — Bonding": chemistry_score,
+    "Mathematics — Trigonometry": maths_score,
+    "English — Comprehension": english_score
 }
 
-st.markdown("---")
+generate = st.button(
+    "⚡ Generate My Learning Plan",
+    use_container_width=True
+)
 
-run_col, info_col = st.columns([1, 2])
-
-with run_col:
-    generate = st.button(
-        "⚡ Generate My Learning Plan",
-        use_container_width=True
-    )
-
-with info_col:
-    st.caption(
-        "Your plan is generated from the values you enter. "
-        "Change scores or routine values and run it again to update the plan."
-    )
+if "generated" not in st.session_state:
+    st.session_state.generated = False
 
 if generate:
-    recommendations, routine = make_plan(
+    st.session_state.generated = True
+    st.session_state.plan_scores = scores.copy()
+    st.session_state.plan_name = student_name
+    st.session_state.plan_class = student_class
+    st.session_state.plan_data = make_plan(
         scores,
         study_minutes,
         screen_minutes,
         activity_minutes
     )
 
-    st.session_state["recommendations"] = recommendations
-    st.session_state["routine"] = routine
-    st.session_state["generated_scores"] = scores.copy()
-    st.session_state["generated_name"] = student_name
-    st.session_state["generated_class"] = student_class
-    st.session_state["generated_date"] = str(date.today())
-
-
-# -------------------- RESULTS ----------------------------
-
-if "recommendations" in st.session_state:
-    recommendations = st.session_state["recommendations"]
-    routine = st.session_state["routine"]
-    active_scores = st.session_state["generated_scores"]
-
-    average_score = round(
-        sum(active_scores.values()) / len(active_scores), 1
-    )
-
-    weakest_topic = min(
-        active_scores,
-        key=active_scores.get
-    )
-
-    total_practice = sum(
-        item["Suggested Practice (min)"]
-        for item in recommendations
-    )
+if st.session_state.generated:
+    plan_df, balance = st.session_state.plan_data
+    display_scores = st.session_state.plan_scores
+    average_score = sum(display_scores.values()) / len(display_scores)
+    weakest_topic = min(display_scores, key=display_scores.get)
+    strongest_topic = max(display_scores, key=display_scores.get)
 
     st.markdown("---")
     st.markdown(
-        '<div class="section-heading"><span>02 /</span> Your Learning Dashboard</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        f"### Welcome, {st.session_state['generated_name']} 👋"
+        f"## Welcome, {st.session_state.plan_name} 👋"
     )
     st.caption(
-        f"{st.session_state['generated_class']} · "
-        f"Plan generated on {st.session_state['generated_date']}"
+        f"{st.session_state.plan_class} • Learning plan • {date.today()}"
     )
+
+    # --------------------------------------
+    # METRICS
+    # --------------------------------------
 
     m1, m2, m3, m4 = st.columns(4)
 
     with m1:
-        st.metric(
-            "Average score",
-            f"{average_score}%",
-            help="Mean of the four topic scores."
-        )
+        st.metric("Average Score", f"{average_score:.1f}%")
 
     with m2:
-        st.metric(
-            "Priority topic",
-            weakest_topic.split(" — ")[0],
-            f"{active_scores[weakest_topic]}%"
-        )
+        st.metric("Needs Most Support", weakest_topic.split(" — ")[0])
 
     with m3:
-        st.metric(
-            "Topics tracked",
-            len(active_scores)
-        )
+        st.metric("Topics Tracked", len(display_scores))
 
     with m4:
         st.metric(
-            "Suggested practice",
-            f"{total_practice} min",
-            help="Sum of the topic-level practice suggestions."
+            "Suggested Practice",
+            f"{int(plan_df['Practice (min)'].sum())} min"
         )
 
-    # Tabs keep the dashboard organised.
-    tab_dashboard, tab_plan, tab_routine, tab_quiz, tab_method = st.tabs([
+    # --------------------------------------
+    # TABS
+    # --------------------------------------
+
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
         "📊 Dashboard",
         "🎯 Practice Plan",
-        "🌱 Daily Balance",
+        "⚖️ Daily Balance",
         "🧠 Recall Lab",
         "🔬 How It Works"
     ])
 
-    # ---------------- DASHBOARD TAB ----------------------
+    with tab1:
+        st.markdown("### Topic Performance")
 
-    with tab_dashboard:
-        left, right = st.columns([1.4, 1])
+        chart_df = pd.DataFrame({
+            "Topic": list(display_scores.keys()),
+            "Score": list(display_scores.values())
+        })
+
+        fig = px.bar(
+            chart_df,
+            x="Topic",
+            y="Score",
+            color="Score",
+            color_continuous_scale=[
+                "#0B1230",
+                "#00D6FF",
+                "#00F5B8"
+            ],
+            range_y=[0, 100],
+            text="Score"
+        )
+
+        fig.update_traces(
+            texttemplate="%{text}%",
+            textposition="outside",
+            marker_line_color="#00D6FF",
+            marker_line_width=1
+        )
+
+        fig.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#DCEBFF",
+            xaxis_title="",
+            yaxis_title="Score (%)",
+            coloraxis_showscale=False,
+            margin=dict(l=10, r=10, t=25, b=10),
+            yaxis=dict(
+                gridcolor="rgba(0,214,255,0.14)",
+                zerolinecolor="rgba(0,214,255,0.18)"
+            ),
+            xaxis=dict(
+                gridcolor="rgba(0,214,255,0.10)"
+            )
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.markdown("### Learning Snapshot")
+
+        left, right = st.columns(2)
 
         with left:
-            st.markdown("### Topic Performance")
+            st.markdown(f"""
+            <div class="glass-card">
+              <div class="card-title">🔎 Focus Area</div>
+              <div class="card-description">
+                <strong style="color:#00F5B8;">{weakest_topic}</strong>
+                is your current lowest-scoring topic. Start with concept
+                revision, then solve a few guided questions.
+              </div>
+            </div>
+            """, unsafe_allow_html=True)
 
-            chart_df = pd.DataFrame({
-                "Topic": list(active_scores.keys()),
-                "Score": list(active_scores.values())
-            })
+        with right:
+            st.markdown(f"""
+            <div class="glass-card">
+              <div class="card-title">🚀 Strength to Maintain</div>
+              <div class="card-description">
+                <strong style="color:#00F5B8;">{strongest_topic}</strong>
+                is your strongest topic. Keep it active with short,
+                spaced-revision sessions.
+              </div>
+            </div>
+            """, unsafe_allow_html=True)
 
-            fig = px.bar(
-                chart_df,
-                x="Topic",
-                y="Score",
-                color="Score",
-                range_y=[0, 100],
-                color_continuous_scale=[
-                    "#FF6584",
-                    "#246BFD",
-                    "#00E5FF",
-                    "#00FFB3"
-                ],
-                text="Score",
-                title="Your current topic snapshot"
+    with tab2:
+        st.markdown("### Personalised Practice Plan")
+        st.caption(
+            "Suggestions are generated from score ranges using transparent rules."
+        )
+
+        for _, row in plan_df.iterrows():
+            st.markdown(f"""
+            <div class="glass-card">
+              <div class="card-title">{row['Topic']}</div>
+              <div class="card-description">
+                Score: <strong style="color:#00F5B8;">
+                {row['Score (%)']}%</strong>
+                &nbsp; | &nbsp; Status: {row['Status']}
+                &nbsp; | &nbsp; Priority: {row['Priority']}
+                <br><br>
+                <strong style="color:#00D6FF;">
+                Suggested practice: {row['Practice (min)']} minutes
+                </strong>
+                <br>
+                {row['Suggested Action']}
+              </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        csv_data = plan_df.to_csv(index=False).encode("utf-8")
+
+        st.download_button(
+            label="⬇️ Download Practice Plan (CSV)",
+            data=csv_data,
+            file_name="ab_school_loop_recommendations.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+
+        st.dataframe(
+            plan_df,
+            use_container_width=True,
+            hide_index=True
+        )
+
+    with tab3:
+        st.markdown("### Daily Balance Check")
+
+        balance_cols = st.columns(3)
+
+        with balance_cols[0]:
+            st.metric("Focused Study", f"{study_minutes} min")
+
+        with balance_cols[1]:
+            st.metric("Non-study Screen", f"{screen_minutes} min")
+
+        with balance_cols[2]:
+            st.metric("Physical Activity", f"{activity_minutes} min")
+
+        if activity_minutes < 30:
+            st.info(
+                "Try adding a little more movement to your day, "
+                "such as walking, outdoor play or stretching."
+            )
+        else:
+            st.success(
+                "You have included physical activity in your routine. "
+                "Keep balancing study, rest and movement."
             )
 
-            fig.update_traces(
-                texttemplate="%{text}%",
-                textposition="outside",
-                marker_line_width=0
+        if screen_minutes > study_minutes:
+            st.info(
+                "Consider short screen breaks and a clear stopping time "
+                "for entertainment apps."
+            )
+        else:
+            st.success(
+                "Your reported non-study screen time is not higher than "
+                "your focused study time."
             )
 
-            fig.update_layout(
-                paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)",
-                font=dict(
-                    color="#DDF7FF",
-                    family="Inter, sans-serif"
-                ),
-                title_font=dict(size=18, color="#73F5FF"),
-                xaxis=dict(
-                    title="",
-                    tickfont=dict(color="#C5E7F6"),
-                    gridcolor="rgba(0,229,255,.10)"
-                ),
-                yaxis=dict(
-                    title="Score (%)",
+        routine_df = pd.DataFrame({
+            "Activity": [
+                "Focused study",
+                "Non-study screen time",
+                "Physical activity"
+            ],
+            "Minutes": [
+                study_minutes,
+                screen_minutes,
+                activity_minutes
+            ]
+        })
+
+        balance_fig = px.bar(
+            routine_df,
+            x="Activity",
+            y="Minutes",
+            color="Activity",
+            color_discrete_sequence=[
+                "#00D6FF",
+                "#7C83FF",
+                "#00F5B8"
+            ]
+        )
+
+        balance_fig.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#DCEBFF",
+            showlegend=False,
+            margin=dict(l=10, r=10, t=20, b=10),
+            yaxis=dict(
+                gridcolor="rgba(0,214,255,0.14)"
+            )
+        )
+
+        st.plotly_chart(balance_fig, use_container_width=True)
+
+        st.caption(
+            "This section provides general routine suggestions, not medical advice."
+        )
+
+    with tab4:
+        st.markdown("### 🧠 Recall Lab")
+        st.caption(
+            "Try a short question to practise re
