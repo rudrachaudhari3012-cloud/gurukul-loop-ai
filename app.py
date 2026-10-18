@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from datetime import date
 
-st.set_page_config(page_title="Gurukul Loop AI | Student Growth Studio", page_icon="🎓", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="AB SCHOOL LOOP AI | Student Growth Studio", page_icon="🎓", layout="wide", initial_sidebar_state="expanded")
 
 # Transparent rule-based prototype; not a trained ML model.
 def classify_topic(score):
