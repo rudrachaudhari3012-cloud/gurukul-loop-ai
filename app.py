@@ -62,7 +62,7 @@ hr { border-color:#e5ebf4; }
 st.markdown("""
 <div class="hero">
   <div class="eyebrow">Student growth • Learning science • Healthy habits</div>
-  <h1>GURUKUL LOOP AI</h1>
+  <h1>AB SCHOOL LOOP AI</h1>
   <p>Your learning day, made clearer. Turn quiz results into a practical next-step plan—while keeping focus, movement, and screen balance in view.</p>
   <div class="pill-row"><span class="pill">🎯 Personal practice plan</span><span class="pill">📊 Topic insights</span><span class="pill">🌱 Balanced routine</span><span class="pill">🧪 Transparent prototype</span></div>
 </div>
@@ -76,7 +76,7 @@ with st.sidebar:
     st.markdown("## 👤 Student profile")
     st.caption("Personalise the demo using sample or permission-approved data.")
     student_name = st.text_input("Student name", value="Demo Student")
-    grade = st.selectbox("Class / grade", ["Class 8", "Class 9", "Class 10", "Class 11", "Class 12"] , index=3)
+    grade = st.selectbox("Class / grade", ["Class 8", "Class 9", "Class 10", "Class 11", "Class 12"], index=3)
     st.markdown("---")
     st.markdown("## 🕒 Daily rhythm")
     study_minutes = st.slider("Focused study today (min)", 0, 360, 90, 15)
@@ -151,7 +151,7 @@ if st.session_state.get("generated"):
             st.write(activity)
     st.markdown('<div class="section-kicker">04 / Take it with you</div><div class="section-title">Export your demo results</div>', unsafe_allow_html=True)
     csv = df.to_csv(index=False).encode("utf-8-sig")
-    st.download_button("⬇️ Download recommendation report (CSV)", data=csv, file_name="gurukul_loop_recommendations.csv", mime="text/csv")
+    st.download_button("⬇️ Download recommendation report (CSV)", data=csv, file_name="ab_school_loop_recommendations.csv", mime="text/csv")
 else:
     st.write("")
     st.info("👆 Enter or keep the sample scores, then select **Build my personal learning loop** to see the dashboard, practice recommendations, and routine reminders.")
@@ -164,8 +164,6 @@ for col, icon, title, desc in zip(steps, ["📝", "🔎", "🎯", "🔁"], ["Mea
         with st.container(border=True):
             st.markdown(f"### {icon} {title}")
             st.caption(desc)
-
-
 
 st.markdown('<div class="section-kicker">05 / Interactive practice</div><div class="section-title">Recall Lab — test what you remember</div><div class="subtle">આ demo quiz છે. જવાબ પસંદ કરો અને તરત feedback મેળવો.</div>', unsafe_allow_html=True)
 quiz_bank = {
@@ -201,4 +199,4 @@ with arch3:
         st.write("Student follows the suggestion, takes another quiz, and compares progress.")
 st.caption("Research note: this version does not train a machine-learning model or automatically verify student performance. Any impact claims require testing with appropriate consent and real evaluation data.")
 
-st.markdown('<div class="footer">GURUKUL LOOP AI · Student research prototype · Version 0.2 · Designed for learning support, not diagnosis</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer">AB SCHOOL LOOP AI · Student research prototype · Version 0.2 · Designed for learning support, not diagnosis</div>', unsafe_allow_html=True)
