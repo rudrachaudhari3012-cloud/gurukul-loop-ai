@@ -83,6 +83,132 @@ hr { border-color:rgba(124,190,225,.16); }
 [data-testid="stForm"] [data-baseweb="select"] div { color:#ffffff !important; }
 [data-testid="stForm"] [data-testid="stCaptionContainer"],
 [data-testid="stForm"] small { color:#ffffff !important; }
+
+/* MIDNIGHT AI — Navy, Cyan, Mint. Theme-only overrides; app logic/features are unchanged. */
+:root { color-scheme: dark; }
+.stApp {
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(34,211,238,.12), transparent 32%),
+    radial-gradient(ellipse at 94% 8%, rgba(94,234,212,.10), transparent 27%),
+    #0B1220 !important;
+  color: #FFFFFF !important;
+}
+[data-testid="stHeader"] { background: rgba(11,18,32,.92) !important; }
+[data-testid="stSidebar"] {
+  background: linear-gradient(180deg, #0B1220 0%, #111C2E 72%, #0D1B2A 100%) !important;
+  border-right: 1px solid rgba(34,211,238,.24) !important;
+}
+[data-testid="stSidebar"] *,
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
+  color: #FFFFFF !important;
+}
+[data-testid="stSidebar"] input,
+[data-testid="stSidebar"] [data-baseweb="select"] { color: #FFFFFF !important; }
+.hero {
+  background: linear-gradient(120deg, #0B1220 0%, #111C2E 55%, #0B5260 100%) !important;
+  border-color: rgba(34,211,238,.42) !important;
+  box-shadow: 0 24px 70px rgba(0,0,0,.32), 0 0 34px rgba(34,211,238,.06) !important;
+}
+.eyebrow, .section-kicker { color: #5EEAD4 !important; }
+.section-title { color: #FFFFFF !important; }
+.subtle, [data-testid="stCaptionContainer"] { color: #B8C7D9 !important; }
+.pill { border-color: rgba(34,211,238,.3) !important; background: rgba(34,211,238,.08) !important; color: #FFFFFF !important; }
+div[data-testid="stMetric"] {
+  background: linear-gradient(145deg, #111C2E, #0E1929) !important;
+  border-color: rgba(34,211,238,.22) !important;
+}
+div[data-testid="stMetricLabel"] { color: #B8C7D9 !important; }
+div[data-testid="stMetricValue"] { color: #FFFFFF !important; }
+[data-testid="stVerticalBlockBorderWrapper"] {
+  background: rgba(17,28,46,.88) !important;
+  border-color: rgba(34,211,238,.20) !important;
+}
+/* All form fields: high contrast white text and readable placeholders. */
+[data-testid="stForm"] label,
+[data-testid="stForm"] [data-testid="stWidgetLabel"],
+[data-testid="stForm"] [data-testid="stWidgetLabel"] p,
+[data-testid="stForm"] .stMarkdown,
+[data-testid="stForm"] .stMarkdown p,
+[data-testid="stForm"] h3,
+[data-testid="stForm"] h4,
+[data-testid="stForm"] [data-testid="stCaptionContainer"],
+[data-testid="stForm"] small { color: #FFFFFF !important; }
+[data-testid="stForm"] input,
+[data-testid="stForm"] textarea,
+[data-testid="stForm"] [data-baseweb="select"] > div,
+[data-testid="stForm"] [data-baseweb="input"] > div,
+[data-testid="stForm"] [data-baseweb="textarea"] > div {
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  background-color: #111C2E !important;
+  border-color: rgba(34,211,238,.45) !important;
+}
+[data-testid="stForm"] input::placeholder,
+[data-testid="stForm"] textarea::placeholder {
+  color: #B8C7D9 !important; opacity: 1 !important;
+  -webkit-text-fill-color: #B8C7D9 !important;
+}
+[data-testid="stForm"] [data-baseweb="select"] [role="combobox"],
+[data-testid="stForm"] [data-baseweb="select"] div { color: #FFFFFF !important; }
+input, textarea { caret-color: #22D3EE !important; }
+input:focus, textarea:focus,
+[data-baseweb="select"] > div:focus-within {
+  border-color: #22D3EE !important;
+  box-shadow: 0 0 0 1px #22D3EE !important;
+}
+/* Streamlit's standard widgets outside forms stay readable too. */
+[data-testid="stWidgetLabel"],
+[data-testid="stWidgetLabel"] p,
+.stMarkdown, .stMarkdown p,
+[data-testid="stRadio"] label,
+[data-testid="stCheckbox"] label { color: #FFFFFF; }
+[data-baseweb="select"] > div,
+[data-baseweb="input"] > div,
+[data-baseweb="textarea"] > div {
+  background-color: #111C2E !important;
+  border-color: rgba(34,211,238,.32) !important;
+  color: #FFFFFF !important;
+}
+[data-baseweb="select"] input,
+[data-baseweb="select"] [role="combobox"] { color: #FFFFFF !important; }
+[data-baseweb="select"] svg { fill: #5EEAD4 !important; }
+div.stButton > button[kind="primary"],
+.stDownloadButton button {
+  border: 1px solid rgba(94,234,212,.58) !important;
+  border-radius: 13px !important;
+  background: linear-gradient(100deg, #22D3EE, #5EEAD4) !important;
+  color: #0B1220 !important;
+  font-weight: 800 !important;
+  min-height: 2.8rem;
+  box-shadow: 0 8px 24px rgba(34,211,238,.14) !important;
+}
+div.stButton > button, .stDownloadButton button {
+  border-color: rgba(34,211,238,.34);
+}
+div.stButton > button:hover, .stDownloadButton button:hover {
+  filter: brightness(1.08);
+  border-color: #5EEAD4 !important;
+}
+.stTabs [data-baseweb="tab-list"] {
+  background: #111C2E !important;
+  border: 1px solid rgba(34,211,238,.16);
+}
+.stTabs [data-baseweb="tab"] { color: #B8C7D9 !important; }
+.stTabs [aria-selected="true"] {
+  background: rgba(34,211,238,.12) !important;
+  color: #5EEAD4 !important;
+}
+[data-testid="stAlert"] { border-radius: 14px; }
+hr { border-color: rgba(34,211,238,.18) !important; }
+.footer { color: #B8C7D9 !important; }
+.small-note {
+  border-left-color: #5EEAD4 !important;
+  background: rgba(94,234,212,.08) !important;
+  color: #FFFFFF !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
