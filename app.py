@@ -59,6 +59,30 @@ div.stButton > button:hover, .stDownloadButton button:hover { filter:brightness(
 hr { border-color:rgba(124,190,225,.16); }
 .footer { color:#7f96b2; font-size:.8rem; text-align:center; padding:1.5rem 0 .4rem; }
 .small-note { border-left:3px solid #28d5c1; padding:.6rem .9rem; background:rgba(40,213,193,.07); border-radius:0 10px 10px 0; color:#bdd4e8; }
+/* Readability fix: keep the existing theme, but make profile/rhythm form text clearly visible. */
+[data-testid="stForm"] label,
+[data-testid="stForm"] [data-testid="stWidgetLabel"],
+[data-testid="stForm"] [data-testid="stWidgetLabel"] p,
+[data-testid="stForm"] .stMarkdown,
+[data-testid="stForm"] .stMarkdown p,
+[data-testid="stForm"] h3,
+[data-testid="stForm"] h4 { color:#ffffff !important; }
+[data-testid="stForm"] input,
+[data-testid="stForm"] textarea,
+[data-testid="stForm"] [data-baseweb="select"] > div,
+[data-testid="stForm"] [data-baseweb="input"] > div,
+[data-testid="stForm"] [data-baseweb="textarea"] > div {
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  background-color:#10243b !important;
+  border-color:rgba(125,205,240,.45) !important;
+}
+[data-testid="stForm"] input::placeholder,
+[data-testid="stForm"] textarea::placeholder { color:#d7e5f5 !important; opacity:1 !important; -webkit-text-fill-color:#d7e5f5 !important; }
+[data-testid="stForm"] [data-baseweb="select"] [role="combobox"],
+[data-testid="stForm"] [data-baseweb="select"] div { color:#ffffff !important; }
+[data-testid="stForm"] [data-testid="stCaptionContainer"],
+[data-testid="stForm"] small { color:#ffffff !important; }
 </style>
 """, unsafe_allow_html=True)
 
