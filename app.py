@@ -72,34 +72,205 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# Student profile and daily-rhythm gate.
+# The remaining pages stay locked until the required profile/routine fields are entered.
+if "profile_complete" not in st.session_state:
+    st.session_state.profile_complete = False
+
+if not st.session_state.profile_complete:
+    st.markdown('<div class="section-kicker">START HERE / STUDENT PROFILE</div><div class="section-title">Create your student profile</div>', unsafe_allow_html=True)
+    st.write("Complete the required student profile and daily rhythm fields. Press **Enter** to unlock the dashboard, or **Cancel** to clear the form.")
+    with st.form("student_profile_setup", clear_on_submit=False):
+        st.markdown("### 👤 Student profile")
+        name_input = st.text_input("Student name *", value=st.session_state.get("draft_name", ""), placeholder="Enter student name")
+        grade_input = st.selectbox("Class / grade *", ["Select class", "Class 8", "Class 9", "Class 10", "Class 11", "Class 12"], index=0)
+        goal_input = st.selectbox("Main learning goal *", ["Select a goal", "Understand difficult concepts", "Improve memory and recall", "Improve exam performance", "Build a balanced routine", "Improve reading comprehension"])
+        st.markdown("### 🕒 Daily rhythm")
+        d1, d2 = st.columns(2)
+        with d1:
+            study_input = st.number_input("Focused study today (minutes) *", min_value=0, max_value=720, value=90, step=15)
+            activity_input = st.number_input("Physical activity today (minutes) *", min_value=0, max_value=360, value=30, step=5)
+        with d2:
+            screen_input = st.number_input("Non-study screen time (minutes) *", min_value=0, max_value=900, value=120, step=15)
+            sleep_input = st.number_input("Sleep last night (hours) *", min_value=0.0, max_value=24.0, value=8.0, step=0.5)
+        energy_input = st.selectbox("Study energy today *", ["Select energy", "Low", "Okay", "Good", "High"])
+        reflection_input = st.text_area("One intention for today *", placeholder="Example: I will revise one topic and take a movement break.", max_chars=300)
+        enter_col, cancel_col = st.columns(2)
+        with enter_col:
+            enter_clicked = st.form_submit_button("✅ Enter dashboard", type="primary", use_container_width=True)
+        with cancel_col:
+            cancel_clicked = st.form_submit_button("✖ Cancel / Clear", use_container_width=True)
+
+    if cancel_clicked:
+        for key in ("draft_name", "student_profile", "profile_complete"):
+            st.session_state.pop(key, None)
+        st.session_state.profile_complete = False
+        st.rerun()
+    if enter_clicked:
+        missing = []
+        if not name_input.strip(): missing.append("Student name")
+        if grade_input == "Select class": missing.append("Class / grade")
+        if goal_input == "Select a goal": missing.append("Main learning goal")
+        if energy_input == "Select energy": missing.append("Study energy")
+        if not reflection_input.strip(): missing.append("Daily intention")
+        if sleep_input <= 0: missing.append("Sleep hours")
+        if missing:
+            st.error("Please complete the required fields: " + ", ".join(missing) + ".")
+        else:
+            st.session_state.student_profile = {
+                "name": name_input.strip(), "grade": grade_input, "goal": goal_input,
+                "study": int(study_input), "screen": int(screen_input),
+                "activity": int(activity_input), "sleep": float(sleep_input),
+                "energy": energy_input, "reflection": reflection_input.strip()
+            }
+            st.session_state.profile_complete = True
+            st.rerun()
+    st.info("🔒 Dashboard pages are locked until you press Enter with all required fields completed.")
+    st.stop()
+
+profile = st.session_state.student_profile
+student_name = profile["name"]
+grade = profile["grade"]
+study_minutes = profile["study"]
+screen_minutes = profile["screen"]
+activity_minutes = profile["activity"]
+
 with st.sidebar:
     st.markdown("# 🎓 AB SCHOOL LOOP AI")
     st.caption("Premium student growth studio")
-    page = st.radio("Navigate", ["Overview", "Learning Dashboard", "Recall Quiz", "AI Coach", "Project Showcase", "Roadmap & Team", "Judge Q&A"], label_visibility="collapsed")
+    page = st.radio("Navigate", ["Overview", "Student Profile", "Learning Dashboard", "Mind power", "Recall Quiz", "Healthy habits", "Values & reflection", "AI Coach", "Transparent prototype", "Project Showcase", "Roadmap & Team", "Judge Q&A"], label_visibility="collapsed")
     st.divider()
-    st.markdown("### 👤 Student profile")
-    student_name = st.text_input("Student name", value="Demo Student")
-    grade = st.selectbox("Class / grade", ["Class 8", "Class 9", "Class 10", "Class 11", "Class 12"], index=3)
+    st.markdown("### 👤 Active student")
+    st.write(f"**{student_name}** · {grade}")
+    st.caption(f"Goal: {profile['goal']}")
     st.markdown("### 🕒 Daily rhythm")
-    study_minutes = st.slider("Focused study today (min)", 0, 360, 90, 15)
-    screen_minutes = st.slider("Non-study screen time (min)", 0, 600, 120, 15)
-    activity_minutes = st.slider("Physical activity (min)", 0, 180, 30, 5)
-    st.caption("Demo only: avoid entering private information for public presentations.")
+    st.metric("Focused study", f"{study_minutes} min")
+    st.metric("Non-study screen time", f"{screen_minutes} min")
+    st.metric("Physical activity", f"{activity_minutes} min")
+    st.metric("Sleep", f"{profile['sleep']:g} h")
+    if st.button("Reset profile / Lock pages", use_container_width=True):
+        st.session_state.profile_complete = False
+        st.session_state.pop("student_profile", None)
+        st.rerun()
+    st.caption("Demo only: avoid entering sensitive personal information.")
 
 st_scores = {"Physics · Motion": 42, "Chemistry · Bonding": 68, "Mathematics · Trigonometry": 81, "English · Comprehension": 55}
 with st.expander("ℹ️ Prototype transparency", expanded=False):
     st.write("This version uses transparent rules and sample data; it is not a trained machine-learning model. It is not a medical or psychological assessment. Thresholds are initial design choices and must be evaluated using consented data before making effectiveness claims.")
 
+if page == "Student Profile":
+    st.markdown('<div class="section-kicker">PROFILE / DAILY RHYTHM</div><div class="section-title">Your student snapshot</div>', unsafe_allow_html=True)
+    st.caption("The profile below is held in the current Streamlit session. It is not sent to an external service by this code.")
+    a,b,c,d = st.columns(4)
+    a.metric("Student", profile["name"])
+    b.metric("Class", profile["grade"])
+    c.metric("Study energy", profile["energy"])
+    d.metric("Main goal", profile["goal"])
+    st.markdown("### 🕒 Daily rhythm")
+    r1,r2,r3,r4 = st.columns(4)
+    r1.metric("Focused study", f"{profile['study']} min")
+    r2.metric("Non-study screen", f"{profile['screen']} min")
+    r3.metric("Physical activity", f"{profile['activity']} min")
+    r4.metric("Sleep", f"{profile['sleep']:g} h")
+    st.markdown("### 🌱 Today's intention")
+    st.write(profile["reflection"])
+    st.markdown("### ✏️ Update daily intention")
+    with st.form("update_intention"):
+        new_intention = st.text_area("What is one realistic intention for today?", value=profile["reflection"], max_chars=300)
+        save_intention = st.form_submit_button("Save intention", type="primary")
+    if save_intention:
+        if new_intention.strip():
+            profile["reflection"] = new_intention.strip()
+            st.session_state.student_profile = profile
+            st.success("Intention saved for this session.")
+            st.rerun()
+        else:
+            st.error("Please enter an intention before saving.")
+
+elif page == "Mind power":
+    st.markdown('<div class="section-kicker">MIND POWER / RECALL</div><div class="section-title">Train recall, focus and reflection</div>', unsafe_allow_html=True)
+    st.write("These are short learning exercises, not an IQ test or psychological assessment.")
+    with st.container(border=True):
+        st.markdown("### 🧠 60-second recall")
+        st.write("Pick one topic, close your notes, and write what you remember. Then compare it with your notes.")
+        recall_topic = st.text_input("Topic to recall", placeholder="Example: Newton's laws")
+        recall_text = st.text_area("Write what you remember", placeholder="Key idea, formula, example, or question…", max_chars=1200)
+        if st.button("Save recall attempt", type="primary"):
+            if recall_topic.strip() and recall_text.strip():
+                st.session_state.setdefault("recall_log", []).append({"topic": recall_topic.strip(), "response": recall_text.strip(), "date": date.today().isoformat()})
+                st.success("Recall attempt saved in this session. Now compare it with your notes and add missing points.")
+            else:
+                st.warning("Enter both a topic and your recall notes first.")
+    with st.container(border=True):
+        st.markdown("### 🎯 Focus block")
+        focus_minutes = st.select_slider("Choose a realistic focus block", options=[5,10,15,20,25,30,40,50], value=25, format_func=lambda x: f"{x} minutes")
+        st.write(f"Plan: focus on one task for **{focus_minutes} minutes**, then take a short break and check what you learned.")
+        st.caption("This is a plan prompt, not a timer running in the background.")
+    logs = st.session_state.get("recall_log", [])
+    st.metric("Recall attempts saved this session", len(logs))
+    if logs:
+        st.dataframe(pd.DataFrame(logs), use_container_width=True, hide_index=True)
+
+elif page == "Healthy habits":
+    st.markdown('<div class="section-kicker">HEALTHY HABITS / DAILY BALANCE</div><div class="section-title">Balance learning with everyday wellbeing</div>', unsafe_allow_html=True)
+    st.write("Use these self-reported values as routine signals—not medical advice or a judgement about the student.")
+    h1,h2,h3,h4 = st.columns(4)
+    h1.metric("Study", f"{profile['study']} min")
+    h2.metric("Screen time", f"{profile['screen']} min")
+    h3.metric("Movement", f"{profile['activity']} min")
+    h4.metric("Sleep", f"{profile['sleep']:g} h")
+    tips=[]
+    tips.append("Try one focused 20–25 minute block, with a short break afterward." if profile["study"] < 30 else "Schedule short breaks between focused study blocks.")
+    tips.append("Consider a screen-free break and separate entertainment screen time from study." if profile["screen"] > 180 else "Keep checking that screen use leaves room for offline activities and rest.")
+    tips.append("Consider a short walk, stretch, or outdoor play break if practical." if profile["activity"] < 30 else "Keep movement enjoyable and regular; rest matters too.")
+    tips.append("If you feel tired, aim for a consistent sleep routine; individual sleep needs can vary." if profile["sleep"] < 8 else "Protect a consistent sleep schedule when possible.")
+    for i,tip in enumerate(tips,1):
+        st.markdown(f"**{i}.** {tip}")
+    st.caption("The app uses simple thresholds to generate gentle suggestions. It does not diagnose health conditions.")
+
+elif page == "Values & reflection":
+    st.markdown('<div class="section-kicker">VALUES / REFLECTION</div><div class="section-title">Reflect on effort, kindness and responsibility</div>', unsafe_allow_html=True)
+    prompts = ["What did I learn today?", "Where did I show patience or honesty?", "Who did I help or thank today?", "What is one thing I can improve tomorrow?"]
+    with st.form("values_reflection_form"):
+        reflection_answers = {prompt: st.text_area(prompt, max_chars=400, key=f"reflection_{i}") for i,prompt in enumerate(prompts)}
+        submitted_reflection = st.form_submit_button("Save reflection", type="primary")
+    if submitted_reflection:
+        st.session_state.values_reflection = {k:v.strip() for k,v in reflection_answers.items()}
+        st.success("Reflection saved for this session. Small, honest steps are enough.")
+    saved_reflection = st.session_state.get("values_reflection")
+    if saved_reflection:
+        st.markdown("### Saved reflection")
+        for prompt, answer in saved_reflection.items():
+            with st.container(border=True):
+                st.markdown(f"**{prompt}**")
+                st.write(answer if answer else "No response entered.")
+
+elif page == "Transparent prototype":
+    st.markdown('<div class="section-kicker">TRANSPARENCY / RESPONSIBLE DESIGN</div><div class="section-title">How the prototype makes suggestions</div>', unsafe_allow_html=True)
+    st.warning("This version is a transparent rule-based prototype, not a trained machine-learning model.")
+    st.markdown("### Learning-score rules")
+    rules = pd.DataFrame([
+        ("0–49%", "Needs support", "High", "Rebuild core ideas; guided practice", 25),
+        ("50–74%", "Growing", "Medium", "Revise concepts; mixed practice", 15),
+        ("75–100%", "Strong", "Low", "Spaced revision; challenge questions", 5),
+    ], columns=["Score range", "Status", "Priority", "Suggested action", "Suggested minutes"])
+    st.dataframe(rules, use_container_width=True, hide_index=True)
+    st.markdown("### What it does and does not do")
+    st.write("• Uses fixed score thresholds and self-reported routine values.\n• Produces practice suggestions that can be inspected and explained.\n• Does not infer intelligence, diagnose health, or predict a student's future.\n• Uses illustrative demo scores unless the student changes them.\n• Has no validated effectiveness claim; thresholds should be evaluated with appropriately consented data.")
+    st.markdown("### Current student routine inputs")
+    st.json({"class": profile["grade"], "study_minutes": profile["study"], "non_study_screen_minutes": profile["screen"], "activity_minutes": profile["activity"], "sleep_hours": profile["sleep"], "study_energy": profile["energy"]})
+    st.caption("Do not use public demo sessions to collect sensitive information. For research pilots, obtain appropriate permission and minimise data collection.")
+
 if page == "Overview":
     st.markdown('<div class="section-kicker">01 / Project introduction</div><div class="section-title">A balanced loop for student growth</div>', unsafe_allow_html=True)
-    st.write("AB SCHOOL LOOP AI is designed to help students notice what to practise next, reflect on quiz results, and remember that learning works best alongside movement, rest, and healthy screen habits.")
+    st.write(f"Welcome, **{student_name}** ({grade}). Your main goal is **{profile['goal']}**. AB SCHOOL LOOP AI helps you choose what to practise next, reflect on quiz results, and balance learning with movement, rest, and healthy screen habits.")
     a,b,c = st.columns(3)
     with a:
-        with st.container(border=True): st.markdown("### 🧠 Mind power"); st.write("Short recall practice, reflection, and focused learning.")
+        with st.container(border=True): st.markdown("### 🧠 Mind power"); st.write("Short recall practice, reflection, and focused learning."); st.caption("Open Mind power for recall attempts.")
     with b:
-        with st.container(border=True): st.markdown("### 🏃 Healthy life"); st.write("Gentle reminders to balance study, movement, rest, and screens.")
+        with st.container(border=True): st.markdown("### 🏃 Healthy life"); st.write("Gentle reminders to balance study, movement, rest, and screens."); st.caption("Open Healthy habits for your routine signals.")
     with c:
-        with st.container(border=True): st.markdown("### 🤝 Values & support"); st.write("A supportive tool for students, teachers, and families—not a replacement for them.")
+        with st.container(border=True): st.markdown("### 🤝 Values & support"); st.write("A supportive tool for students, teachers, and families—not a replacement for them."); st.caption("Open Values & reflection to save a daily reflection.")
     st.markdown('<div class="section-kicker">02 / The learning loop</div><div class="section-title">Learn → Recall → Reflect → Improve</div>', unsafe_allow_html=True)
     loop = st.columns(4)
     for col, icon, title, desc in zip(loop, ["📘","🧩","🔎","🚀"], ["Learn","Recall","Reflect","Improve"], ["Study one clear concept.","Answer without looking at notes.","Understand mistakes and gaps.","Choose a small next practice step."]):
