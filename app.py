@@ -273,7 +273,7 @@ st.markdown(f"""
   <div class="eyebrow">STUDENT GROWTH · LEARNING SCIENCE · HEALTHY LIFE</div>
   <h1>AB SCHOOL LOOP AI</h1>
   <p>{T['tagline']}<br>{T['intro']}</p>
-  <div class="pills"><span class="pill">🧠 Mind power</span><span class="pill">📚 Smart learning</span><span class="pill">📊 Progress analytics</span><span class="pill">🌱 Values & reflection</span><span class="pill">🌙 Midnight AI UI</span></div>
+  
 </div>
 """, unsafe_allow_html=True)
 
