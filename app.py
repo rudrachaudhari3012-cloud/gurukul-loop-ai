@@ -505,19 +505,6 @@ elif page == T["analytics"]:
 # ---------------------------
 # VALUES & REFLECTION
 # ---------------------------
-elif page == T["values"]:
-    st.markdown('<div class="kicker">07 / VALUES & REFLECTION</div><div class="section-title">Grow with honesty, effort and kindness</div>', unsafe_allow_html=True)
-    prompts = ["What did I learn today?", "Where did I show patience or honesty?", "Who did I help or thank today?", "What is one small improvement for tomorrow?"]
-    with st.form("reflection_form"):
-        answers = [st.text_area(prompt, max_chars=300, key=f"value_prompt_{i}") for i,prompt in enumerate(prompts)]
-        submitted = st.form_submit_button("Save reflection", type="primary")
-    if submitted:
-        combined = "\n".join(f"{p} {a.strip()}" for p,a in zip(prompts,answers) if a.strip())
-        if combined:
-            save_reflection(user["id"], combined)
-            st.success("Reflection saved in the local project database.")
-        else:
-            st.warning("Write at least one reflection before saving.")
 
 # ---------------------------
 # TRANSPARENT PROTOTYPE
