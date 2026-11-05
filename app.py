@@ -300,9 +300,8 @@ if st.session_state.user is None:
             password = st.text_input(T["password"] + " (minimum 8 characters)", type="password")
             role_label = st.selectbox(T["role"], [T["student"], T["teacher"]])
             grade = st.selectbox(T["class"], ["Class 8", "Class 9", "Class 10", "Class 11", "Class 12", "Not applicable"])
-            goal = st.selectbox(T["goal"], T["goal_options"])
-            energy = st.selectbox(T["energy"], T["energy_options"])
-            intention = st.text_area(T["intention"], max_chars=300, placeholder="Example: I will revise one topic and take a short break.")
+            # Optional profile fields are intentionally omitted from registration.
+            goal, energy, intention = "", "", ""
             b1, b2 = st.columns(2)
             with b1:
                 register_go = st.form_submit_button("✅ " + T["enter"], type="primary", use_container_width=True)
@@ -311,8 +310,8 @@ if st.session_state.user is None:
         if clear_go:
             st.rerun()
         if register_go:
-            if not all([full_name.strip(), username.strip(), password, intention.strip()]):
-                st.error("Please complete all required fields. / કૃપા કરીને જરૂરી વિગતો ભરો.")
+            if not all([full_name.strip(), username.strip(), password]):
+                st.error("Please complete your name, username and password. / નામ, યુઝરનેમ અને પાસવર્ડ ભરો.")
             elif len(password) < 8:
                 st.error("Use a password with at least 8 characters. / ઓછામાં ઓછા 8 અક્ષરનો પાસવર્ડ રાખો.")
             else:
@@ -340,7 +339,7 @@ with st.sidebar:
     st.markdown(f"**{user['full_name']}**")
     st.caption(f"{user['role']} · {user['grade'] or '—'}")
     st.divider()
-    nav_items = [T["overview"], T["learning"], T["quiz"], T["coach"], T["analytics"], T["values"], T["transparent"], T["showcase"], T["roadmap"], T["judge"]]
+    nav_items = [T["overview"], T["learning"], T["quiz"], T["coach"], T["analytics"], T["showcase"], T["roadmap"]]
     if is_teacher:
         nav_items.insert(4, T["teacher_dash"])
     page = st.radio("NAVIGATION", nav_items, label_visibility="collapsed")
@@ -359,7 +358,6 @@ avg_score = round(sum(score_values) / len(score_values), 1) if score_values else
 # ---------------------------
 if page == T["overview"]:
     st.markdown(f'<div class="kicker">01 / STUDENT HOME</div><div class="section-title">{T["welcome"]}, {user["full_name"]} 👋</div>', unsafe_allow_html=True)
-    st.write(f"**{T['goal']}:** {user['goal'] or '—'}  ·  **{T['energy']}:** {user['energy'] or '—'}")
     c1,c2,c3,c4 = st.columns(4)
     c1.metric("Quiz attempts", len(results)); c2.metric("Average score", f"{avg_score}%" if results else "—")
     c3.metric("Account", user["role"]); c4.metric("Class", user["grade"] or "—")
@@ -552,15 +550,79 @@ elif page == T["showcase"]:
             with st.container(border=True): st.markdown(f"### {icon} {title}"); st.write(desc)
 
 # ---------------------------
-# ROADMAP & TEAM
+# ROADMAP + PERFORMANCE GRAPH + STUDY ASSISTANT
 # ---------------------------
 elif page == T["roadmap"]:
-    st.markdown('<div class="kicker">10 / EXECUTION PLAN</div><div class="section-title">Roadmap & Team</div>', unsafe_allow_html=True)
-    roadmap = pd.DataFrame([( "Week 1", "Problem research and success metrics"),("Week 2","UI, registration and role testing"),("Week 3","Quiz bank and coaching rules"),("Week 4","Analytics, teacher view and PDF report"),("Week 5","Pilot testing, feedback and bug fixes"),("Week 6","Final demo, poster, PPT and Q&A rehearsal")],columns=["Timeline","Deliverable"])
-    st.dataframe(roadmap,use_container_width=True,hide_index=True)
-    st.markdown("### Suggested team roles")
-    team = pd.DataFrame([( "Student 1", "Research & evaluation"),("Student 2","UI & design"),("Student 3","Python & database"),("Student 4","Testing & presentation")],columns=["Role","Responsibility"])
-    st.dataframe(team,use_container_width=True,hide_index=True)
+    st.markdown('<div class="kicker">10 / EXECUTION PLAN</div><div class="section-title">Complete Student Growth Roadmap</div>', unsafe_allow_html=True)
+    roadmap = pd.DataFrame([
+        ("Week 1", 1, "Baseline assessment, student needs research and success metrics"),
+        ("Week 2", 2, "Registration, UI refinement and student/teacher role testing"),
+        ("Week 3", 3, "Question bank, quiz evaluation and transparent coaching rules"),
+        ("Week 4", 4, "Performance graphs, subject analysis and teacher dashboard"),
+        ("Week 5", 5, "Pilot testing, student feedback, accessibility and bug fixes"),
+        ("Week 6", 6, "Final prototype validation, presentation, poster and demo rehearsal"),
+    ], columns=["Timeline", "Week", "Milestone"])
+    st.dataframe(roadmap[["Timeline", "Milestone"]], use_container_width=True, hide_index=True)
+    fig_roadmap = px.bar(roadmap, x="Week", y="Timeline", orientation="h", color="Week",
+                         hover_data={"Milestone": True, "Week": False}, title="Six-week project execution graph")
+    fig_roadmap.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                              font_color="#eaf2ff", showlegend=False, yaxis_title="Project phase", xaxis_title="Week")
+    st.plotly_chart(fig_roadmap, use_container_width=True)
+
+    st.markdown("### Full student improvement roadmap")
+    student_steps = pd.DataFrame([
+        ("1. Measure", "Record current marks by subject and identify topics needing attention."),
+        ("2. Understand", "Relearn one weak concept using class notes and a worked example."),
+        ("3. Practise", "Solve a small set of basic questions, then attempt mixed questions."),
+        ("4. Review", "Check every mistake and write why the correct method works."),
+        ("5. Re-test", "Take a short topic test after revision and compare the result."),
+        ("6. Improve", "Repeat the cycle and update the next week's targets."),
+    ], columns=["Stage", "Action"])
+    st.dataframe(student_steps, use_container_width=True, hide_index=True)
+
+    st.markdown("### Team responsibilities")
+    team = pd.DataFrame([
+        ("Student 1", "Research, student feedback and evaluation metrics"),
+        ("Student 2", "UI/UX design, accessibility and presentation visuals"),
+        ("Student 3", "Python, database, quiz engine and analytics"),
+        ("Student 4", "Testing, documentation, demo and presentation"),
+    ], columns=["Role", "Responsibility"])
+    st.dataframe(team, use_container_width=True, hide_index=True)
+
+    st.divider()
+    st.markdown("### 📘 Marks-based Study Assistant")
+    st.caption("Enter recent marks out of 100. The assistant uses clear score bands and study suggestions; it is a rule-based prototype, not a trained AI model.")
+    subjects = ["Physics", "Chemistry", "Mathematics", "English"]
+    mark_cols = st.columns(4)
+    marks = {}
+    for col, subject in zip(mark_cols, subjects):
+        with col:
+            marks[subject] = st.number_input(subject, min_value=0, max_value=100, value=60, step=1, key=f"roadmap_mark_{subject}")
+    if st.button("Generate my improvement roadmap", type="primary", use_container_width=True):
+        weakest = min(marks, key=marks.get)
+        average = sum(marks.values()) / len(marks)
+        st.metric("Current average", f"{average:.1f}%")
+        st.success(f"Priority subject: {weakest} ({marks[weakest]}%). Start with this subject, while maintaining revision in the others.")
+        advice = []
+        for subject, mark in marks.items():
+            if mark < 50:
+                advice.append((subject, mark, "Foundation focus", "Revise definitions and one worked example; solve 5 basic questions; ask a teacher about doubts."))
+            elif mark < 75:
+                advice.append((subject, mark, "Build consistency", "Revise key concepts; solve 8 mixed questions; maintain an error notebook."))
+            else:
+                advice.append((subject, mark, "Strengthen mastery", "Use spaced revision; solve 3 challenging questions; explain the concept without notes."))
+        advice_df = pd.DataFrame(advice, columns=["Subject", "Marks", "Level", "Recommended next steps"])
+        st.dataframe(advice_df, use_container_width=True, hide_index=True)
+        fig_marks = px.bar(advice_df, x="Subject", y="Marks", color="Level", range_y=[0, 100],
+                           title="Your subject-wise marks", color_discrete_map={"Foundation focus":"#fb7185", "Build consistency":"#fbbf24", "Strengthen mastery":"#5eead4"})
+        fig_marks.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#eaf2ff")
+        st.plotly_chart(fig_marks, use_container_width=True)
+        st.markdown("#### Your next 7-day action plan")
+        st.write(f"1. **Day 1–2:** Give extra attention to {weakest}; revise one core topic each day.")
+        st.write("2. **Day 3–4:** Practise questions in all four subjects and record mistakes.")
+        st.write("3. **Day 5:** Revisit incorrect questions and clarify doubts.")
+        st.write("4. **Day 6:** Take a short self-test in the priority subject.")
+        st.write("5. **Day 7:** Compare marks, note progress and set the next week's target.")
 
 # ---------------------------
 # JUDGE Q&A
@@ -583,8 +645,6 @@ elif page == T["judge"]:
 st.divider()
 with st.expander("👤 Profile & PDF Report", expanded=False):
     st.write(f"**Name:** {user['full_name']}  ·  **Role:** {user['role']}  ·  **Class:** {user['grade'] or '—'}")
-    st.write(f"**Main learning goal:** {user['goal'] or '—'}")
-    st.write(f"**Today's intention:** {user['intention'] or '—'}")
     if PDF_AVAILABLE:
         pdf_data = make_pdf(user, results, user.get("intention", ""))
         st.download_button("📄 " + T["download"], pdf_data, "AB_SCHOOL_LOOP_AI_Report.pdf", "application/pdf", type="primary")
