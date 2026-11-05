@@ -275,9 +275,6 @@ st.markdown(f"""
   <p>{T['tagline']}<br>{T['intro']}</p>
   <div class="pills"><span class="pill">🧠 Mind power</span><span class="pill">📚 Smart learning</span><span class="pill">📊 Progress analytics</span><span class="pill">🌱 Values & reflection</span><span class="pill">🌙 Midnight AI UI</span></div>
 </div>
-elif page == "Mind power":
-    show_mind_power()
-from pages.mind_power import show_mind_power
 
 """, unsafe_allow_html=True)
 
