@@ -377,7 +377,22 @@ elif page == "Healthy habits":
     for i,tip in enumerate(tips,1):
         st.markdown(f"**{i}.** {tip}")
     st.caption("The app uses simple thresholds to generate gentle suggestions. It does not diagnose health conditions.")
-
+elif page == "Values & reflection":
+    st.markdown('<div class="section-kicker">VALUES / REFLECTION</div><div class="section-title">Reflect on effort, kindness and responsibility</div>', unsafe_allow_html=True)
+    prompts = ["What did I learn today?", "Where did I show patience or honesty?", "Who did I help or thank today?", "What is one thing I can improve tomorrow?"]
+    with st.form("values_reflection_form"):
+        reflection_answers = {prompt: st.text_area(prompt, max_chars=400, key=f"reflection_{i}") for i,prompt in enumerate(prompts)}
+        submitted_reflection = st.form_submit_button("Save reflection", type="primary")
+    if submitted_reflection:
+        st.session_state.values_reflection = {k:v.strip() for k,v in reflection_answers.items()}
+        st.success("Reflection saved for this session. Small, honest steps are enough.")
+    saved_reflection = st.session_state.get("values_reflection")
+    if saved_reflection:
+        st.markdown("### Saved reflection")
+        for prompt, answer in saved_reflection.items():
+            with st.container(border=True):
+                st.markdown(f"**{prompt}**")
+                st.write(answer if answer else "No response entered.")
 if page == "Overview":
     st.markdown('<div class="section-kicker">01 / Project introduction</div><div class="section-title">A balanced loop for student growth</div>', unsafe_allow_html=True)
     st.write(f"Welcome, **{student_name}** ({grade}). Your main goal is **{profile['goal']}**. AB SCHOOL LOOP AI helps you choose what to practise next, reflect on quiz results, and balance learning with movement, rest, and healthy screen habits.")
