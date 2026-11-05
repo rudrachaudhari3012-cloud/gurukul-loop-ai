@@ -1,572 +1,595 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from datetime import date
+import sqlite3
+import hashlib
+import secrets
+import io
+import json
+from datetime import date, datetime
 
-st.set_page_config(page_title="AB SCHOOL LOOP AI | Premium Learning Studio", page_icon="🎓", layout="wide", initial_sidebar_state="expanded")
+# Optional PDF support: install reportlab (listed in requirements.txt).
+try:
+    from reportlab.lib.pagesizes import A4
+    from reportlab.pdfgen import canvas
+    PDF_AVAILABLE = True
+except ImportError:
+    PDF_AVAILABLE = False
 
-# Transparent rule-based prototype; not a trained ML model.
-def classify_topic(score):
-    if score < 50:
-        return "Needs support", "High", "Rebuild the core idea, then solve 5 guided questions.", 25
-    if score < 75:
-        return "Growing", "Medium", "Revise key concepts and solve 5 mixed questions.", 15
-    return "Strong", "Low", "Use spaced revision and try 2 challenge questions.", 5
+APP_TITLE = "AB SCHOOL LOOP AI"
+DB_PATH = "ab_school_loop_ai.db"
 
-def make_plan(scores, study_minutes, screen_minutes, activity_minutes):
-    rows = []
-    for topic, score in sorted(scores.items(), key=lambda item: item[1]):
-        status, priority, action, mins = classify_topic(score)
-        rows.append({"Topic": topic, "Quiz score (%)": score, "Status": status,
-                     "Priority": priority, "Suggested action": action, "Suggested minutes": mins})
-    total = sum(row["Suggested minutes"] for row in rows)
-    habit = ("Start with one focused 25-minute study block and a 5-minute break." if study_minutes < 30 else "Use focused blocks, short breaks, and a brief end-of-day review.")
-    screen = ("Try a screen-free break and keep entertainment screen time separate from study." if screen_minutes > 180 else "Keep balancing study, entertainment, sleep, and offline time.")
-    activity = ("Consider a short movement break or outdoor activity." if activity_minutes < 30 else "Nice routine signal—keep regular movement and rest in your day.")
-    return pd.DataFrame(rows), total, habit, screen, activity
+st.set_page_config(page_title=APP_TITLE, page_icon="🎓", layout="wide", initial_sidebar_state="expanded")
 
-# Premium dark theme and responsive card styles
+# ---------------------------
+# MIDNIGHT / CYAN / MINT THEME
+# ---------------------------
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
 :root { color-scheme: dark; }
-.stApp { background: radial-gradient(ellipse at 10% 0%,rgba(0,204,255,.12),transparent 30%), radial-gradient(ellipse at 95% 8%,rgba(30,215,160,.10),transparent 25%), #07111f; color:#eaf2ff; }
-.block-container { max-width:1480px; padding-top:1.25rem; padding-bottom:3rem; }
-[data-testid="stSidebar"] { background:linear-gradient(180deg,#0b1930,#102747 70%,#0c1b2d); border-right:1px solid rgba(105,190,255,.15); }
-[data-testid="stSidebar"] * { color:#eaf2ff; }
-[data-testid="stSidebar"] input, [data-testid="stSidebar"] [data-baseweb="select"] { color:#102039 !important; }
-[data-testid="stHeader"] { background:rgba(7,17,31,.82); }
-.hero { position:relative; overflow:hidden; padding:clamp(1.5rem,4vw,3.2rem); border:1px solid rgba(106,215,255,.28); border-radius:28px; color:#fff; background:linear-gradient(120deg,#0d1c35 0%,#123b61 52%,#087d83 100%); box-shadow:0 24px 70px rgba(0,0,0,.28); }
-.hero:after { content:'✦'; position:absolute; right:5%; top:-52px; font-size:210px; color:rgba(255,255,255,.08); pointer-events:none; }
-.eyebrow { letter-spacing:.17em; text-transform:uppercase; font-size:.72rem; font-weight:800; color:#91f3ef; }
-.hero h1 { color:#fff !important; font-size:clamp(2.3rem,5vw,4.4rem); font-weight:800; line-height:1.03; margin:.5rem 0 .75rem; }
-.hero p { color:#d7eaff; font-size:1.08rem; max-width:780px; margin-bottom:0; }
-.pill-row { display:flex; flex-wrap:wrap; gap:.55rem; margin-top:1.25rem; }
-.pill { border:1px solid rgba(255,255,255,.23); background:rgba(255,255,255,.08); border-radius:999px; padding:.48rem .8rem; font-size:.8rem; color:#fff; }
-.section-kicker { color:#5eead4; font-size:.72rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin:.25rem 0 .2rem; }
-.section-title { color:#f0f7ff; font-size:1.55rem; font-weight:800; margin-top:0; margin-bottom:.4rem; }
-.subtle, [data-testid="stCaptionContainer"] { color:#9fb3cb; }
-div[data-testid="stMetric"] { background:linear-gradient(145deg,rgba(21,43,69,.95),rgba(11,27,45,.95)); border:1px solid rgba(107,190,230,.18); padding:1rem 1.1rem; border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,.15); }
-div[data-testid="stMetricLabel"] { color:#a7bfd8; }
-div[data-testid="stMetricValue"] { color:#f4fbff; }
-[data-testid="stVerticalBlockBorderWrapper"] { border-radius:18px; border-color:rgba(111,190,230,.20); background:rgba(13,31,51,.76); }
-div.stButton > button[kind="primary"], .stDownloadButton button { border:1px solid rgba(123,255,232,.3); border-radius:13px; background:linear-gradient(100deg,#00a6c7,#08b99a); color:#031523; font-weight:800; min-height:2.8rem; box-shadow:0 8px 24px rgba(0,190,180,.14); }
-div.stButton > button:hover, .stDownloadButton button:hover { filter:brightness(1.12); border-color:#5eead4; }
-.stTabs [data-baseweb="tab-list"] { gap:.35rem; background:rgba(12,29,48,.85); padding:.45rem; border-radius:15px; }
-.stTabs [data-baseweb="tab"] { border-radius:10px; color:#bdd0e5; padding:.55rem .85rem; }
-.stTabs [aria-selected="true"] { background:#123b54; color:#69f5e3; }
-[data-testid="stAlert"] { border-radius:14px; }
-hr { border-color:rgba(124,190,225,.16); }
-.footer { color:#7f96b2; font-size:.8rem; text-align:center; padding:1.5rem 0 .4rem; }
-.small-note { border-left:3px solid #28d5c1; padding:.6rem .9rem; background:rgba(40,213,193,.07); border-radius:0 10px 10px 0; color:#bdd4e8; }
-/* Readability fix: keep the existing theme, but make profile/rhythm form text clearly visible. */
-[data-testid="stForm"] label,
-[data-testid="stForm"] [data-testid="stWidgetLabel"],
-[data-testid="stForm"] [data-testid="stWidgetLabel"] p,
-[data-testid="stForm"] .stMarkdown,
-[data-testid="stForm"] .stMarkdown p,
-[data-testid="stForm"] h3,
-[data-testid="stForm"] h4 { color:#ffffff !important; }
-[data-testid="stForm"] input,
-[data-testid="stForm"] textarea,
-[data-testid="stForm"] [data-baseweb="select"] > div,
-[data-testid="stForm"] [data-baseweb="input"] > div,
-[data-testid="stForm"] [data-baseweb="textarea"] > div {
-  color:#ffffff !important;
-  -webkit-text-fill-color:#ffffff !important;
-  background-color:#10243b !important;
-  border-color:rgba(125,205,240,.45) !important;
-}
-[data-testid="stForm"] input::placeholder,
-[data-testid="stForm"] textarea::placeholder { color:#d7e5f5 !important; opacity:1 !important; -webkit-text-fill-color:#d7e5f5 !important; }
-[data-testid="stForm"] [data-baseweb="select"] [role="combobox"],
-[data-testid="stForm"] [data-baseweb="select"] div { color:#ffffff !important; }
-[data-testid="stForm"] [data-testid="stCaptionContainer"],
-[data-testid="stForm"] small { color:#ffffff !important; }
-
-/* MIDNIGHT AI — Navy, Cyan, Mint. Theme-only overrides; app logic/features are unchanged. */
-:root { color-scheme: dark; }
-.stApp {
-  background:
-    radial-gradient(ellipse at 10% 0%, rgba(34,211,238,.12), transparent 32%),
-    radial-gradient(ellipse at 94% 8%, rgba(94,234,212,.10), transparent 27%),
-    #0B1220 !important;
-  color: #FFFFFF !important;
-}
-[data-testid="stHeader"] { background: rgba(11,18,32,.92) !important; }
-[data-testid="stSidebar"] {
-  background: linear-gradient(180deg, #0B1220 0%, #111C2E 72%, #0D1B2A 100%) !important;
-  border-right: 1px solid rgba(34,211,238,.24) !important;
-}
-[data-testid="stSidebar"] *,
-[data-testid="stSidebar"] p,
-[data-testid="stSidebar"] label,
-[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
-  color: #FFFFFF !important;
-}
-[data-testid="stSidebar"] input,
-[data-testid="stSidebar"] [data-baseweb="select"] { color: #FFFFFF !important; }
-.hero {
-  background: linear-gradient(120deg, #0B1220 0%, #111C2E 55%, #0B5260 100%) !important;
-  border-color: rgba(34,211,238,.42) !important;
-  box-shadow: 0 24px 70px rgba(0,0,0,.32), 0 0 34px rgba(34,211,238,.06) !important;
-}
-.eyebrow, .section-kicker { color: #5EEAD4 !important; }
-.section-title { color: #FFFFFF !important; }
-.subtle, [data-testid="stCaptionContainer"] { color: #B8C7D9 !important; }
-.pill { border-color: rgba(34,211,238,.3) !important; background: rgba(34,211,238,.08) !important; color: #FFFFFF !important; }
-div[data-testid="stMetric"] {
-  background: linear-gradient(145deg, #111C2E, #0E1929) !important;
-  border-color: rgba(34,211,238,.22) !important;
-}
-div[data-testid="stMetricLabel"] { color: #B8C7D9 !important; }
-div[data-testid="stMetricValue"] { color: #FFFFFF !important; }
-[data-testid="stVerticalBlockBorderWrapper"] {
-  background: rgba(17,28,46,.88) !important;
-  border-color: rgba(34,211,238,.20) !important;
-}
-/* All form fields: high contrast white text and readable placeholders. */
-[data-testid="stForm"] label,
-[data-testid="stForm"] [data-testid="stWidgetLabel"],
-[data-testid="stForm"] [data-testid="stWidgetLabel"] p,
-[data-testid="stForm"] .stMarkdown,
-[data-testid="stForm"] .stMarkdown p,
-[data-testid="stForm"] h3,
-[data-testid="stForm"] h4,
-[data-testid="stForm"] [data-testid="stCaptionContainer"],
-[data-testid="stForm"] small { color: #FFFFFF !important; }
-[data-testid="stForm"] input,
-[data-testid="stForm"] textarea,
-[data-testid="stForm"] [data-baseweb="select"] > div,
-[data-testid="stForm"] [data-baseweb="input"] > div,
-[data-testid="stForm"] [data-baseweb="textarea"] > div {
-  color: #FFFFFF !important;
-  -webkit-text-fill-color: #FFFFFF !important;
-  background-color: #111C2E !important;
-  border-color: rgba(34,211,238,.45) !important;
-}
-[data-testid="stForm"] input::placeholder,
-[data-testid="stForm"] textarea::placeholder {
-  color: #B8C7D9 !important; opacity: 1 !important;
-  -webkit-text-fill-color: #B8C7D9 !important;
-}
-[data-testid="stForm"] [data-baseweb="select"] [role="combobox"],
-[data-testid="stForm"] [data-baseweb="select"] div { color: #FFFFFF !important; }
-input, textarea { caret-color: #22D3EE !important; }
-input:focus, textarea:focus,
-[data-baseweb="select"] > div:focus-within {
-  border-color: #22D3EE !important;
-  box-shadow: 0 0 0 1px #22D3EE !important;
-}
-/* Streamlit's standard widgets outside forms stay readable too. */
-[data-testid="stWidgetLabel"],
-[data-testid="stWidgetLabel"] p,
-.stMarkdown, .stMarkdown p,
-[data-testid="stRadio"] label,
-[data-testid="stCheckbox"] label { color: #FFFFFF; }
-[data-baseweb="select"] > div,
-[data-baseweb="input"] > div,
-[data-baseweb="textarea"] > div {
-  background-color: #111C2E !important;
-  border-color: rgba(34,211,238,.32) !important;
-  color: #FFFFFF !important;
-}
-[data-baseweb="select"] input,
-[data-baseweb="select"] [role="combobox"] { color: #FFFFFF !important; }
-[data-baseweb="select"] svg { fill: #5EEAD4 !important; }
-div.stButton > button[kind="primary"],
-.stDownloadButton button {
-  border: 1px solid rgba(94,234,212,.58) !important;
-  border-radius: 13px !important;
-  background: linear-gradient(100deg, #22D3EE, #5EEAD4) !important;
-  color: #0B1220 !important;
-  font-weight: 800 !important;
-  min-height: 2.8rem;
-  box-shadow: 0 8px 24px rgba(34,211,238,.14) !important;
-}
-div.stButton > button, .stDownloadButton button {
-  border-color: rgba(34,211,238,.34);
-}
-div.stButton > button:hover, .stDownloadButton button:hover {
-  filter: brightness(1.08);
-  border-color: #5EEAD4 !important;
-}
-.stTabs [data-baseweb="tab-list"] {
-  background: #111C2E !important;
-  border: 1px solid rgba(34,211,238,.16);
-}
-.stTabs [data-baseweb="tab"] { color: #B8C7D9 !important; }
-.stTabs [aria-selected="true"] {
-  background: rgba(34,211,238,.12) !important;
-  color: #5EEAD4 !important;
-}
-[data-testid="stAlert"] { border-radius: 14px; }
-hr { border-color: rgba(34,211,238,.18) !important; }
-.footer { color: #B8C7D9 !important; }
-.small-note {
-  border-left-color: #5EEAD4 !important;
-  background: rgba(94,234,212,.08) !important;
-  color: #FFFFFF !important;
-}
-
+.stApp { background: radial-gradient(ellipse at 8% 0%,rgba(34,211,238,.14),transparent 32%), radial-gradient(ellipse at 94% 8%,rgba(94,234,212,.11),transparent 28%), #08111f; color:#f4f8ff; }
+.block-container { max-width:1450px; padding-top:1.4rem; padding-bottom:3rem; }
+[data-testid="stSidebar"] { background:linear-gradient(180deg,#0b1728,#101f34 72%,#0b1b2b); border-right:1px solid rgba(34,211,238,.22); }
+[data-testid="stSidebar"] * { color:#f4f8ff !important; }
+[data-testid="stHeader"] { background:rgba(8,17,31,.86); }
+.hero { padding:clamp(1.5rem,4vw,3rem); border:1px solid rgba(34,211,238,.38); border-radius:26px; background:linear-gradient(120deg,#0b1424 0%,#122c49 55%,#075b63 100%); box-shadow:0 22px 65px rgba(0,0,0,.30); position:relative; overflow:hidden; }
+.hero:after { content:'✦'; position:absolute; right:5%; top:-55px; font-size:205px; color:rgba(255,255,255,.07); }
+.eyebrow { color:#5eead4; letter-spacing:.16em; text-transform:uppercase; font-size:.72rem; font-weight:800; }
+.hero h1 { color:#fff !important; font-family:Manrope,Inter,sans-serif; font-size:clamp(2.2rem,5vw,4.1rem); line-height:1.05; margin:.5rem 0; font-weight:800; }
+.hero p { color:#d9eaff; max-width:800px; font-size:1.05rem; margin:0; }
+.pills { display:flex; flex-wrap:wrap; gap:.55rem; margin-top:1.1rem; }
+.pill { border:1px solid rgba(94,234,212,.32); background:rgba(34,211,238,.08); padding:.42rem .75rem; border-radius:999px; color:#f3ffff; font-size:.78rem; }
+.kicker { color:#5eead4; font-size:.72rem; letter-spacing:.15em; font-weight:800; text-transform:uppercase; margin:.3rem 0; }
+.section-title { color:#fff; font-size:1.55rem; font-weight:800; margin:0 0 .45rem; }
+.subtle, [data-testid="stCaptionContainer"] { color:#b8c7d9 !important; }
+div[data-testid="stMetric"] { background:linear-gradient(145deg,#14243a,#0d1a2b); border:1px solid rgba(34,211,238,.22); padding:1rem; border-radius:17px; }
+div[data-testid="stMetricLabel"] { color:#b8c7d9 !important; }
+div[data-testid="stMetricValue"] { color:#fff !important; }
+[data-testid="stVerticalBlockBorderWrapper"] { background:rgba(16,31,51,.78); border:1px solid rgba(34,211,238,.18); border-radius:17px; }
+.stButton > button, .stDownloadButton > button, [data-testid="stFormSubmitButton"] > button { border:1px solid rgba(94,234,212,.5); border-radius:12px; background:linear-gradient(100deg,#22d3ee,#5eead4); color:#061321; font-weight:800; min-height:2.65rem; }
+.stButton > button:hover, .stDownloadButton > button:hover { filter:brightness(1.08); border-color:#fff; }
+.stTabs [data-baseweb="tab-list"] { gap:.35rem; background:#111f32; padding:.4rem; border-radius:13px; }
+.stTabs [aria-selected="true"] { background:rgba(34,211,238,.13) !important; color:#5eead4 !important; }
+[data-testid="stWidgetLabel"], [data-testid="stWidgetLabel"] p, .stMarkdown, .stMarkdown p, label { color:#f4f8ff; }
+input, textarea, [data-baseweb="select"] > div { background:#101f32 !important; color:#fff !important; border-color:rgba(34,211,238,.35) !important; }
+input::placeholder, textarea::placeholder { color:#b8c7d9 !important; }
+hr { border-color:rgba(34,211,238,.18); }
+.footer { text-align:center; color:#91a8c2; font-size:.78rem; padding:1.5rem 0 .3rem; }
+.small-note { border-left:3px solid #5eead4; background:rgba(94,234,212,.07); padding:.7rem .9rem; border-radius:0 10px 10px 0; color:#d8e9f7; }
+/* AI Coach: replace dark/black alert text with a clear premium light palette */
+[data-testid="stAlert"] { background:linear-gradient(135deg,rgba(17,43,68,.98),rgba(12,34,52,.98)) !important; border:1px solid rgba(94,234,212,.38) !important; border-radius:14px !important; }
+[data-testid="stAlert"] *, [data-testid="stAlert"] p, [data-testid="stAlert"] div { color:#eaf7ff !important; }
+[data-testid="stAlert"] svg { fill:#5eead4 !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# Hero
-st.markdown("""
+# ---------------------------
+# BILINGUAL LABELS
+# ---------------------------
+TEXT = {
+    "English": {
+        "tagline": "Smart Learning · Healthy Life · Bright Future",
+        "intro": "A student-support studio that turns practice results into clear next steps and encourages balanced routines.",
+        "login": "Login", "register": "Create account", "username": "Username", "password": "Password",
+        "name": "Student / Teacher name", "role": "Account type", "student": "Student", "teacher": "Teacher",
+        "class": "Class / Grade", "goal": "Main learning goal", "energy": "Study energy today", "intention": "One intention for today",
+        "enter": "Enter dashboard", "cancel": "Cancel / Clear", "logout": "Log out", "language": "Language",
+        "overview": "Overview", "learning": "Learning Dashboard", "quiz": "AI Quiz Generator", "coach": "Advanced AI Coach",
+        "teacher_dash": "Teacher Dashboard", "values": "Values & Reflection", "transparent": "Transparent Prototype",
+        "showcase": "Project Showcase", "roadmap": "Roadmap & Team", "judge": "Judge Q&A", "analytics": "Performance Analytics",
+        "profile": "Student Profile", "welcome": "Welcome", "build_plan": "Build my learning plan", "download": "Download PDF report",
+        "goal_options": ["Understand difficult concepts", "Improve memory and recall", "Improve exam performance", "Build a balanced routine", "Improve reading comprehension"],
+        "energy_options": ["Low", "Okay", "Good", "High"]
+    },
+    "ગુજરાતી": {
+        "tagline": "સ્માર્ટ લર્નિંગ · સ્વસ્થ જીવન · ઉજ્જવળ ભવિષ્ય",
+        "intro": "અભ્યાસના પરિણામોને આગળના સ્પષ્ટ પગલાંમાં ફેરવતું અને સંતુલિત દિનચર્યાને પ્રોત્સાહન આપતું વિદ્યાર્થી સહાયક પ્લેટફોર્મ.",
+        "login": "લૉગિન", "register": "એકાઉન્ટ બનાવો", "username": "યુઝરનેમ", "password": "પાસવર્ડ",
+        "name": "વિદ્યાર્થી / શિક્ષકનું નામ", "role": "એકાઉન્ટનો પ્રકાર", "student": "વિદ્યાર્થી", "teacher": "શિક્ષક",
+        "class": "ધોરણ", "goal": "મુખ્ય અભ્યાસ લક્ષ્ય", "energy": "આજની અભ્યાસ ઊર્જા", "intention": "આજનો એક સંકલ્પ",
+        "enter": "ડેશબોર્ડ ખોલો", "cancel": "રદ કરો / સાફ કરો", "logout": "લૉગઆઉટ", "language": "ભાષા",
+        "overview": "ઝાંખી", "learning": "લર્નિંગ ડેશબોર્ડ", "quiz": "AI ક્વિઝ જનરેટર", "coach": "એડવાન્સ્ડ AI કોચ",
+        "teacher_dash": "ટીચર ડેશબોર્ડ", "values": "મૂલ્યો અને આત્મચિંતન", "transparent": "પારદર્શક પ્રોટોટાઇપ",
+        "showcase": "પ્રોજેક્ટ શોકેસ", "roadmap": "રોડમેપ અને ટીમ", "judge": "જજ પ્રશ્નોત્તરી", "analytics": "પરફોર્મન્સ એનાલિટિક્સ",
+        "profile": "વિદ્યાર્થી પ્રોફાઇલ", "welcome": "સ્વાગત છે", "build_plan": "મારો અભ્યાસ પ્લાન બનાવો", "download": "PDF રિપોર્ટ ડાઉનલોડ કરો",
+        "goal_options": ["મુશ્કેલ વિષયો સમજવા", "યાદશક્તિ અને રિકોલ સુધારવા", "પરીક્ષાનું પ્રદર્શન સુધારવા", "સંતુલિત દિનચર્યા બનાવવી", "વાંચન સમજ સુધારવી"],
+        "energy_options": ["ઓછી", "ઠીક", "સારી", "ખૂબ સારી"]
+    }
+}
+
+# ---------------------------
+# DATABASE + PASSWORD HELPERS
+# ---------------------------
+def db():
+    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def init_db():
+    with db() as conn:
+        conn.execute("""CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL, salt TEXT NOT NULL, full_name TEXT NOT NULL,
+            role TEXT NOT NULL, grade TEXT, goal TEXT, energy TEXT, intention TEXT,
+            created_at TEXT NOT NULL)""")
+        conn.execute("""CREATE TABLE IF NOT EXISTS quiz_results (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL,
+            subject TEXT NOT NULL, topic TEXT NOT NULL, score INTEGER NOT NULL,
+            total INTEGER NOT NULL, created_at TEXT NOT NULL,
+            FOREIGN KEY(user_id) REFERENCES users(id))""")
+        conn.execute("""CREATE TABLE IF NOT EXISTS reflections (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL,
+            answer TEXT NOT NULL, created_at TEXT NOT NULL,
+            FOREIGN KEY(user_id) REFERENCES users(id))""")
+
+
+def password_hash(password, salt):
+    return hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 180000).hex()
+
+
+def create_user(username, password, full_name, role, grade, goal, energy, intention):
+    salt = secrets.token_hex(16)
+    hashed = password_hash(password, salt)
+    with db() as conn:
+        conn.execute("INSERT INTO users(username,password_hash,salt,full_name,role,grade,goal,energy,intention,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
+                     (username.lower().strip(), hashed, salt, full_name.strip(), role, grade, goal, energy, intention.strip(), datetime.now().isoformat(timespec="seconds")))
+
+
+def authenticate(username, password):
+    with db() as conn:
+        user = conn.execute("SELECT * FROM users WHERE username=?", (username.lower().strip(),)).fetchone()
+    if not user:
+        return None
+    return user if secrets.compare_digest(password_hash(password, user["salt"]), user["password_hash"]) else None
+
+
+def get_user_results(user_id=None):
+    with db() as conn:
+        if user_id is None:
+            rows = conn.execute("SELECT q.*,u.full_name,u.username,u.grade FROM quiz_results q JOIN users u ON q.user_id=u.id ORDER BY q.id DESC").fetchall()
+        else:
+            rows = conn.execute("SELECT * FROM quiz_results WHERE user_id=? ORDER BY id DESC", (user_id,)).fetchall()
+    return [dict(r) for r in rows]
+
+
+def save_result(user_id, subject, topic, score, total):
+    with db() as conn:
+        conn.execute("INSERT INTO quiz_results(user_id,subject,topic,score,total,created_at) VALUES(?,?,?,?,?,?)",
+                     (user_id, subject, topic, score, total, datetime.now().isoformat(timespec="seconds")))
+
+
+def save_reflection(user_id, answer):
+    with db() as conn:
+        conn.execute("INSERT INTO reflections(user_id,answer,created_at) VALUES(?,?,?)", (user_id, answer, datetime.now().isoformat(timespec="seconds")))
+
+
+init_db()
+
+# ---------------------------
+# QUIZ CONTENT (transparent, template-based generator)
+# ---------------------------
+QUIZ_BANK = {
+    "Physics": {
+        "Motion": [
+            ("Which quantity is a vector?", ["Speed", "Distance", "Displacement", "Time"], 2, "Displacement has magnitude and direction."),
+            ("The SI unit of acceleration is:", ["m/s", "m/s²", "km/h", "N"], 1, "Acceleration is change in velocity per unit time."),
+            ("The slope of a velocity-time graph represents:", ["Distance", "Acceleration", "Speed", "Momentum"], 1, "The gradient is change in velocity divided by time.")],
+        "Force": [
+            ("Newton's first law is also called the law of:", ["Acceleration", "Inertia", "Action", "Gravitation"], 1, "It describes the tendency to resist change in motion."),
+            ("The SI unit of force is:", ["Joule", "Watt", "Newton", "Pascal"], 2, "Force is measured in newtons (N)."),
+            ("If net force is zero, acceleration is:", ["Zero", "Maximum", "Negative", "Infinite"], 0, "Zero net force means zero acceleration.")]
+    },
+    "Chemistry": {
+        "Chemical Bonding": [
+            ("Which bond involves sharing electron pairs?", ["Ionic", "Covalent", "Metallic", "Hydrogen"], 1, "Covalent bonds form through shared electron pairs."),
+            ("The shape of methane (CH₄) is:", ["Linear", "Bent", "Tetrahedral", "Trigonal planar"], 2, "Four bonding pairs arrange tetrahedrally."),
+            ("A polar covalent bond forms when electrons are:", ["Shared equally", "Transferred fully", "Shared unequally", "Removed"], 2, "Different electronegativities cause unequal sharing.")],
+        "Periodic Trends": [
+            ("Across a period, atomic radius generally:", ["Increases", "Decreases", "Stays same", "Doubles"], 1, "Effective nuclear charge generally increases across a period."),
+            ("The energy needed to remove an electron is called:", ["Electron affinity", "Ionisation enthalpy", "Bond energy", "Lattice energy"], 1, "Ionisation enthalpy is the energy required to remove an electron."),
+            ("Elements in the same group generally have the same number of:", ["Neutrons", "Shells", "Valence electrons", "Isotopes"], 2, "For main-group elements, group position relates to valence electrons.")]
+    },
+    "Mathematics": {
+        "Trigonometry": [
+            ("What is sin 30°?", ["0", "1/2", "√3/2", "1"], 1, "sin 30° = 1/2."),
+            ("What is cos 60°?", ["0", "1/2", "√3/2", "1"], 1, "cos 60° = 1/2."),
+            ("The value of tan 45° is:", ["0", "1/√3", "1", "√3"], 2, "tan 45° = 1.")],
+        "Algebra": [
+            ("If x + 5 = 12, x equals:", ["5", "6", "7", "17"], 2, "Subtract 5 from both sides."),
+            ("The factorisation of x² − 9 is:", ["(x−9)(x+1)", "(x−3)(x+3)", "(x−3)²", "(x+9)²"], 1, "Use the difference of two squares."),
+            ("The coefficient of x in 4x + 7 is:", ["4", "7", "11", "x"], 0, "The coefficient multiplying x is 4.")]
+    },
+    "English": {
+        "Vocabulary": [
+            ("Choose the closest meaning of 'brief'.", ["Short", "Angry", "Distant", "Heavy"], 0, "Brief means short in duration or length."),
+            ("Choose the opposite of 'ancient'.", ["Old", "Modern", "Historic", "Past"], 1, "Modern is the opposite of ancient."),
+            ("A person who writes poems is a:", ["Painter", "Poet", "Pilot", "Editor"], 1, "A poet writes poems.")]
+    }
+}
+
+
+def make_pdf(user, results, intention):
+    if not PDF_AVAILABLE:
+        return None
+    buffer = io.BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+    y = height - 55
+    pdf.setFillColorRGB(.04, .12, .22)
+    pdf.rect(0, height-115, width, 115, fill=1, stroke=0)
+    pdf.setFillColorRGB(.36, .92, .85)
+    pdf.setFont("Helvetica-Bold", 20)
+    pdf.drawString(42, height-58, "AB SCHOOL LOOP AI")
+    pdf.setFillColorRGB(1, 1, 1)
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(42, height-80, "Student learning progress report")
+    y = height - 145
+    pdf.setFillColorRGB(.08, .13, .20)
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(42, y, "Student details")
+    y -= 22
+    pdf.setFont("Helvetica", 10)
+    for line in [f"Name: {user['full_name']}", f"Class: {user['grade'] or 'Not specified'}", f"Main learning goal: {user['goal'] or 'Not specified'}", f"Study energy: {user['energy'] or 'Not specified'}", f"Report date: {date.today().strftime('%d %b %Y')}"]:
+        pdf.drawString(48, y, line); y -= 17
+    y -= 10
+    pdf.setFont("Helvetica-Bold", 12); pdf.drawString(42, y, "Quiz history"); y -= 20
+    pdf.setFont("Helvetica", 9)
+    if results:
+        for item in results[:12]:
+            line = f"{item['subject']} / {item['topic']}: {item['score']} of {item['total']} ({round(item['score']/max(item['total'],1)*100)}%)"
+            pdf.drawString(48, y, line[:105]); y -= 15
+            if y < 95:
+                pdf.showPage(); y = height - 55; pdf.setFont("Helvetica", 9)
+    else:
+        pdf.drawString(48, y, "No quiz attempts recorded yet."); y -= 17
+    y -= 8
+    pdf.setFont("Helvetica-Bold", 12); pdf.drawString(42, y, "Today's intention"); y -= 20
+    pdf.setFont("Helvetica", 10)
+    for part in (intention or "Not entered").splitlines()[:4]:
+        pdf.drawString(48, y, part[:105]); y -= 15
+    pdf.setFont("Helvetica-Oblique", 8)
+    pdf.drawString(42, 35, "Prototype report. Suggestions are educational prompts, not a formal assessment.")
+    pdf.save(); buffer.seek(0)
+    return buffer.getvalue()
+
+# ---------------------------
+# LOGIN / REGISTRATION GATE
+# ---------------------------
+if "user" not in st.session_state:
+    st.session_state.user = None
+if "language" not in st.session_state:
+    st.session_state.language = "English"
+
+# The language selector is available on the first screen and in the sidebar.
+head_left, head_right = st.columns([4, 1])
+with head_right:
+    st.session_state.language = st.selectbox("Language / ભાષા", ["English", "ગુજરાતી"], index=["English", "ગુજરાતી"].index(st.session_state.language), key="language_pick")
+T = TEXT[st.session_state.language]
+
+st.markdown(f"""
 <div class="hero">
-  <div class="eyebrow">Student growth · Learning science · Healthy life</div>
+  <div class="eyebrow">STUDENT GROWTH · LEARNING SCIENCE · HEALTHY LIFE</div>
   <h1>AB SCHOOL LOOP AI</h1>
-  <p>Smart Learning · Healthy Life · Bright Future. A student-support prototype that turns quiz results into clear next steps while keeping healthy routines in view.</p>
-  <div class="pill-row"><span class="pill">🧠 Mind power</span><span class="pill">📚 Smart learning</span><span class="pill">🏃 Healthy habits</span><span class="pill">🌱 Values & reflection</span><span class="pill">🔎 Transparent prototype</span></div>
+  <p>{T['tagline']}<br>{T['intro']}</p>
+  <div class="pills"><span class="pill">🧠 Mind power</span><span class="pill">📚 Smart learning</span><span class="pill">📊 Progress analytics</span><span class="pill">🌱 Values & reflection</span><span class="pill">🌙 Midnight AI UI</span></div>
 </div>
 """, unsafe_allow_html=True)
 
-# Student profile and daily-rhythm gate.
-# The remaining pages stay locked until the required profile/routine fields are entered.
-if "profile_complete" not in st.session_state:
-    st.session_state.profile_complete = False
-
-if not st.session_state.profile_complete:
-    st.markdown('<div class="section-kicker">START HERE / STUDENT PROFILE</div><div class="section-title">Create your student profile</div>', unsafe_allow_html=True)
-    st.write("Complete the required student profile and daily rhythm fields. Press **Enter** to unlock the dashboard, or **Cancel** to clear the form.")
-    with st.form("student_profile_setup", clear_on_submit=False):
-        st.markdown("### 👤 Student profile")
-        name_input = st.text_input("Student name *", value=st.session_state.get("draft_name", ""), placeholder="Enter student name")
-        grade_input = st.selectbox("Class / grade *", ["Select class", "Class 8", "Class 9", "Class 10", "Class 11", "Class 12"], index=0)
-        goal_input = st.selectbox("Main learning goal *", ["Select a goal", "Understand difficult concepts", "Improve memory and recall", "Improve exam performance", "Build a balanced routine", "Improve reading comprehension"])
-        st.markdown("### 🕒 Daily rhythm")
-        d1, d2 = st.columns(2)
-        with d1:
-            study_input = st.number_input("Focused study today (minutes) *", min_value=0, max_value=720, value=90, step=15)
-            activity_input = st.number_input("Physical activity today (minutes) *", min_value=0, max_value=360, value=30, step=5)
-        with d2:
-            screen_input = st.number_input("Non-study screen time (minutes) *", min_value=0, max_value=900, value=120, step=15)
-            sleep_input = st.number_input("Sleep last night (hours) *", min_value=0.0, max_value=24.0, value=8.0, step=0.5)
-        energy_input = st.selectbox("Study energy today *", ["Select energy", "Low", "Okay", "Good", "High"])
-        reflection_input = st.text_area("One intention for today *", placeholder="Example: I will revise one topic and take a movement break.", max_chars=300)
-        enter_col, cancel_col = st.columns(2)
-        with enter_col:
-            enter_clicked = st.form_submit_button("✅ Enter dashboard", type="primary", use_container_width=True)
-        with cancel_col:
-            cancel_clicked = st.form_submit_button("✖ Cancel / Clear", use_container_width=True)
-
-    if cancel_clicked:
-        for key in ("draft_name", "student_profile", "profile_complete"):
-            st.session_state.pop(key, None)
-        st.session_state.profile_complete = False
-        st.rerun()
-    if enter_clicked:
-        missing = []
-        if not name_input.strip(): missing.append("Student name")
-        if grade_input == "Select class": missing.append("Class / grade")
-        if goal_input == "Select a goal": missing.append("Main learning goal")
-        if energy_input == "Select energy": missing.append("Study energy")
-        if not reflection_input.strip(): missing.append("Daily intention")
-        if sleep_input <= 0: missing.append("Sleep hours")
-        if missing:
-            st.error("Please complete the required fields: " + ", ".join(missing) + ".")
-        else:
-            st.session_state.student_profile = {
-                "name": name_input.strip(), "grade": grade_input, "goal": goal_input,
-                "study": int(study_input), "screen": int(screen_input),
-                "activity": int(activity_input), "sleep": float(sleep_input),
-                "energy": energy_input, "reflection": reflection_input.strip()
-            }
-            st.session_state.profile_complete = True
+if st.session_state.user is None:
+    st.markdown('<div class="kicker">WELCOME / SECURE DEMO ACCESS</div><div class="section-title">Your learning space starts here</div>', unsafe_allow_html=True)
+    login_tab, register_tab = st.tabs([f"🔐 {T['login']}", f"✨ {T['register']}"])
+    with login_tab:
+        with st.form("login_form"):
+            login_user = st.text_input(T["username"], key="login_username")
+            login_pass = st.text_input(T["password"], type="password", key="login_password")
+            login_go = st.form_submit_button(T["login"], type="primary", use_container_width=True)
+        if login_go:
+            found = authenticate(login_user, login_pass)
+            if found:
+                st.session_state.user = dict(found)
+                st.rerun()
+            else:
+                st.error("Incorrect username or password. / યુઝરનેમ અથવા પાસવર્ડ ખોટો છે.")
+    with register_tab:
+        st.caption("Create a local demo account. Teacher accounts are for the project demonstration only.")
+        with st.form("register_form", clear_on_submit=False):
+            full_name = st.text_input(T["name"])
+            username = st.text_input(T["username"])
+            password = st.text_input(T["password"] + " (minimum 8 characters)", type="password")
+            role_label = st.selectbox(T["role"], [T["student"], T["teacher"]])
+            grade = st.selectbox(T["class"], ["Class 8", "Class 9", "Class 10", "Class 11", "Class 12", "Not applicable"])
+            goal = st.selectbox(T["goal"], T["goal_options"])
+            energy = st.selectbox(T["energy"], T["energy_options"])
+            intention = st.text_area(T["intention"], max_chars=300, placeholder="Example: I will revise one topic and take a short break.")
+            b1, b2 = st.columns(2)
+            with b1:
+                register_go = st.form_submit_button("✅ " + T["enter"], type="primary", use_container_width=True)
+            with b2:
+                clear_go = st.form_submit_button("✖ " + T["cancel"], use_container_width=True)
+        if clear_go:
             st.rerun()
-    st.info("🔒 Dashboard pages are locked until you press Enter with all required fields completed.")
+        if register_go:
+            if not all([full_name.strip(), username.strip(), password, intention.strip()]):
+                st.error("Please complete all required fields. / કૃપા કરીને જરૂરી વિગતો ભરો.")
+            elif len(password) < 8:
+                st.error("Use a password with at least 8 characters. / ઓછામાં ઓછા 8 અક્ષરનો પાસવર્ડ રાખો.")
+            else:
+                try:
+                    role = "Teacher" if role_label == T["teacher"] else "Student"
+                    create_user(username, password, full_name, role, grade, goal, energy, intention)
+                    found = authenticate(username, password)
+                    st.session_state.user = dict(found)
+                    st.success("Account created. Welcome! / એકાઉન્ટ બની ગયું.")
+                    st.rerun()
+                except sqlite3.IntegrityError:
+                    st.error("That username is already taken. / આ યુઝરનેમ પહેલેથી વપરાય છે.")
+    st.markdown('<div class="small-note">🔒 Demo privacy: account information and quiz results are stored in a local SQLite database on the computer running this app. This is a classroom prototype, not a production identity system.</div>', unsafe_allow_html=True)
     st.stop()
 
-profile = st.session_state.student_profile
-student_name = profile["name"]
-grade = profile["grade"]
-study_minutes = profile["study"]
-screen_minutes = profile["screen"]
-activity_minutes = profile["activity"]
+# ---------------------------
+# AUTHENTICATED APP
+# ---------------------------
+user = st.session_state.user
+is_teacher = user["role"] == "Teacher"
 
 with st.sidebar:
     st.markdown("# 🎓 AB SCHOOL LOOP AI")
-    st.caption("Premium student growth studio")
-    page = st.radio("Navigate", ["Overview", "Student Profile", "Learning Dashboard", "Mind power", "Recall Quiz", "Healthy habits", "Values & reflection", "AI Coach", "Transparent prototype", "Project Showcase", "Roadmap & Team", "Judge Q&A"], label_visibility="collapsed")
+    st.caption("MIDNIGHT AI · Learning studio")
+    st.markdown(f"**{user['full_name']}**")
+    st.caption(f"{user['role']} · {user['grade'] or '—'}")
     st.divider()
-    st.markdown("### 👤 Active student")
-    st.write(f"**{student_name}** · {grade}")
-    st.caption(f"Goal: {profile['goal']}")
-    st.markdown("### 🕒 Daily rhythm")
-    st.metric("Focused study", f"{study_minutes} min")
-    st.metric("Non-study screen time", f"{screen_minutes} min")
-    st.metric("Physical activity", f"{activity_minutes} min")
-    st.metric("Sleep", f"{profile['sleep']:g} h")
-    if st.button("Reset profile / Lock pages", use_container_width=True):
-        st.session_state.profile_complete = False
-        st.session_state.pop("student_profile", None)
+    nav_items = [T["overview"], T["learning"], T["quiz"], T["coach"], T["analytics"], T["values"], T["transparent"], T["showcase"], T["roadmap"], T["judge"]]
+    if is_teacher:
+        nav_items.insert(4, T["teacher_dash"])
+    page = st.radio("NAVIGATION", nav_items, label_visibility="collapsed")
+    st.divider()
+    if st.button("↩ " + T["logout"], use_container_width=True):
+        st.session_state.user = None
         st.rerun()
-    st.caption("Demo only: avoid entering sensitive personal information.")
+    st.caption("Prototype v2.0 · Navy / Cyan / Mint")
 
-st_scores = {"Physics · Motion": 42, "Chemistry · Bonding": 68, "Mathematics · Trigonometry": 81, "English · Comprehension": 55}
-with st.expander("ℹ️ Prototype transparency", expanded=False):
-    st.write("This version uses transparent rules and sample data; it is not a trained machine-learning model. It is not a medical or psychological assessment. Thresholds are initial design choices and must be evaluated using consented data before making effectiveness claims.")
+results = get_user_results(user["id"])
+score_values = [round(r["score"] / max(r["total"], 1) * 100) for r in results]
+avg_score = round(sum(score_values) / len(score_values), 1) if score_values else 0
 
-if page == "Student Profile":
-    st.markdown('<div class="section-kicker">PROFILE / DAILY RHYTHM</div><div class="section-title">Your student snapshot</div>', unsafe_allow_html=True)
-    st.caption("The profile below is held in the current Streamlit session. It is not sent to an external service by this code.")
-    a,b,c,d = st.columns(4)
-    a.metric("Student", profile["name"])
-    b.metric("Class", profile["grade"])
-    c.metric("Study energy", profile["energy"])
-    d.metric("Main goal", profile["goal"])
-    st.markdown("### 🕒 Daily rhythm")
-    r1,r2,r3,r4 = st.columns(4)
-    r1.metric("Focused study", f"{profile['study']} min")
-    r2.metric("Non-study screen", f"{profile['screen']} min")
-    r3.metric("Physical activity", f"{profile['activity']} min")
-    r4.metric("Sleep", f"{profile['sleep']:g} h")
-    st.markdown("### 🌱 Today's intention")
-    st.write(profile["reflection"])
-    st.markdown("### ✏️ Update daily intention")
-    with st.form("update_intention"):
-        new_intention = st.text_area("What is one realistic intention for today?", value=profile["reflection"], max_chars=300)
-        save_intention = st.form_submit_button("Save intention", type="primary")
-    if save_intention:
-        if new_intention.strip():
-            profile["reflection"] = new_intention.strip()
-            st.session_state.student_profile = profile
-            st.success("Intention saved for this session.")
-            st.rerun()
-        else:
-            st.error("Please enter an intention before saving.")
+# ---------------------------
+# OVERVIEW
+# ---------------------------
+if page == T["overview"]:
+    st.markdown(f'<div class="kicker">01 / STUDENT HOME</div><div class="section-title">{T["welcome"]}, {user["full_name"]} 👋</div>', unsafe_allow_html=True)
+    st.write(f"**{T['goal']}:** {user['goal'] or '—'}  ·  **{T['energy']}:** {user['energy'] or '—'}")
+    c1,c2,c3,c4 = st.columns(4)
+    c1.metric("Quiz attempts", len(results)); c2.metric("Average score", f"{avg_score}%" if results else "—")
+    c3.metric("Account", user["role"]); c4.metric("Class", user["grade"] or "—")
+    st.markdown("### Your learning loop")
+    cols = st.columns(4)
+    for col, icon, title, desc in zip(cols, ["📘","🧩","🔎","🚀"], ["Learn","Recall","Reflect","Improve"], ["Study one clear concept.","Try a quiz without notes.","Review mistakes calmly.","Choose your next small step."]):
+        with col:
+            with st.container(border=True):
+                st.markdown(f"### {icon} {title}"); st.caption(desc)
+    st.markdown("<div class='small-note'>The app uses transparent educational rules and sample question templates. It does not claim to be a trained AI model.</div>", unsafe_allow_html=True)
 
-elif page == "Mind power":
-    st.markdown('<div class="section-kicker">MIND POWER / RECALL</div><div class="section-title">Train recall, focus and reflection</div>', unsafe_allow_html=True)
-    st.write("These are short learning exercises, not an IQ test or psychological assessment.")
-    with st.container(border=True):
-        st.markdown("### 🧠 60-second recall")
-        st.write("Pick one topic, close your notes, and write what you remember. Then compare it with your notes.")
-        recall_topic = st.text_input("Topic to recall", placeholder="Example: Newton's laws")
-        recall_text = st.text_area("Write what you remember", placeholder="Key idea, formula, example, or question…", max_chars=1200)
-        if st.button("Save recall attempt", type="primary"):
-            if recall_topic.strip() and recall_text.strip():
-                st.session_state.setdefault("recall_log", []).append({"topic": recall_topic.strip(), "response": recall_text.strip(), "date": date.today().isoformat()})
-                st.success("Recall attempt saved in this session. Now compare it with your notes and add missing points.")
+# ---------------------------
+# LEARNING DASHBOARD
+# ---------------------------
+elif page == T["learning"]:
+    st.markdown('<div class="kicker">02 / LEARNING DASHBOARD</div><div class="section-title">Build your next practice plan</div>', unsafe_allow_html=True)
+    st.caption("Enter a recent quiz score for each subject. These are editable inputs, not imported exam records.")
+    subjects = ["Physics", "Chemistry", "Mathematics", "English"]
+    cols = st.columns(4)
+    entered = {}
+    for col, subject in zip(cols, subjects):
+        with col:
+            with st.container(border=True):
+                entered[subject] = st.slider(subject, 0, 100, 65, key=f"score_{subject}")
+                st.caption("Needs support" if entered[subject] < 50 else "Growing" if entered[subject] < 75 else "Strong")
+    if st.button("✨ " + T["build_plan"], type="primary", use_container_width=True):
+        st.session_state.practice_plan = entered
+    if "practice_plan" in st.session_state:
+        plan = st.session_state.practice_plan
+        df = pd.DataFrame([{"Subject": s, "Score": v, "Status": "Needs support" if v < 50 else "Growing" if v < 75 else "Strong", "Next step": "Revisit one core idea + 5 guided questions" if v < 50 else "Revise key concepts + 5 mixed questions" if v < 75 else "Spaced revision + 2 challenge questions"} for s,v in plan.items()])
+        st.dataframe(df, use_container_width=True, hide_index=True)
+        fig = px.bar(df, x="Subject", y="Score", color="Status", range_y=[0,100], color_discrete_map={"Needs support":"#fb7185","Growing":"#fbbf24","Strong":"#5eead4"}, title="Subject performance")
+        fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#eaf2ff")
+        st.plotly_chart(fig, use_container_width=True)
+        st.download_button("Download practice plan CSV", df.to_csv(index=False).encode("utf-8-sig"), "ab_school_loop_practice_plan.csv", "text/csv")
+
+# ---------------------------
+# AI QUIZ GENERATOR
+# ---------------------------
+elif page == T["quiz"]:
+    st.markdown('<div class="kicker">03 / ACTIVE RECALL LAB</div><div class="section-title">AI Quiz Generator</div>', unsafe_allow_html=True)
+    st.caption("Transparent quiz generator: selects questions from the built-in question bank. It is not generating new facts with a trained AI model.")
+    s1,s2,s3 = st.columns(3)
+    with s1: subject = st.selectbox("Subject", list(QUIZ_BANK.keys()))
+    with s2: topic = st.selectbox("Topic", list(QUIZ_BANK[subject].keys()))
+    with s3: count = st.selectbox("Number of questions", [3])
+    if st.button("⚡ Generate quiz", type="primary"):
+        st.session_state.active_quiz = {"subject":subject, "topic":topic, "questions":QUIZ_BANK[subject][topic], "answers":{}}
+    quiz = st.session_state.get("active_quiz")
+    if quiz:
+        st.markdown(f"### {quiz['subject']} · {quiz['topic']}")
+        with st.form("quiz_attempt_form"):
+            answers = []
+            for i,(question, options, correct, explanation) in enumerate(quiz["questions"][:count]):
+                st.markdown(f"**Q{i+1}. {question}**")
+                answers.append(st.radio("Choose an answer", options, key=f"attempt_{quiz['subject']}_{quiz['topic']}_{i}", index=None))
+            submitted = st.form_submit_button("Submit answers", type="primary", use_container_width=True)
+        if submitted:
+            if any(a is None for a in answers):
+                st.warning("Answer every question before submitting.")
             else:
-                st.warning("Enter both a topic and your recall notes first.")
-    with st.container(border=True):
-        st.markdown("### 🎯 Focus block")
-        focus_minutes = st.select_slider("Choose a realistic focus block", options=[5,10,15,20,25,30,40,50], value=25, format_func=lambda x: f"{x} minutes")
-        st.write(f"Plan: focus on one task for **{focus_minutes} minutes**, then take a short break and check what you learned.")
-        st.caption("This is a plan prompt, not a timer running in the background.")
-    logs = st.session_state.get("recall_log", [])
-    st.metric("Recall attempts saved this session", len(logs))
-    if logs:
-        st.dataframe(pd.DataFrame(logs), use_container_width=True, hide_index=True)
+                correct_count = sum(1 for a, q in zip(answers, quiz["questions"]) if a == q[1][q[2]])
+                save_result(user["id"], quiz["subject"], quiz["topic"], correct_count, len(answers))
+                st.session_state.last_quiz_review = [(q[0], a, q[1][q[2]], q[3]) for a,q in zip(answers, quiz["questions"])]
+                st.session_state.pop("active_quiz", None)
+                st.success(f"Your score: {correct_count}/{len(answers)} ({round(correct_count/len(answers)*100)}%).")
+                st.rerun()
+    if st.session_state.get("last_quiz_review"):
+        with st.expander("Review the latest answers", expanded=True):
+            for q,a,correct,why in st.session_state.last_quiz_review:
+                st.markdown(f"**{q}**")
+                st.write(f"Your answer: {a} · Correct answer: {correct}")
+                st.caption(why)
 
-elif page == "Healthy habits":
-    st.markdown('<div class="section-kicker">HEALTHY HABITS / DAILY BALANCE</div><div class="section-title">Balance learning with everyday wellbeing</div>', unsafe_allow_html=True)
-    st.write("Use these self-reported values as routine signals—not medical advice or a judgement about the student.")
-    h1,h2,h3,h4 = st.columns(4)
-    h1.metric("Study", f"{profile['study']} min")
-    h2.metric("Screen time", f"{profile['screen']} min")
-    h3.metric("Movement", f"{profile['activity']} min")
-    h4.metric("Sleep", f"{profile['sleep']:g} h")
-    tips=[]
-    tips.append("Try one focused 20–25 minute block, with a short break afterward." if profile["study"] < 30 else "Schedule short breaks between focused study blocks.")
-    tips.append("Consider a screen-free break and separate entertainment screen time from study." if profile["screen"] > 180 else "Keep checking that screen use leaves room for offline activities and rest.")
-    tips.append("Consider a short walk, stretch, or outdoor play break if practical." if profile["activity"] < 30 else "Keep movement enjoyable and regular; rest matters too.")
-    tips.append("If you feel tired, aim for a consistent sleep routine; individual sleep needs can vary." if profile["sleep"] < 8 else "Protect a consistent sleep schedule when possible.")
-    for i,tip in enumerate(tips,1):
-        st.markdown(f"**{i}.** {tip}")
-    st.caption("The app uses simple thresholds to generate gentle suggestions. It does not diagnose health conditions.")
+# ---------------------------
+# ADVANCED AI COACH
+# ---------------------------
+elif page == T["coach"]:
+    st.markdown('<div class="kicker">04 / STUDY COACH</div><div class="section-title">Advanced AI Coach</div>', unsafe_allow_html=True)
+    st.caption("Rule-based coaching prompts. No external AI service or personal data transmission is used.")
+    energy_now = st.select_slider("How is your energy right now?", ["Low", "Okay", "Good", "High"], value="Okay")
+    target = st.selectbox("What do you want help with?", ["Understand a hard concept", "Remember formulas", "Prepare for a quiz", "Reduce distractions", "Plan a balanced study session"])
+    context = st.text_area("Optional: topic or chapter", placeholder="Example: Newton's laws / Chemical bonding")
+    if st.button("Generate my coaching steps", type="primary"):
+        advice = {
+            "Understand a hard concept":["Read one worked example slowly.","Explain the concept in your own words.","Solve two similar questions and check each step."],
+            "Remember formulas":["Write the formula from memory.","Check symbols and units.","Use it in one direct and one mixed problem."],
+            "Prepare for a quiz":["List the 3 most important subtopics.","Attempt questions without notes.","Review errors and retry one similar question."],
+            "Reduce distractions":["Choose one small task.","Keep notifications away for one focus block.","Take a short break and note what you completed."],
+            "Plan a balanced study session":["Choose one 20–25 minute learning block.","Add a short movement and water break.","Finish with a 2-minute recall check."]}
+        prefix = "Start gently with a 10-minute first step." if energy_now == "Low" else "Use one focused block, then review your progress."
+        st.success(prefix)
+        if context.strip(): st.info(f"Focus topic: {context.strip()}")
+        for i,step in enumerate(advice[target],1): st.markdown(f"**{i}.** {step}")
 
-elif page == "Values & reflection":
-    st.markdown('<div class="section-kicker">VALUES / REFLECTION</div><div class="section-title">Reflect on effort, kindness and responsibility</div>', unsafe_allow_html=True)
-    prompts = ["What did I learn today?", "Where did I show patience or honesty?", "Who did I help or thank today?", "What is one thing I can improve tomorrow?"]
-    with st.form("values_reflection_form"):
-        reflection_answers = {prompt: st.text_area(prompt, max_chars=400, key=f"reflection_{i}") for i,prompt in enumerate(prompts)}
-        submitted_reflection = st.form_submit_button("Save reflection", type="primary")
-    if submitted_reflection:
-        st.session_state.values_reflection = {k:v.strip() for k,v in reflection_answers.items()}
-        st.success("Reflection saved for this session. Small, honest steps are enough.")
-    saved_reflection = st.session_state.get("values_reflection")
-    if saved_reflection:
-        st.markdown("### Saved reflection")
-        for prompt, answer in saved_reflection.items():
-            with st.container(border=True):
-                st.markdown(f"**{prompt}**")
-                st.write(answer if answer else "No response entered.")
-
-elif page == "Transparent prototype":
-    st.markdown('<div class="section-kicker">TRANSPARENCY / RESPONSIBLE DESIGN</div><div class="section-title">How the prototype makes suggestions</div>', unsafe_allow_html=True)
-    st.warning("This version is a transparent rule-based prototype, not a trained machine-learning model.")
-    st.markdown("### Learning-score rules")
-    rules = pd.DataFrame([
-        ("0–49%", "Needs support", "High", "Rebuild core ideas; guided practice", 25),
-        ("50–74%", "Growing", "Medium", "Revise concepts; mixed practice", 15),
-        ("75–100%", "Strong", "Low", "Spaced revision; challenge questions", 5),
-    ], columns=["Score range", "Status", "Priority", "Suggested action", "Suggested minutes"])
-    st.dataframe(rules, use_container_width=True, hide_index=True)
-    st.markdown("### What it does and does not do")
-    st.write("• Uses fixed score thresholds and self-reported routine values.\n• Produces practice suggestions that can be inspected and explained.\n• Does not infer intelligence, diagnose health, or predict a student's future.\n• Uses illustrative demo scores unless the student changes them.\n• Has no validated effectiveness claim; thresholds should be evaluated with appropriately consented data.")
-    st.markdown("### Current student routine inputs")
-    st.json({"class": profile["grade"], "study_minutes": profile["study"], "non_study_screen_minutes": profile["screen"], "activity_minutes": profile["activity"], "sleep_hours": profile["sleep"], "study_energy": profile["energy"]})
-    st.caption("Do not use public demo sessions to collect sensitive information. For research pilots, obtain appropriate permission and minimise data collection.")
-
-if page == "Overview":
-    st.markdown('<div class="section-kicker">01 / Project introduction</div><div class="section-title">A balanced loop for student growth</div>', unsafe_allow_html=True)
-    st.write(f"Welcome, **{student_name}** ({grade}). Your main goal is **{profile['goal']}**. AB SCHOOL LOOP AI helps you choose what to practise next, reflect on quiz results, and balance learning with movement, rest, and healthy screen habits.")
+# ---------------------------
+# TEACHER DASHBOARD
+# ---------------------------
+elif is_teacher and page == T["teacher_dash"]:
+    st.markdown('<div class="kicker">05 / TEACHER CONTROL ROOM</div><div class="section-title">Teacher Dashboard</div>', unsafe_allow_html=True)
+    with db() as conn:
+        students = [dict(r) for r in conn.execute("SELECT id,full_name,username,grade,goal,created_at FROM users WHERE role='Student' ORDER BY full_name").fetchall()]
+    all_results = get_user_results()
     a,b,c = st.columns(3)
-    with a:
-        with st.container(border=True): st.markdown("### 🧠 Mind power"); st.write("Short recall practice, reflection, and focused learning."); st.caption("Open Mind power for recall attempts.")
-    with b:
-        with st.container(border=True): st.markdown("### 🏃 Healthy life"); st.write("Gentle reminders to balance study, movement, rest, and screens."); st.caption("Open Healthy habits for your routine signals.")
-    with c:
-        with st.container(border=True): st.markdown("### 🤝 Values & support"); st.write("A supportive tool for students, teachers, and families—not a replacement for them."); st.caption("Open Values & reflection to save a daily reflection.")
-    st.markdown('<div class="section-kicker">02 / The learning loop</div><div class="section-title">Learn → Recall → Reflect → Improve</div>', unsafe_allow_html=True)
-    loop = st.columns(4)
-    for col, icon, title, desc in zip(loop, ["📘","🧩","🔎","🚀"], ["Learn","Recall","Reflect","Improve"], ["Study one clear concept.","Answer without looking at notes.","Understand mistakes and gaps.","Choose a small next practice step."]):
-        with col:
-            with st.container(border=True): st.markdown(f"### {icon} {title}"); st.caption(desc)
-    st.markdown('<div class="section-kicker">03 / System overview</div><div class="section-title">From student input to useful next steps</div>', unsafe_allow_html=True)
-    st.code("Student / Quiz Results  →  Rule-based Analysis  →  Suggested Practice Plan  →  Student Reflection  →  Next Quiz", language="text")
-    st.markdown('<div class="small-note">Research principle: show how each suggestion is produced, test it with permission-based data, and report limitations honestly.</div>', unsafe_allow_html=True)
-
-elif page == "Learning Dashboard":
-    st.markdown('<div class="section-kicker">04 / Learning dashboard</div><div class="section-title">Build a personal practice plan</div>', unsafe_allow_html=True)
-    st.caption("Change any score below, then build the plan. Sample scores are illustrative.")
-    cols = st.columns(4, gap="medium"); scores = {}
-    for col, (topic, default) in zip(cols, st_scores.items()):
-        with col:
-            with st.container(border=True):
-                st.markdown(f"**{topic}**")
-                scores[topic] = st.number_input("Quiz score (%)", 0, 100, default, 1, key=f"dash_{topic}")
-                st.caption("🔴 Needs support" if scores[topic] < 50 else ("🟠 Growing" if scores[topic] < 75 else "🟢 Strong"))
-    if st.button("✨ Build my learning plan", type="primary", use_container_width=True):
-        st.session_state["plan_ready"] = True
-        st.session_state["plan_scores"] = scores
-        st.session_state["plan_routine"] = (study_minutes, screen_minutes, activity_minutes)
-        st.session_state["plan_student"] = student_name.strip() or "Demo Student"
-        st.session_state["plan_grade"] = grade
-    if st.session_state.get("plan_ready"):
-        current = st.session_state["plan_scores"]; sm, scm, am = st.session_state["plan_routine"]
-        df, total, habit, screen, activity = make_plan(current, sm, scm, am)
-        avg = round(sum(current.values())/len(current), 1); weak = min(current, key=current.get)
-        st.caption(f"Prepared for {st.session_state['plan_student']} · {st.session_state['plan_grade']} · {date.today().strftime('%d %b %Y')}")
-        k1,k2,k3,k4 = st.columns(4)
-        k1.metric("Average score", f"{avg}%"); k2.metric("First focus", weak.split(" · ")[0]); k3.metric("Topics reviewed", f"{len(current)} / 4"); k4.metric("Suggested practice", f"{total} min")
-        left,right = st.columns([1.05,1], gap="large")
-        with left:
-            with st.container(border=True):
-                st.markdown("**📊 Topic performance**")
-                fig = px.bar(df.sort_values("Quiz score (%)"), x="Quiz score (%)", y="Topic", orientation="h", color="Priority", text="Quiz score (%)", range_x=[0,100], color_discrete_map={"High":"#fb7185","Medium":"#fbbf24","Low":"#2dd4bf"})
-                fig.update_traces(texttemplate="%{text}%", textposition="outside", cliponaxis=False)
-                fig.update_layout(height=360, margin=dict(l=8,r=28,t=15,b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#dcecff"), xaxis=dict(title="Score (%)",gridcolor="rgba(150,190,220,.15)"), yaxis=dict(title="",gridcolor="rgba(0,0,0,0)"), legend_title_text="Priority")
-                st.plotly_chart(fig, use_container_width=True, config={"displayModeBar":False})
-        with right:
-            st.markdown("**🧭 Recommended next steps**")
-            for _, row in df.iterrows():
-                with st.container(border=True):
-                    st.markdown(f"**{row['Topic']}** · {row['Priority']} priority")
-                    st.write(row["Suggested action"]); st.caption(f"Suggested time: {row['Suggested minutes']} minutes")
-        st.markdown("### 🌿 Healthy routine signals")
-        c1,c2,c3 = st.columns(3)
-        for col, title, desc in [(c1,"📚 Focus",habit),(c2,"📵 Screen balance",screen),(c3,"🏃 Movement",activity)]:
-            with col:
-                with st.container(border=True): st.markdown(f"**{title}**"); st.write(desc)
-        st.download_button("⬇️ Download practice report (CSV)", df.to_csv(index=False).encode("utf-8-sig"), "ab_school_loop_practice_report.csv", "text/csv")
+    a.metric("Registered students", len(students)); b.metric("Quiz attempts", len(all_results))
+    c.metric("Average score", f"{round(sum(r['score']/max(r['total'],1)*100 for r in all_results)/len(all_results),1)}%" if all_results else "—")
+    st.markdown("### Student directory")
+    if students:
+        st.dataframe(pd.DataFrame(students)[["full_name","username","grade","goal","created_at"]], use_container_width=True, hide_index=True)
     else:
-        st.info("Adjust the sample scores if needed, then click **Build my learning plan**.")
+        st.info("No student accounts yet. Ask students to register with Student account type.")
+    st.markdown("### Recent quiz activity")
+    if all_results:
+        rdf = pd.DataFrame(all_results)
+        rdf["Score (%)"] = (rdf["score"] / rdf["total"] * 100).round(1)
+        st.dataframe(rdf[["full_name","grade","subject","topic","Score (%)","created_at"]], use_container_width=True, hide_index=True)
+        st.download_button("Download class activity CSV", rdf.to_csv(index=False).encode("utf-8-sig"), "teacher_class_activity.csv", "text/csv")
+    else:
+        st.info("Quiz activity will appear after students complete a quiz.")
+    st.caption("Teacher view is a local demo feature. Use fictional/demo accounts for public presentations.")
 
-elif page == "Recall Quiz":
-    st.markdown('<div class="section-kicker">05 / Active recall lab</div><div class="section-title">Test what you remember</div>', unsafe_allow_html=True)
-    st.write("Choose a subject, answer without checking notes, then read the explanation. This is a small demo quiz; it does not claim to measure overall intelligence.")
-    subject = st.selectbox("Subject", ["Physics", "Chemistry", "Mathematics", "English"])
-    quiz_bank = {
-        "Physics": ("Which quantity is a vector?", ["Speed", "Distance", "Displacement", "Time"], "Displacement", "A vector has magnitude and direction. Displacement includes both."),
-        "Chemistry": ("Which type of bond involves sharing electron pairs?", ["Ionic bond", "Covalent bond", "Metallic bond", "Hydrogen bond"], "Covalent bond", "A covalent bond forms when atoms share electron pairs."),
-        "Mathematics": ("What is sin 30°?", ["0", "1/2", "√3/2", "1"], "1/2", "For the standard angle 30°, sin 30° = 1/2."),
-        "English": ("Choose the closest meaning of ‘brief’. ", ["Short", "Angry", "Distant", "Heavy"], "Short", "‘Brief’ means short in duration or length.")}
-    q, options, answer, explanation = quiz_bank[subject]
-    st.markdown(f"#### {q}")
-    selected = st.radio(
-        "Select one answer",
-        options,
-        key=f"quiz_{subject}",
-        on_change=lambda s=subject: st.session_state.pop(f"quiz_checked_{s}", None),
-    )
-    if st.button("Check answer", type="primary"):
-        st.session_state[f"quiz_checked_{subject}"] = True
-        st.session_state[f"quiz_correct_{subject}"] = selected == answer
-    if st.session_state.get(f"quiz_checked_{subject}"):
-        if st.session_state.get(f"quiz_correct_{subject}"):
-            st.success("Correct! Nice recall.")
+# ---------------------------
+# PERFORMANCE ANALYTICS
+# ---------------------------
+elif page == T["analytics"]:
+    st.markdown('<div class="kicker">06 / PERFORMANCE INTELLIGENCE</div><div class="section-title">Performance Analytics</div>', unsafe_allow_html=True)
+    if results:
+        df = pd.DataFrame(results)
+        df["Score (%)"] = (df["score"] / df["total"] * 100).round(1)
+        x,y,z = st.columns(3)
+        x.metric("Attempts", len(df)); y.metric("Average", f"{df['Score (%)'].mean():.1f}%"); z.metric("Best", f"{df['Score (%)'].max():.1f}%")
+        df["Attempt"] = range(1,len(df)+1)
+        fig = px.line(df.sort_values("id"), x="Attempt", y="Score (%)", markers=True, title="Quiz score trend", range_y=[0,100])
+        fig.update_traces(line_color="#22d3ee", marker_color="#5eead4")
+        fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#eaf2ff")
+        st.plotly_chart(fig, use_container_width=True)
+        by_subject = df.groupby("subject",as_index=False)["Score (%)"].mean()
+        fig2 = px.bar(by_subject,x="subject",y="Score (%)",title="Average by subject",range_y=[0,100],color="subject")
+        fig2.update_layout(paper_bgcolor="rgba(0,0,0,0)",plot_bgcolor="rgba(0,0,0,0)",font_color="#eaf2ff",showlegend=False)
+        st.plotly_chart(fig2,use_container_width=True)
+        st.dataframe(df[["subject","topic","score","total","Score (%)","created_at"]],use_container_width=True,hide_index=True)
+    else:
+        st.info("Complete your first quiz to unlock personal analytics.")
+
+# ---------------------------
+# VALUES & REFLECTION
+# ---------------------------
+elif page == T["values"]:
+    st.markdown('<div class="kicker">07 / VALUES & REFLECTION</div><div class="section-title">Grow with honesty, effort and kindness</div>', unsafe_allow_html=True)
+    prompts = ["What did I learn today?", "Where did I show patience or honesty?", "Who did I help or thank today?", "What is one small improvement for tomorrow?"]
+    with st.form("reflection_form"):
+        answers = [st.text_area(prompt, max_chars=300, key=f"value_prompt_{i}") for i,prompt in enumerate(prompts)]
+        submitted = st.form_submit_button("Save reflection", type="primary")
+    if submitted:
+        combined = "\n".join(f"{p} {a.strip()}" for p,a in zip(prompts,answers) if a.strip())
+        if combined:
+            save_reflection(user["id"], combined)
+            st.success("Reflection saved in the local project database.")
         else:
-            st.warning(f"Not quite. Correct answer: {answer}")
-        st.info(explanation)
-        st.caption("Reflection prompt: What clue helped you choose, and what will you revise before trying again?")
+            st.warning("Write at least one reflection before saving.")
 
-elif page == "AI Coach":
-    st.markdown('<div class="section-kicker">06 / Study coach</div><div class="section-title">A small next step beats a perfect plan</div>', unsafe_allow_html=True)
-    mood = st.select_slider("How is your study energy today?", options=["Low", "Okay", "Good", "High"], value="Okay")
-    goal = st.selectbox("What do you want to work on?", ["Understand a hard concept", "Remember formulas", "Improve reading comprehension", "Reduce distractions", "Build a balanced routine"])
-    if st.button("Suggest my next step", type="primary"):
-        suggestions = {
-            "Understand a hard concept": "Study one example slowly, explain it in your own words, then solve two similar questions.",
-            "Remember formulas": "Write the formula from memory, check it, and use it in one simple question and one mixed question.",
-            "Improve reading comprehension": "Read a short passage, summarise it in two sentences, then answer who/what/why questions.",
-            "Reduce distractions": "Put notifications away for one 20–25 minute block, then take a short break.",
-            "Build a balanced routine": "Pick one realistic study block, include movement and rest, and keep entertainment screen time separate."}
-        energy = "Start with just 10 minutes and make the first step easy." if mood == "Low" else "Try one focused block, then check how it felt." if mood == "Okay" else "Use your energy for one focused block and a short recall check."
-        st.success(suggestions[goal]); st.info(energy)
-    st.markdown('<div class="small-note">These are fixed, rule-based coaching prompts in this prototype, not AI-generated personalised predictions.</div>', unsafe_allow_html=True)
+# ---------------------------
+# TRANSPARENT PROTOTYPE
+# ---------------------------
+elif page == T["transparent"]:
+    st.markdown('<div class="kicker">08 / RESPONSIBLE DESIGN</div><div class="section-title">Transparent Prototype</div>', unsafe_allow_html=True)
+    st.warning("This is a rule-based educational prototype, not a trained machine-learning model or a validated assessment tool.")
+    rules = pd.DataFrame([( "0–49%", "Needs support", "Revisit the core idea + guided practice"),("50–74%","Growing","Revise concepts + mixed practice"),("75–100%","Strong","Spaced revision + challenge questions")],columns=["Score range","Status","Suggested next step"])
+    st.dataframe(rules,use_container_width=True,hide_index=True)
+    st.markdown("### What the prototype does")
+    st.write("- Stores local demo accounts and quiz attempts in SQLite.\n- Uses fixed rules and a built-in question bank.\n- Displays progress charts and downloadable reports.\n- Does not diagnose health, measure intelligence, or predict a student's future.\n- Public demos should use fictional student data and appropriate permission.")
 
-elif page == "Project Showcase":
-    st.markdown('<div class="section-kicker">07 / Project proposal</div><div class="section-title">Problem, solution & system architecture</div>', unsafe_allow_html=True)
-    st.markdown("### The problem")
-    st.write("Students can find it difficult to decide what to practise next while balancing academic learning, physical activity, and screen time. A single score does not explain the next useful action.")
+# ---------------------------
+# PROJECT SHOWCASE
+# ---------------------------
+elif page == T["showcase"]:
+    st.markdown('<div class="kicker">09 / PROJECT PRESENTATION</div><div class="section-title">Project Showcase</div>', unsafe_allow_html=True)
+    st.markdown("### Problem statement")
+    st.write("Students may find it difficult to decide what to practise next while balancing academic learning and everyday routines.")
     st.markdown("### Proposed solution")
-    st.write("AB SCHOOL LOOP AI combines quiz scores and self-reported routine inputs to create transparent practice suggestions and a reflection loop. The current prototype uses simple rules that can be tested and improved.")
+    st.write("AB SCHOOL LOOP AI combines a student learning dashboard, question-bank quiz generator, transparent coaching prompts, teacher overview, reflection, and performance analytics.")
     st.markdown("### System architecture")
-    st.code("Student → Web App → Input Validation → Rule-based Analysis → Practice Plan + Charts → Student Reflection → Next Quiz", language="text")
-    st.markdown("### Main modules")
+    st.code("Student / Teacher → Login → Profile & Learning Inputs → Quiz / Rule Engine → Analytics → Reflection → Next Practice",language="text")
+    st.markdown("### Technology stack")
+    st.write("Python · Streamlit · SQLite · Pandas · Plotly · ReportLab (PDF export)")
+    st.markdown("### Key modules")
     modules = st.columns(3)
-    for col, icon, title, desc in zip(modules,["📘","🏃","🤝"],["Learning module","Health & fitness module","Behaviour & values module"],["Scores, recall quiz, practice plan.","Self-reported activity and screen-balance reminders.","Reflection, supportive habits, parent/teacher discussion."]):
+    for col,icon,title,desc in zip(modules,["🔐","🧠","📊"],["Access","Learning","Insights"],["Local login and role-based views.","Quiz bank and guided coach prompts.","Progress charts and teacher activity view."]):
         with col:
             with st.container(border=True): st.markdown(f"### {icon} {title}"); st.write(desc)
-    st.markdown("### Hardware & software options")
-    st.write("Software: Python, Streamlit, Pandas, Plotly; optional future ML libraries only after a clear research question and evaluation plan. Hardware is not required for the current software demo. Raspberry Pi/ESP32, camera or fitness sensors would be optional extensions and require consent, privacy safeguards, and a clear use case.")
-    budget = pd.DataFrame([("Raspberry Pi / ESP32", "₹1,500–3,000"),("Camera module", "₹800–1,500"),("Fitness tracker / sensors", "₹1,000–2,000"),("Wires, power, storage", "₹500–1,000"),("Enclosure / mounting", "₹300–800"),("Other components", "₹500–1,000")], columns=["Optional item", "Estimated cost"])
-    st.markdown("### Illustrative optional hardware budget")
-    st.dataframe(budget, use_container_width=True, hide_index=True)
-    st.caption("These are planning estimates, not verified live prices. A laptop-only prototype can be built without this hardware.")
-    st.markdown("### Evaluation plan")
-    st.write("Compare a baseline practice plan with a revised plan using consented pilot data. Track quiz performance over repeated attempts, completion rate, user feedback, and error patterns. Use a small sample only as exploratory evidence; do not claim causation without an appropriate study design.")
 
-elif page == "Roadmap & Team":
-    st.markdown('<div class="section-kicker">08 / Six-week execution</div><div class="section-title">Roadmap & four-person team</div>', unsafe_allow_html=True)
-    roadmap = pd.DataFrame([( "Week 1", "Research question, problem statement, success metrics"),("Week 2", "UI polish, input checks, quiz content review"),("Week 3", "Practice-plan rules and data logging with consent"),("Week 4", "Dashboard, charts, and CSV export testing"),("Week 5", "Pilot tests, feedback, bug fixes, limitation review"),("Week 6", "Final demo, poster/PPT, rehearsal, Q&A")], columns=["Week", "Deliverables"])
-    for _, row in roadmap.iterrows():
-        with st.container(border=True):
-            st.markdown(f"**{row['Week']}**  ·  {row['Deliverables']}")
-    st.markdown("### Team roles")
-    roles = [("Student 1", "Research & data analysis", "Research question, metrics, data quality, report."),("Student 2", "Hardware & IoT", "Optional sensors, setup, safety and privacy checks."),("Student 3", "Software & app", "Streamlit UI, testing, charts, deployment."),("Student 4", "Research & presentation", "Literature comparison, Gujarati PPT, demo and Q&A.")]
-    cols = st.columns(2)
-    for i,(person, role, desc) in enumerate(roles):
-        with cols[i%2]:
-            with st.container(border=True): st.markdown(f"### 👨‍🎓 {person}"); st.markdown(f"**{role}**"); st.write(desc)
-    st.markdown("### Practical checklist")
-    st.write("☐ Define one measurable research question · ☐ Review privacy and consent · ☐ Test with sample data first · ☐ Record bugs and results honestly · ☐ Prepare a backup offline demo")
+# ---------------------------
+# ROADMAP & TEAM
+# ---------------------------
+elif page == T["roadmap"]:
+    st.markdown('<div class="kicker">10 / EXECUTION PLAN</div><div class="section-title">Roadmap & Team</div>', unsafe_allow_html=True)
+    roadmap = pd.DataFrame([( "Week 1", "Problem research and success metrics"),("Week 2","UI, registration and role testing"),("Week 3","Quiz bank and coaching rules"),("Week 4","Analytics, teacher view and PDF report"),("Week 5","Pilot testing, feedback and bug fixes"),("Week 6","Final demo, poster, PPT and Q&A rehearsal")],columns=["Timeline","Deliverable"])
+    st.dataframe(roadmap,use_container_width=True,hide_index=True)
+    st.markdown("### Suggested team roles")
+    team = pd.DataFrame([( "Student 1", "Research & evaluation"),("Student 2","UI & design"),("Student 3","Python & database"),("Student 4","Testing & presentation")],columns=["Role","Responsibility"])
+    st.dataframe(team,use_container_width=True,hide_index=True)
 
-elif page == "Judge Q&A":
-    st.markdown('<div class="section-kicker">09 / Presentation preparation</div><div class="section-title">Judge questions & honest answers</div>', unsafe_allow_html=True)
+# ---------------------------
+# JUDGE Q&A
+# ---------------------------
+elif page == T["judge"]:
+    st.markdown('<div class="kicker">11 / PRESENTATION PREPARATION</div><div class="section-title">Judge Questions & Answers</div>', unsafe_allow_html=True)
     qa = [
-        ("What problem does your project solve?", "It helps students turn quiz results into a clear next practice step while considering self-reported routine signals. It is a learning-support prototype, not a replacement for teachers."),
-        ("Is this a real AI model?", "The current prototype is rule-based, not a trained ML model. Our next research step is to define a measurable question, collect consented data, compare baselines, and only then decide whether ML adds value."),
-        ("How do you evaluate results?", "We plan to track repeated quiz scores, task completion, feedback, and error patterns. Any pilot result will be reported with sample size and limitations."),
-        ("How do you protect student privacy?", "Use demo data during public presentations, minimise collected information, obtain appropriate permission for pilots, and avoid collecting sensitive health or personal details."),
-        ("What is innovative about the approach?", "The project brings together a transparent practice recommendation loop and balanced-routine prompts in one student-facing demo. We will compare it with existing learning tools before making novelty claims."),
-        ("What is the budget?", "The current laptop-only software demo does not require hardware. Optional sensor components are only planning estimates and would be purchased only if the research question needs them.")]
-    for q,a in qa:
-        with st.expander(q): st.write(a)
+        ("What problem does your project solve?", "It helps students turn quiz results into a clear next practice step while encouraging reflection and balanced routines."),
+        ("Is this a real AI model?", "The current version is a transparent rule-based prototype with a built-in question bank. It is not a trained ML model."),
+        ("How does the quiz generator work?", "It selects questions from a reviewed subject/topic question bank and checks answers automatically."),
+        ("How is student progress shown?", "Quiz attempts are stored locally and displayed as score trends and subject averages."),
+        ("How is student information handled?", "The demo stores account and quiz data in a local SQLite file. Public demos should use fictional data and appropriate permission."),
+        ("What can be improved next?", "A reviewed curriculum-aligned question bank, stronger deployment security, teacher feedback workflows and carefully evaluated ML features.")]
+    for question,answer in qa:
+        with st.expander(question): st.write(answer)
 
+# ---------------------------
+# PROFILE + PDF REPORT (always available at bottom)
+# ---------------------------
 st.divider()
-st.markdown('<div class="footer">AB SCHOOL LOOP AI · Student research prototype · Premium UI v1 · Learning support, not diagnosis · Transparent rule-based baseline</div>', unsafe_allow_html=True)
+with st.expander("👤 Profile & PDF Report", expanded=False):
+    st.write(f"**Name:** {user['full_name']}  ·  **Role:** {user['role']}  ·  **Class:** {user['grade'] or '—'}")
+    st.write(f"**Main learning goal:** {user['goal'] or '—'}")
+    st.write(f"**Today's intention:** {user['intention'] or '—'}")
+    if PDF_AVAILABLE:
+        pdf_data = make_pdf(user, results, user.get("intention", ""))
+        st.download_button("📄 " + T["download"], pdf_data, "AB_SCHOOL_LOOP_AI_Report.pdf", "application/pdf", type="primary")
+    else:
+        st.warning("PDF library not installed. Run: pip install reportlab")
+    st.caption("PDF report uses English text to keep the generated file readable with ReportLab's built-in fonts. The app interface supports Gujarati and English.")
+
+st.markdown('<div class="footer">AB SCHOOL LOOP AI · Midnight AI v2.0 · Student learning support prototype · Learn → Recall → Reflect → Improve</div>', unsafe_allow_html=True)
