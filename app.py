@@ -933,164 +933,142 @@ def style_chart(fig):
     )
     return fig
 
+# =====================================================
+# MIND POWER DASHBOARD
+# =====================================================
 
-# ---------------------------
-# MIND POWER
-# ---------------------------
-
-elif page == "Mind Power":
+if page == T["mind"]:
 
     st.markdown("""
-    <div class="mind-hero">
-
-    <h1>🧠 Unlock Your Mind Power</h1>
-
-    <h3>
-    Think Better • Focus Deeper • Achieve More
-    </h3>
-
-    <p>
-    A focused mind builds a brighter future.
-    </p>
-
+    <div class="mind-banner">
+        <div class="eyebrow">🧠 MIND POWER · PERSONAL GROWTH</div>
+        <h1>Unlock Your Mind Power</h1>
+        <p>Think Better · Focus Deeper · Achieve More</p>
+        <div style="font-size:14px;color:#52669a;">
+            A focused mind builds a brighter future.
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("")
+    # MIND POWER METRICS
 
-    c1,c2,c3,c4 = st.columns(4)
+    focus_score = avg_score if results else 0
 
-    with c1:
-        st.metric(
-            "🎯 Focus Score",
-            "87%",
-            "+5%"
-        )
+    energy_levels = {
+        "Low": "Growing",
+        "Okay": "Balanced",
+        "Good": "Strong",
+        "High": "High"
+    }
 
-    with c2:
-        st.metric(
-            "⚡ Brain Energy",
-            "High"
-        )
+    positive_count = 0
 
-    with c3:
-        st.metric(
-            "🏆 Mind Streak",
-            "7 Days"
-        )
+    with db() as conn:
+        reflection_row = conn.execute(
+            "SELECT COUNT(*) FROM reflections WHERE user_id=?",
+            (user["id"],)
+        ).fetchone()
 
-    with c4:
-        st.metric(
-            "⭐ Positive Thoughts",
-            "12"
-        )
+    positive_count = reflection_row[0] if reflection_row else 0
 
-    st.markdown("## 📈 Your Mind Progress")
+    m1, m2, m3, m4 = st.columns(4)
 
-    progress_df = pd.DataFrame({
-        "Day":[
-            "Mon",
-            "Tue",
-            "Wed",
-            "Thu",
-            "Fri",
-            "Sat",
-            "Sun"
-        ],
-        "Score":[
-            62,
-            58,
-            70,
-            82,
-            86,
-            88,
-            92
-        ]
-    })
-
-    fig = px.line(
-        progress_df,
-        x="Day",
-        y="Score",
-        markers=True
+    m1.metric(
+        "🎯 Focus Score",
+        f"{focus_score}%" if results else "—"
     )
 
-    fig.update_traces(
-        line_color="#4f46e5",
-        marker_color="#8b5cf6"
+    m2.metric(
+        "⚡ Brain Energy",
+        energy_levels.get(user.get("energy", ""), "Ready")
     )
 
-    fig.update_layout(
-        title="Mind Progress",
-        paper_bgcolor="white",
-        plot_bgcolor="white",
-        font_color="#1e293b"
+    m3.metric(
+        "🏆 Mind Streak",
+        f"{len(results)} Activities"
     )
 
-    st.plotly_chart(
-        fig,
-        use_container_width=True
+    m4.metric(
+        "⭐ Positive Thoughts",
+        positive_count
     )
 
-    col1,col2 = st.columns([2,1])
+    st.write("")
 
-    with col1:
+    # PROGRESS + TIPS
 
-        st.markdown("""
-        ### 🚀 Quick Activities
-        """)
+    left, right = st.columns([1.08, 1])
 
-        a,b = st.columns(2)
+    with left:
 
-        with a:
-            st.success("🧠 Memory Booster")
+        with st.container(border=True):
 
-        with b:
-            st.success("🧩 Focus Trainer")
+            st.markdown(
+                "### 📊 Your Mind Progress"
+            )
 
-        c,d = st.columns(2)
+            if results:
 
-        with c:
-            st.success("😊 Positive Mind")
+                progress_df = pd.DataFrame({
+                    "Attempt": range(1, len(results) + 1),
+                    "Focus": [
+                        round(
+                            r["score"] /
+                            max(r["total"], 1) * 100
+                        )
+                        for r in reversed(results)
+                    ]
+                })
 
-        with d:
-            st.success("🧘 Relax & Breathe")
+                fig = px.area(
+                    progress_df,
+                    x="Attempt",
+                    y="Focus",
+                    range_y=[0, 100],
+                    markers=True
+                )
 
-    with col2:
+                fig.update_traces(
+                    line_color="#438cf7",
+                    fillcolor="rgba(67,140,247,.20)",
+                    marker_color="#9250ed"
+                )
 
-        st.markdown("""
-        <div class="mind-card">
+                style_chart(fig)
+                st.plotly_chart(
+                    fig,
+                    use_container_width=True
+                )
 
-        <h3>💡 Mind Power Tips</h3>
+            else:
+                st.info(
+                    "Complete your first quiz to start tracking "
+                    "your learning progress."
+                )
 
-        ✅ Practice deep breathing daily
+    with right:
 
-        <br><br>
+        with st.container(border=True):
 
-        ✅ Use Pomodoro technique
+            st.markdown("### 💡 Mind Power Tips")
 
-        <br><br>
+            tips = [
+                "Practice deep breathing for 2 minutes daily.",
+                "Use the Pomodoro technique for focused study.",
+                "Replace negative thoughts with constructive ones.",
+                "Maintain a regular and healthy sleep routine."
+            ]
 
-        ✅ Replace negative thoughts
-
-        <br><br>
-
-        ✅ Sleep 7–8 hours
-
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("---")
-
-    st.markdown("""
-    ### ⭐ Remember
-
-    A calm mind is a powerful mind.
-    """)
-
-    st.info(
-        "Focus on progress, not perfection."
-    )
+            for tip in tips:
+                st.markdown(
+                    f"""
+                    <div class="tip-card">
+                        <span style="color:#16a34a;">✔</span>
+                        &nbsp; {tip}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+           
 
 # =====================================================
 # OVERVIEW
