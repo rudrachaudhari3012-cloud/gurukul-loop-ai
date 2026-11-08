@@ -1091,61 +1091,6 @@ elif page == "Mind Power":
     st.info(
         "Focus on progress, not perfection."
     )
-    # QUICK ACTIVITIES
-
-    st.write("")
-
-    with st.container(border=True):
-
-        st.markdown("### 🚀 Quick Activities")
-
-        a1, a2, a3, a4 = st.columns(4)
-
-        with a1:
-            st.markdown(
-                '<div class="activity-card" '
-                'style="background:#eee0ff;">'
-                '<h3>🧠 Memory Booster</h3>'
-                '<p>Train your recall</p></div>',
-                unsafe_allow_html=True
-            )
-
-        with a2:
-            st.markdown(
-                '<div class="activity-card" '
-                'style="background:#d9f7e8;">'
-                '<h3>🧩 Focus Trainer</h3>'
-                '<p>Practice attention</p></div>',
-                unsafe_allow_html=True
-            )
-
-        with a3:
-            st.markdown(
-                '<div class="activity-card" '
-                'style="background:#fff0d6;">'
-                '<h3>😊 Positive Mind</h3>'
-                '<p>Gratitude practice</p></div>',
-                unsafe_allow_html=True
-            )
-
-        with a4:
-            st.markdown(
-                '<div class="activity-card" '
-                'style="background:#d8f7fb;">'
-                '<h3>🧘 Relax & Breathe</h3>'
-                '<p>Take a calm break</p></div>',
-                unsafe_allow_html=True
-            )
-
-    st.write("")
-
-    with st.container(border=True):
-        st.markdown("### ⭐ Remember")
-        st.markdown(
-            "A calm mind is a powerful mind. "
-            "Small consistent steps can support learning."
-        )
-
 
 # =====================================================
 # OVERVIEW
