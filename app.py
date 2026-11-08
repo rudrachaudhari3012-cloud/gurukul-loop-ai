@@ -934,143 +934,163 @@ def style_chart(fig):
     return fig
 
 
-# =====================================================
-# MIND POWER DASHBOARD
-# =====================================================
+# ---------------------------
+# MIND POWER
+# ---------------------------
 
-if page == T["mind"]:
+elif page == "Mind Power":
 
     st.markdown("""
-    <div class="mind-banner">
-        <div class="eyebrow">🧠 MIND POWER · PERSONAL GROWTH</div>
-        <h1>Unlock Your Mind Power</h1>
-        <p>Think Better · Focus Deeper · Achieve More</p>
-        <div style="font-size:14px;color:#52669a;">
-            A focused mind builds a brighter future.
-        </div>
+    <div class="mind-hero">
+
+    <h1>🧠 Unlock Your Mind Power</h1>
+
+    <h3>
+    Think Better • Focus Deeper • Achieve More
+    </h3>
+
+    <p>
+    A focused mind builds a brighter future.
+    </p>
+
     </div>
     """, unsafe_allow_html=True)
 
-    # MIND POWER METRICS
+    st.markdown("")
 
-    focus_score = avg_score if results else 0
+    c1,c2,c3,c4 = st.columns(4)
 
-    energy_levels = {
-        "Low": "Growing",
-        "Okay": "Balanced",
-        "Good": "Strong",
-        "High": "High"
-    }
+    with c1:
+        st.metric(
+            "🎯 Focus Score",
+            "87%",
+            "+5%"
+        )
 
-    positive_count = 0
+    with c2:
+        st.metric(
+            "⚡ Brain Energy",
+            "High"
+        )
 
-    with db() as conn:
-        reflection_row = conn.execute(
-            "SELECT COUNT(*) FROM reflections WHERE user_id=?",
-            (user["id"],)
-        ).fetchone()
+    with c3:
+        st.metric(
+            "🏆 Mind Streak",
+            "7 Days"
+        )
 
-    positive_count = reflection_row[0] if reflection_row else 0
+    with c4:
+        st.metric(
+            "⭐ Positive Thoughts",
+            "12"
+        )
 
-    m1, m2, m3, m4 = st.columns(4)
+    st.markdown("## 📈 Your Mind Progress")
 
-    m1.metric(
-        "🎯 Focus Score",
-        f"{focus_score}%" if results else "—"
+    progress_df = pd.DataFrame({
+        "Day":[
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+        ],
+        "Score":[
+            62,
+            58,
+            70,
+            82,
+            86,
+            88,
+            92
+        ]
+    })
+
+    fig = px.line(
+        progress_df,
+        x="Day",
+        y="Score",
+        markers=True
     )
 
-    m2.metric(
-        "⚡ Brain Energy",
-        energy_levels.get(user.get("energy", ""), "Ready")
+    fig.update_traces(
+        line_color="#4f46e5",
+        marker_color="#8b5cf6"
     )
 
-    m3.metric(
-        "🏆 Mind Streak",
-        f"{len(results)} Activities"
+    fig.update_layout(
+        title="Mind Progress",
+        paper_bgcolor="white",
+        plot_bgcolor="white",
+        font_color="#1e293b"
     )
 
-    m4.metric(
-        "⭐ Positive Thoughts",
-        positive_count
+    st.plotly_chart(
+        fig,
+        use_container_width=True
     )
 
-    st.write("")
+    col1,col2 = st.columns([2,1])
 
-    # PROGRESS + TIPS
+    with col1:
 
-    left, right = st.columns([1.08, 1])
+        st.markdown("""
+        ### 🚀 Quick Activities
+        """)
 
-    with left:
+        a,b = st.columns(2)
 
-        with st.container(border=True):
+        with a:
+            st.success("🧠 Memory Booster")
 
-            st.markdown(
-                "### 📊 Your Mind Progress"
-            )
+        with b:
+            st.success("🧩 Focus Trainer")
 
-            if results:
+        c,d = st.columns(2)
 
-                progress_df = pd.DataFrame({
-                    "Attempt": range(1, len(results) + 1),
-                    "Focus": [
-                        round(
-                            r["score"] /
-                            max(r["total"], 1) * 100
-                        )
-                        for r in reversed(results)
-                    ]
-                })
+        with c:
+            st.success("😊 Positive Mind")
 
-                fig = px.area(
-                    progress_df,
-                    x="Attempt",
-                    y="Focus",
-                    range_y=[0, 100],
-                    markers=True
-                )
+        with d:
+            st.success("🧘 Relax & Breathe")
 
-                fig.update_traces(
-                    line_color="#438cf7",
-                    fillcolor="rgba(67,140,247,.20)",
-                    marker_color="#9250ed"
-                )
+    with col2:
 
-                style_chart(fig)
-                st.plotly_chart(
-                    fig,
-                    use_container_width=True
-                )
+        st.markdown("""
+        <div class="mind-card">
 
-            else:
-                st.info(
-                    "Complete your first quiz to start tracking "
-                    "your learning progress."
-                )
+        <h3>💡 Mind Power Tips</h3>
 
-    with right:
+        ✅ Practice deep breathing daily
 
-        with st.container(border=True):
+        <br><br>
 
-            st.markdown("### 💡 Mind Power Tips")
+        ✅ Use Pomodoro technique
 
-            tips = [
-                "Practice deep breathing for 2 minutes daily.",
-                "Use the Pomodoro technique for focused study.",
-                "Replace negative thoughts with constructive ones.",
-                "Maintain a regular and healthy sleep routine."
-            ]
+        <br><br>
 
-            for tip in tips:
-                st.markdown(
-                    f"""
-                    <div class="tip-card">
-                        <span style="color:#16a34a;">✔</span>
-                        &nbsp; {tip}
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+        ✅ Replace negative thoughts
 
+        <br><br>
+
+        ✅ Sleep 7–8 hours
+
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    st.markdown("""
+    ### ⭐ Remember
+
+    A calm mind is a powerful mind.
+    """)
+
+    st.info(
+        "Focus on progress, not perfection."
+    )
     # QUICK ACTIVITIES
 
     st.write("")
