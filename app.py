@@ -866,7 +866,7 @@ with st.sidebar:
         T["overview"],
         T["learning"],
         T["quiz"],
-        T[" Mind Power"],
+        
         T["coach"],
         T["analytics"],
     ]
