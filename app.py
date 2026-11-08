@@ -869,11 +869,6 @@ with st.sidebar:
         T["mind"],
         T["coach"],
         T["analytics"],
-        T["values"],
-        T["transparent"],
-        T["showcase"],
-        T["roadmap"],
-        T["judge"]
     ]
 
     if is_teacher:
