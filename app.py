@@ -1060,7 +1060,7 @@ if page == T["mind"]:
             ]
 
             for tip in tips:
-                st.markdown(
+                st.markdown
                     f"""
                     <div class="tip-card">
                         <span style="color:#16a34a;">✔</span>
