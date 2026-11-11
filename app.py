@@ -862,26 +862,33 @@ with st.sidebar:
 
     st.divider()
 
+    # Only the active student-platform sections are shown in navigation.
+    # The five presentation-only sections are intentionally hidden.
     nav_items = [
         T["overview"],
         T["learning"],
         T["quiz"],
         T["mind"],
         T["coach"],
-        T["analytics"],
-        T["values"],
-        T["transparent"],
-        T["showcase"],
-        T["roadmap"],
-        T["judge"]
+        T["analytics"]
     ]
 
     if is_teacher:
         nav_items.insert(6, T["teacher_dash"])
 
+    # Quick Access buttons update this radio selection through a callback,
+    # so the same pages remain available from the sidebar and Overview.
+    def navigate_to(target_page):
+        st.session_state["main_navigation"] = target_page
+
+    if st.session_state.get("main_navigation") not in nav_items:
+        st.session_state["main_navigation"] = T["overview"]
+
     page = st.radio(
         "NAVIGATION",
         nav_items,
+        index=nav_items.index(st.session_state["main_navigation"]),
+        key="main_navigation",
         label_visibility="collapsed"
     )
 
@@ -1471,40 +1478,31 @@ if page == T["overview"]:
     q1, q2, q3, q4 = st.columns(4)
 
     quick_items = [
-        (
-            q1, "🧠", "Mind Power",
-            "Brain Games & Focus", "#eee0ff"
-        ),
-        (
-            q2, "🧩", "AI Quiz",
-            "Practice & Test", "#d7f7e6"
-        ),
-        (
-            q3, "😊", "AI Coach",
-            "Get Guidance", "#ffefd8"
-        ),
-        (
-            q4, "📊", "Analytics",
-            "Track Progress", "#d9f5fb"
-        )
+        (q1, "🧠", "Mind Power", "Brain Games & Focus", T["mind"], "#eee0ff"),
+        (q2, "🧩", "AI Quiz", "Practice & Test", T["quiz"], "#d7f7e6"),
+        (q3, "😊", "AI Coach", "Get Guidance", T["coach"], "#ffefd8"),
+        (q4, "📊", "Analytics", "Track Progress", T["analytics"], "#d9f5fb")
     ]
 
-    for col, icon, title, subtitle, color in quick_items:
-
+    for col, icon, title, subtitle, target_page, color in quick_items:
         with col:
-
             with st.container(border=True):
-
                 st.markdown(
                     f"""
-                    <div class="quick-card"
-                         style="background:{color};">
+                    <div class="quick-card" style="background:{color};">
                         <div class="quick-icon">{icon}</div>
                         <div class="quick-title">{title}</div>
                         <div class="quick-sub">{subtitle}</div>
                     </div>
                     """,
                     unsafe_allow_html=True
+                )
+                st.button(
+                    f"Open {title} →",
+                    key=f"quick_access_{title.lower().replace(' ', '_')}",
+                    use_container_width=True,
+                    on_click=navigate_to,
+                    args=(target_page,)
                 )
 
     st.write("")
