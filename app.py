@@ -7,7 +7,7 @@ import hashlib
 import secrets
 import io
 from datetime import date, datetime
-
+from mind_power import render_mind_power
 try:
     from reportlab.lib.pagesizes import A4
     from reportlab.pdfgen import canvas
