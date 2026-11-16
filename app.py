@@ -1701,7 +1701,9 @@ elif page == T["coach"]:
 # =====================================================
 # PERFORMANCE ANALYTICS
 # =====================================================
+elif page == T["analytics"]:
 
+    performance_analytics.show_progress_analytics()
 elif page == T["analytics"]:
 
     st.markdown(
