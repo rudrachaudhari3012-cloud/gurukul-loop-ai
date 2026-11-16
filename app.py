@@ -6,7 +6,8 @@ import sqlite3
 import hashlib
 import secrets
 import io
-from smart_dashboard import 
+
+from smart_learning import 
 show_learning_dashboard
 
 from datetime import date, datetime
