@@ -6,7 +6,6 @@ import sqlite3
 import hashlib
 import secrets
 import io
-import performance_analytics
 from datetime import date, datetime
 from mind_power import render_mind_power
 try:
