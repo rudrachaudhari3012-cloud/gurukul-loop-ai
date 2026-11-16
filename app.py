@@ -1705,6 +1705,87 @@ elif page == T["analytics"]:
 
     performance_analytics.show_progress_analytics()
 
+    st.markdown(
+        '<div class="kicker">05 / PERFORMANCE INTELLIGENCE</div>'
+        '<div class="section-title">Performance Analytics</div>',
+        unsafe_allow_html=True
+    )
+
+    if results:
+
+        df = pd.DataFrame(results)
+
+        df["Score (%)"] = (
+            df["score"] / df["total"] * 100
+        ).round(1)
+
+        a, b, c = st.columns(3)
+
+        a.metric("Attempts", len(df))
+        b.metric(
+            "Average",
+            f"{df['Score (%)'].mean():.1f}%"
+        )
+        c.metric(
+            "Best Score",
+            f"{df['Score (%)'].max():.1f}%"
+        )
+
+        df["Attempt"] = range(1, len(df) + 1)
+
+        fig = px.line(
+            df.sort_values("id"),
+            x="Attempt",
+            y="Score (%)",
+            markers=True,
+            range_y=[0, 100],
+            title="Quiz Score Trend"
+        )
+
+        fig.update_traces(
+            line_color="#438cf7",
+            marker_color="#9250ed"
+        )
+
+        style_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
+
+        by_subject = df.groupby(
+            "subject", as_index=False
+        )["Score (%)"].mean()
+
+        fig2 = px.bar(
+            by_subject,
+            x="subject",
+            y="Score (%)",
+            title="Average by Subject",
+            range_y=[0, 100]
+        )
+
+        fig2.update_traces(
+            marker_color="#8c69e8"
+        )
+
+        style_chart(fig2)
+        st.plotly_chart(fig2, use_container_width=True)
+
+        st.dataframe(
+            df[
+                [
+                    "subject", "topic",
+                    "score", "total",
+                    "Score (%)", "created_at"
+                ]
+            ],
+            use_container_width=True,
+            hide_index=True
+        )
+
+    else:
+        st.info(
+            "Complete your first quiz to unlock analytics."
+        )
+
 
 # =====================================================
 # TEACHER DASHBOARD
