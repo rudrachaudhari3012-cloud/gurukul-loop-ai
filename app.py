@@ -1703,8 +1703,6 @@ elif page == T["coach"]:
 # =====================================================
 elif page == T["analytics"]:
 
-    performance_analytics.show_progress_analytics()
-
     st.markdown(
         '<div class="kicker">05 / PERFORMANCE INTELLIGENCE</div>'
         '<div class="section-title">Performance Analytics</div>',
