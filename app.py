@@ -1380,9 +1380,106 @@ if page == T["overview"]:
 # LEARNING DASHBOARD
 # =====================================================
 
-elif page == "learning":
-    show_learning_dashboard()
+elif page == T["learning"]:
     
+    st.markdown(
+        '<div class="kicker">02 / LEARNING INTELLIGENCE</div>'
+        '<div class="section-title">Learning Dashboard</div>',
+        unsafe_allow_html=True
+    )
+
+    st.caption(
+        "Enter a recent score for each subject."
+    )
+
+    subjects = [
+        "Physics", "Chemistry",
+        "Mathematics", "English"
+    ]
+
+    cols = st.columns(4)
+    entered = {}
+
+    for col, subject in zip(cols, subjects):
+
+        with col:
+            with st.container(border=True):
+                entered[subject] = st.slider(
+                    subject,
+                    0, 100, 65,
+                    key=f"learning_{subject}"
+                )
+
+                status = (
+                    "Needs support"
+                    if entered[subject] < 50
+                    else "Growing"
+                    if entered[subject] < 75
+                    else "Strong"
+                )
+
+                st.caption(status)
+
+    if st.button(
+        "✨ Build My Learning Plan",
+        type="primary",
+        use_container_width=True
+    ):
+        st.session_state.practice_plan = entered
+
+    if "practice_plan" in st.session_state:
+
+        plan = st.session_state.practice_plan
+
+        df = pd.DataFrame([
+            {
+                "Subject": s,
+                "Score": v,
+                "Status": (
+                    "Needs support" if v < 50
+                    else "Growing" if v < 75
+                    else "Strong"
+                ),
+                "Next Step": (
+                    "Revise core concepts + guided practice"
+                    if v < 50
+                    else "Revise key concepts + mixed questions"
+                    if v < 75
+                    else "Spaced revision + challenge questions"
+                )
+            }
+            for s, v in plan.items()
+        ])
+
+        st.dataframe(
+            df,
+            use_container_width=True,
+            hide_index=True
+        )
+
+        fig = px.bar(
+            df,
+            x="Subject",
+            y="Score",
+            color="Status",
+            range_y=[0, 100],
+            color_discrete_map={
+                "Needs support": "#ed7292",
+                "Growing": "#f2bb57",
+                "Strong": "#24b88a"
+            },
+            title="Subject Performance"
+        )
+
+        style_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.download_button(
+            "Download Practice Plan CSV",
+            df.to_csv(index=False).encode("utf-8-sig"),
+            "practice_plan.csv",
+            "text/csv"
+        )
 
 # =====================================================
 # AI QUIZ GENERATOR
