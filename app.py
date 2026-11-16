@@ -6,8 +6,8 @@ import sqlite3
 import hashlib
 import secrets
 import io
-from smart_learning import 
-show_learning_dashboard
+from learning_dashboard import show_learning_dashboard
+
 from datetime import date, datetime
 from mind_power import render_mind_power
 try:
@@ -1381,7 +1381,7 @@ if page == T["overview"]:
 # LEARNING DASHBOARD
 # =====================================================
 
-elif page == T["learning"]:
+elif page == "learning":
     show_learning_dashboard()
     
 
