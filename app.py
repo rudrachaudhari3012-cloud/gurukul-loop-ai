@@ -963,10 +963,6 @@ def style_chart(fig):
 if page == T["mind"]:
     render_mind_power()
 
-from pages.health_fitness import show_health_fitness
-
-elif page == "🏃 Health & Fitness":
-    show_health_fitness(user)
 
 # =====================================================
 # PREMIUM HOME DASHBOARD
