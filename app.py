@@ -554,16 +554,6 @@ def get_health_logs(user_id):
     exercise
 ):
 
-  
-
- 
-def delete_health_log(record_id):
-
-    with db() as conn:
-        conn.execute(
-            "DELETE FROM health_logs WHERE id=?",
-            (record_id,)
-        )
 def save_reflection(user_id, answer):
     with db() as conn:
         conn.execute("""
