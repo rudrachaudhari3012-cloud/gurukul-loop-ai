@@ -517,45 +517,7 @@ def save_result(user_id, subject, topic, score, total):
             user_id, subject, topic, score, total,
             datetime.now().isoformat(timespec="seconds")
         ))
-        def get_health_logs(user_id):
-
-    with db() as conn:
-        rows = conn.execute("""
-        SELECT *
-        FROM health_logs
-        WHERE user_id=?
-        ORDER BY log_date DESC
-        """, (user_id,)).fetchall()
-
-    return [dict(r) for r in rows]
-
-def update_health_log(
-    record_id,
-    sleep,
-    water,
-    exercise
-):
-    
-def save_health_log(user_id, log_date, sleep, water, exercise):
-
-    with db() as conn:
-        conn.execute("""
-        INSERT INTO health_logs
-        (user_id, log_date, sleep_hours,
-         water_glasses, exercise_minutes,
-         created_at)
-        VALUES (?,?,?,?,?,?)
-        """,
-        (
-            user_id,
-            log_date,
-            sleep,
-            water,
-            exercise,
-            datetime.now().isoformat()
-        ))
-
-
+        
 def save_reflection(user_id, answer):
     with db() as conn:
         conn.execute("""
