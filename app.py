@@ -556,21 +556,7 @@ def get_health_logs(user_id):
 
   
 
-    with db() as conn:
-        conn.execute("""
-        UPDATE health_logs
-        SET
-            sleep_hours=?,
-            water_glasses=?,
-            exercise_minutes=?
-        WHERE id=?
-        """,
-        (
-            sleep,
-            water,
-            exercise,
-            record_id
-        ))
+ 
 def delete_health_log(record_id):
 
     with db() as conn:
