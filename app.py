@@ -427,7 +427,18 @@ def init_db():
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
         """)
-
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS health_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            log_date TEXT NOT NULL,
+            sleep_hours REAL,
+            water_glasses INTEGER,
+            exercise_minutes INTEGER,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+        """)
 
 def password_hash(password, salt):
     return hashlib.pbkdf2_hmac(
@@ -506,8 +517,65 @@ def save_result(user_id, subject, topic, score, total):
             user_id, subject, topic, score, total,
             datetime.now().isoformat(timespec="seconds")
         ))
+def save_health_log(user_id, log_date, sleep, water, exercise):
 
+    with db() as conn:
+        conn.execute("""
+        INSERT INTO health_logs
+        (user_id, log_date, sleep_hours,
+         water_glasses, exercise_minutes,
+         created_at)
+        VALUES (?,?,?,?,?,?)
+        """,
+        (
+            user_id,
+            log_date,
+            sleep,
+            water,
+            exercise,
+            datetime.now().isoformat()
+        ))
 
+def get_health_logs(user_id):
+
+    with db() as conn:
+        rows = conn.execute("""
+        SELECT *
+        FROM health_logs
+        WHERE user_id=?
+        ORDER BY log_date DESC
+        """, (user_id,)).fetchall()
+
+    return [dict(r) for r in rows]
+    def update_health_log(
+    record_id,
+    sleep,
+    water,
+    exercise
+):
+
+    with db() as conn:
+        conn.execute("""
+        UPDATE health_logs
+        SET
+            sleep_hours=?,
+            water_glasses=?,
+            exercise_minutes=?
+        WHERE id=?
+        """,
+        (
+            sleep,
+            water,
+            exercise,
+            record_id
+        ))
+def delete_health_log(record_id):
+
+    with db() as conn:
+        conn.execute(
+            "DELETE FROM health_logs WHERE id=?",
+            (record_id,)
+        )
 def save_reflection(user_id, answer):
     with db() as conn:
         conn.execute("""
