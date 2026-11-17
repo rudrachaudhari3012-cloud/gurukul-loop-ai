@@ -1303,7 +1303,7 @@ if page == T["overview"]:
         (q2, "🧩", "AI Quiz", "Practice & Test", T["quiz"], "#d7f7e6"),
         (q3, "😊", "AI Coach", "Get Guidance", T["coach"], "#ffefd8"),
         (q4, "📊", "Analytics", "Track Progress", T["analytics"], "#d9f5fb"),
-        (q5, "🏃", "Health & Fitness", "Sleep & Exercise Tracker", "🏃 Health & Fitness", "#ffe4cc"),
+        
     ]
 
     for col, icon, title, subtitle, target_page, color in quick_items:
