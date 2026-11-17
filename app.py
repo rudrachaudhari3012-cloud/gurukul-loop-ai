@@ -554,12 +554,7 @@ def get_health_logs(user_id):
     exercise
 ):
 
-    def update_health_log(
-    record_id,
-    sleep,
-    water,
-    exercise
-):
+  
 
     with db() as conn:
         conn.execute("""
