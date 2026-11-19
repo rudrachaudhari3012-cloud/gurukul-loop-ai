@@ -883,7 +883,6 @@ with st.sidebar:
         T["mind"],
         T["coach"],
         T["analytics"],
-         T["Health & Fitness"],
     ]
 
     if is_teacher:
