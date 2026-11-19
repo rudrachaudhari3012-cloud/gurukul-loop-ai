@@ -1636,10 +1636,7 @@ elif page == T["coach"]:
         "Transparent rule-based educational coaching."
     )
 
-    energy = st.select_slider(
-        "How is your energy right now?",
-        ["Low", "Okay", "Good", "High"],
-        value="Okay"
+   
     )
 
     target = st.selectbox(
