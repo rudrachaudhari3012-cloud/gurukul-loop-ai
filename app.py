@@ -963,7 +963,7 @@ def style_chart(fig):
 # =====================================================
 # HEALTH & FITNESS
 # =====================================================
-if menu == T["health"]:
+if page == T["health"]:
     show_health_fitness()
 
  
