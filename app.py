@@ -857,7 +857,7 @@ with st.sidebar:
             AB SCHOOL<br>LOOP AI
         </div>
         <div style="font-size:12px;color:#a9c5ff;">
-            MIDNIGHT AI · Learning Studio
+              · Learning Studio
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -883,6 +883,7 @@ with st.sidebar:
         T["mind"],
         T["coach"],
         T["analytics"],
+        T["health"]
     ]
 
     if is_teacher:
@@ -956,8 +957,11 @@ def style_chart(fig):
         )
     )
     return fig
-
-
+# =====================================================
+# HEALTH & FITNESS
+# =====================================================
+if page == T["health"] 
+      show_health_fitness() 
 # =====================================================
 # MIND POWER DASHBOARD
 # =====================================================
