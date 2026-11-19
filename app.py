@@ -6,8 +6,7 @@ import sqlite3
 import hashlib
 import secrets
 import io
-from health_fitness import show_health_fitness
-
+from health_power import render_health_power
 from datetime import date, datetime
 from mind_power import render_mind_power
 try:
@@ -961,10 +960,13 @@ def style_chart(fig):
     )
     return fig
 # =====================================================
-# HEALTH & FITNESS
+# HEALTH POWER AI
 # =====================================================
 if page == T["health"]:
-    show_health_fitness()
+    render_health_power(
+        st,
+        student_id=str(user["id"])
+    )
 
  
 # =====================================================
