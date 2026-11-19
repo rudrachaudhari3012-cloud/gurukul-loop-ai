@@ -36,7 +36,8 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
 
 :root {
-    --navy: #101d3b;
+    --navy: #101d3b;65
+    
     --blue: #3679f6;
     --sky: #6bc9ff;
     --purple: #9250ed;
@@ -963,7 +964,7 @@ def style_chart(fig):
 # HEALTH & FITNESS
 # =====================================================
 if menu == T["health"]:
-    show_health_fitness(user)
+    show_health_fitness()
 
  
 # =====================================================
