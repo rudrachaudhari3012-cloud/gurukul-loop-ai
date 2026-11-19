@@ -960,7 +960,7 @@ def style_chart(fig):
 # =====================================================
 # HEALTH & FITNESS
 # =====================================================
-elif menu == T["health"]:
+if menu == T["health"]:
     show_health_fitness(user)
 
  
