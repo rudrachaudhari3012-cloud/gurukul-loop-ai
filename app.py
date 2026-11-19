@@ -1636,9 +1636,6 @@ elif page == T["coach"]:
         "Transparent rule-based educational coaching."
     )
 
-   
-    )
-
     target = st.selectbox(
         "What do you want help with?",
         [
