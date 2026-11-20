@@ -368,7 +368,7 @@ def render_health_power(st, student_id="demo_student"):
     with tabs[2]:
         st.subheader("🥗 Smart Food Guide")
         st.write("Gain nutritional insights about food.")
-        selected_food = st.selectbox("ખોરાક પસંદ કરો", list(FOOD_LIBRARY.keys()), key="hp_food_select")
+        selected_food = st.selectbox("Choose the Food", list(FOOD_LIBRARY.keys()), key="hp_food_select")
         item = FOOD_LIBRARY[selected_food]
         st.markdown(f"### {selected_food}")
         st.info(f"**પોષક જૂથ:** {item['group']}\n\n{item['detail']}\n\n**Learning tip:** {item['tip']}")
