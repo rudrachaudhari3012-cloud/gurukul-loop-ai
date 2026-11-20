@@ -326,7 +326,7 @@ def render_health_power(st, student_id="demo_student"):
 
     # ---------------- SLEEP ----------------
     with tabs[1]:
-        st.subheader("🌙 Sleep Intelligence")
+        st.subheader("🌙 Sleep Routine")
         st.write("સૂવાનો અને જાગવાનો સમય દાખલ કરો. સિસ્ટમ સમયગાળો અને routine history ગણશે.")
         with st.form("hp_sleep_form", clear_on_submit=True):
             s_date = st.date_input("Sleep record date (જે દિવસે જાગ્યા)", value=date.today(), key="hp_s_date")
