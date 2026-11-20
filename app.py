@@ -6,6 +6,7 @@ import sqlite3
 import hashlib
 import secrets
 import io
+from supabase import create_client
 from health_power import render_health_power
 from datetime import date, datetime
 from mind_power import render_mind_power
