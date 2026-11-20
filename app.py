@@ -35,7 +35,7 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
 
 :root {
-    --navy: #101d3b;65
+    --navy: #101d3b;
     
     --blue: #3679f6;
     --sky: #6bc9ff;
