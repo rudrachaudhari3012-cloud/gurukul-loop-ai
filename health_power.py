@@ -367,7 +367,7 @@ def render_health_power(st, student_id="demo_student"):
     # ---------------- SMART FOOD ----------------
     with tabs[2]:
         st.subheader("🥗 Smart Food Guide")
-        st.write("ભારતીય અને ગુજરાતી ખોરાક વિશે પોષણની મૂળભૂત સમજ મેળવો.")
+        st.write("Gain nutritional insights about food.")
         selected_food = st.selectbox("ખોરાક પસંદ કરો", list(FOOD_LIBRARY.keys()), key="hp_food_select")
         item = FOOD_LIBRARY[selected_food]
         st.markdown(f"### {selected_food}")
