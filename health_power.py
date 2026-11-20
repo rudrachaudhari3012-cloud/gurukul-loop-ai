@@ -242,7 +242,7 @@ def render_health_power(st, student_id="demo_student"):
     <div class="hp-hero">
       <div class="hp-kicker">AB SCHOOL LOOP AI · STUDENT WELL-BEING</div>
       <h1>🧬 HEALTH POWER AI</h1>
-      <p>Active Body · Sleep Intelligence · Smart Food · Healthy Habit Games</p>
+      <p>Active Body · Sleep Routine · Smart Food · Healthy Habit Games</p>
     </div>
     """, unsafe_allow_html=True)
 
