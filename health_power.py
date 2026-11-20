@@ -332,9 +332,9 @@ def render_health_power(st, student_id="demo_student"):
             s_date = st.date_input("Sleep record date (જે દિવસે જાગ્યા)", value=date.today(), key="hp_s_date")
             c1, c2 = st.columns(2)
             with c1:
-                s_bed = st.time_input("સૂવાનો સમય", value=datetime.strptime("22:00", "%H:%M").time())
+                s_bed = st.time_input("Sleep Time (સૂવાનો સમય)", value=datetime.strptime("22:00", "%H:%M").time())
             with c2:
-                s_wake = st.time_input("જાગવાનો સમય", value=datetime.strptime("06:00", "%H:%M").time())
+                s_wake = st.time_input("Wake Up Time (જાગવાનો સમય)", value=datetime.strptime("06:00", "%H:%M").time())
             s_submit = st.form_submit_button("Save Sleep Record", use_container_width=True)
             if s_submit:
                 bed_mins = s_bed.hour * 60 + s_bed.minute
