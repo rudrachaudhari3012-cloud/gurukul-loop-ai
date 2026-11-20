@@ -19,6 +19,21 @@ except ImportError:
 
 APP_TITLE = "AB SCHOOL LOOP AI"
 DB_PATH = "ab_school_loop_ai.db"
+# =====================================================
+# SUPABASE CONNECTION
+# =====================================================
+
+@st.cache_resource
+def get_supabase_client():
+    try:
+        url = st.secrets["SUPABASE_URL"]
+        key = st.secrets["SUPABASE_PUBLISHABLE_KEY"]
+
+        return create_client(url, key)
+
+    except Exception as e:
+        st.error(f"Supabase connection setup error: {e}")
+        return None
 
 st.set_page_config(
     page_title=APP_TITLE,
