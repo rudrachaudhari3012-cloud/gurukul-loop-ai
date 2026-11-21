@@ -13,7 +13,7 @@ import plotly.graph_objects as go
 from datetime import datetime
 import streamlit as st
 
-def show_learning_dashboard():
+def show_learning_dashboard(style_chart):
     st.title("📚 Learning Dashboard")
 
     st.write("Welcome to Learning Dashboard")
