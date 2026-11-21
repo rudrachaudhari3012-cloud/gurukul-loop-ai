@@ -6,9 +6,10 @@ import sqlite3
 import hashlib
 import secrets
 import io
-from mind_power import render_mind_power
+from supabase import create_client
+from health_power import render_health_power
 from datetime import date, datetime
-
+from mind_power import render_mind_power
 try:
     from reportlab.lib.pagesizes import A4
     from reportlab.pdfgen import canvas
@@ -18,6 +19,21 @@ except ImportError:
 
 APP_TITLE = "AB SCHOOL LOOP AI"
 DB_PATH = "ab_school_loop_ai.db"
+# =====================================================
+# SUPABASE CONNECTION
+# =====================================================
+
+@st.cache_resource
+def get_supabase_client():
+    try:
+        url = st.secrets["SUPABASE_URL"]
+        key = st.secrets["SUPABASE_PUBLISHABLE_KEY"]
+
+        return create_client(url, key)
+
+    except Exception as e:
+        st.error(f"Supabase connection setup error: {e}")
+        return None
 
 st.set_page_config(
     page_title=APP_TITLE,
@@ -36,6 +52,7 @@ st.markdown("""
 
 :root {
     --navy: #101d3b;
+    
     --blue: #3679f6;
     --sky: #6bc9ff;
     --purple: #9250ed;
@@ -326,6 +343,7 @@ TEXT = {
         "quiz": "AI Quiz Generator",
         "coach": "Advanced AI Coach",
         "analytics": "Performance Analytics",
+        "health":"Health",
         "teacher_dash": "Teacher Dashboard",
         "values": "Values & Reflection",
         "transparent": "Transparent Prototype",
@@ -362,6 +380,7 @@ TEXT = {
         "quiz": "AI ક્વિઝ જનરેટર",
         "coach": "એડવાન્સ્ડ AI કોચ",
         "analytics": "પરફોર્મન્સ એનાલિટિક્સ",
+        "health": "હેલ્થ",
         "teacher_dash": "ટીચર ડેશબોર્ડ",
         "values": "મૂલ્યો અને આત્મચિંતન",
         "transparent": "પારદર્શક પ્રોટોટાઇપ",
@@ -427,7 +446,18 @@ def init_db():
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
         """)
-
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS health_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            log_date TEXT NOT NULL,
+            sleep_hours REAL,
+            water_glasses INTEGER,
+            exercise_minutes INTEGER,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+        """)
 
 def password_hash(password, salt):
     return hashlib.pbkdf2_hmac(
@@ -506,8 +536,7 @@ def save_result(user_id, subject, topic, score, total):
             user_id, subject, topic, score, total,
             datetime.now().isoformat(timespec="seconds")
         ))
-
-
+        
 def save_reflection(user_id, answer):
     with db() as conn:
         conn.execute("""
@@ -520,6 +549,30 @@ def save_reflection(user_id, answer):
 
 
 init_db()
+init_db()
+
+# =====================================================
+# SUPABASE CONNECTION TEST
+# =====================================================
+
+if st.sidebar.button("🔌 Test Supabase Connection"):
+    try:
+        supabase = get_supabase_client()
+
+        if supabase is not None:
+            response = (
+                supabase.table("profiles")
+                .select("id")
+                .limit(1)
+                .execute()
+            )
+
+            st.success("Supabase connection successful!")
+            st.write("Profiles table is accessible.")
+
+    except Exception as e:
+        st.error("Supabase test failed.")
+        st.write(str(e))
 
 # =====================================================
 # QUESTION BANK
@@ -846,7 +899,7 @@ with st.sidebar:
             AB SCHOOL<br>LOOP AI
         </div>
         <div style="font-size:12px;color:#a9c5ff;">
-            MIDNIGHT AI · Learning Studio
+              · Learning Studio
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -871,7 +924,8 @@ with st.sidebar:
         T["quiz"],
         T["mind"],
         T["coach"],
-        T["analytics"]
+        T["analytics"],
+        T["health"],
     ]
 
     if is_teacher:
@@ -945,16 +999,22 @@ def style_chart(fig):
         )
     )
     return fig
+# =====================================================
+# HEALTH POWER AI
+# =====================================================
+if page == T["health"]:
+    render_health_power(
+        st,
+        student_id=str(user["id"])
+    )
 
-
+ 
 # =====================================================
 # MIND POWER DASHBOARD
 # =====================================================
-if page == "Mind Power":
-    render_mind_power(st, student_id=st.session_state.get("username")
-# =====================================================
-# OVERVIEW
-# =====================================================
+if page == T["mind"]:
+    render_mind_power()
+
 
 # =====================================================
 # PREMIUM HOME DASHBOARD
@@ -1294,7 +1354,8 @@ if page == T["overview"]:
         (q1, "🧠", "Mind Power", "Brain Games & Focus", T["mind"], "#eee0ff"),
         (q2, "🧩", "AI Quiz", "Practice & Test", T["quiz"], "#d7f7e6"),
         (q3, "😊", "AI Coach", "Get Guidance", T["coach"], "#ffefd8"),
-        (q4, "📊", "Analytics", "Track Progress", T["analytics"], "#d9f5fb")
+        (q4, "📊", "Analytics", "Track Progress", T["analytics"], "#d9f5fb"),
+        
     ]
 
     for col, icon, title, subtitle, target_page, color in quick_items:
@@ -1380,7 +1441,7 @@ if page == T["overview"]:
 # =====================================================
 
 elif page == T["learning"]:
-
+    
     st.markdown(
         '<div class="kicker">02 / LEARNING INTELLIGENCE</div>'
         '<div class="section-title">Learning Dashboard</div>',
@@ -1479,7 +1540,6 @@ elif page == T["learning"]:
             "practice_plan.csv",
             "text/csv"
         )
-
 
 # =====================================================
 # AI QUIZ GENERATOR
@@ -1628,12 +1688,6 @@ elif page == T["coach"]:
         "Transparent rule-based educational coaching."
     )
 
-    energy = st.select_slider(
-        "How is your energy right now?",
-        ["Low", "Okay", "Good", "High"],
-        value="Okay"
-    )
-
     target = st.selectbox(
         "What do you want help with?",
         [
@@ -1701,7 +1755,6 @@ elif page == T["coach"]:
 # =====================================================
 # PERFORMANCE ANALYTICS
 # =====================================================
-
 elif page == T["analytics"]:
 
     st.markdown(
