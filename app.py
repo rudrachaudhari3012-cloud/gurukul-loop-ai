@@ -549,7 +549,6 @@ def save_reflection(user_id, answer):
 
 
 init_db()
-init_db()
 
 # =====================================================
 # SUPABASE CONNECTION TEST
