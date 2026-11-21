@@ -10,7 +10,7 @@ from supabase import create_client
 from health_power import render_health_power
 from datetime import date, datetime
 from mind_power import render_mind_power
-from learning_dashboard import show_learning_dashboardf
+from learning_dashboard import show_learning_dashboard
 try:
     from reportlab.lib.pagesizes import A4
     from reportlab.pdfgen import canvas
