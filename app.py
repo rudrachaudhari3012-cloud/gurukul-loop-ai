@@ -1441,9 +1441,7 @@ if page == T["overview"]:
 # LEARNING DASHBOARD
 # =====================================================
 
-if page == T["learning"]:
 
-    show_learning_dashboard(style_chart)
 # =====================================================
 # AI QUIZ GENERATOR
 # =====================================================
