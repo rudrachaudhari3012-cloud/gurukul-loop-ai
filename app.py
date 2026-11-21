@@ -954,10 +954,16 @@ with st.sidebar:
         "↩ " + T["logout"],
         use_container_width=True
     ):
-        st.session_state.user = None
-        st.rerun()
+        end_login_session(
+    st.session_state.get("login_session_id")
+)
 
-    st.caption("Prototype v2.0 · Mind Power Edition")
+st.session_state.login_session_id = None
+st.session_state.user = None
+
+st.rerun()
+       
+    st.caption("Prototype v2.0 ")
 
 
 results = get_user_results(user["id"])
