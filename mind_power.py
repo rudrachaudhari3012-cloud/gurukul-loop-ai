@@ -151,8 +151,8 @@ def word_memory_game():
     st.subheader("🧠 Word Memory Challenge")
 
     st.write(
-        "યાદ રાખો: પાંચ શબ્દો 10 seconds માટે દેખાશે. "
-        "પછી તેમને સાચા sequence માં લખવાના રહેશે."
+        "Remember: Five words will appear for 10 seconds. "
+        "Then you will have to write them in the correct sequence."
     )
 
     if not st.session_state.mp_game_started:
