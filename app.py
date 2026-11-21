@@ -739,7 +739,7 @@ def make_pdf(user, results):
 
 if "user" not in st.session_state:
     st.session_state.user = None
-    st.session_state.user = user
+    st.session_state.user = None
     st.session_state.login_session_id = start_login_session(user)
 
 if "language" not in st.session_state:
