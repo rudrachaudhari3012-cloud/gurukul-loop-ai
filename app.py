@@ -6,10 +6,8 @@ import sqlite3
 import hashlib
 import secrets
 import io
-from supabase import create_client
-from health_power import render_health_power
 from datetime import date, datetime
-from mind_power import render_mind_power
+
 try:
     from reportlab.lib.pagesizes import A4
     from reportlab.pdfgen import canvas
@@ -19,21 +17,6 @@ except ImportError:
 
 APP_TITLE = "AB SCHOOL LOOP AI"
 DB_PATH = "ab_school_loop_ai.db"
-# =====================================================
-# SUPABASE CONNECTION
-# =====================================================
-
-@st.cache_resource
-def get_supabase_client():
-    try:
-        url = st.secrets["SUPABASE_URL"]
-        key = st.secrets["SUPABASE_PUBLISHABLE_KEY"]
-
-        return create_client(url, key)
-
-    except Exception as e:
-        st.error(f"Supabase connection setup error: {e}")
-        return None
 
 st.set_page_config(
     page_title=APP_TITLE,
@@ -52,7 +35,6 @@ st.markdown("""
 
 :root {
     --navy: #101d3b;
-    
     --blue: #3679f6;
     --sky: #6bc9ff;
     --purple: #9250ed;
@@ -343,7 +325,6 @@ TEXT = {
         "quiz": "AI Quiz Generator",
         "coach": "Advanced AI Coach",
         "analytics": "Performance Analytics",
-        "health":"Health",
         "teacher_dash": "Teacher Dashboard",
         "values": "Values & Reflection",
         "transparent": "Transparent Prototype",
@@ -380,7 +361,6 @@ TEXT = {
         "quiz": "AI ક્વિઝ જનરેટર",
         "coach": "એડવાન્સ્ડ AI કોચ",
         "analytics": "પરફોર્મન્સ એનાલિટિક્સ",
-        "health": "હેલ્થ",
         "teacher_dash": "ટીચર ડેશબોર્ડ",
         "values": "મૂલ્યો અને આત્મચિંતન",
         "transparent": "પારદર્શક પ્રોટોટાઇપ",
@@ -446,18 +426,7 @@ def init_db():
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
         """)
-        conn.execute("""
-        CREATE TABLE IF NOT EXISTS health_logs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            log_date TEXT NOT NULL,
-            sleep_hours REAL,
-            water_glasses INTEGER,
-            exercise_minutes INTEGER,
-            created_at TEXT NOT NULL,
-            FOREIGN KEY(user_id) REFERENCES users(id)
-        )
-        """)
+
 
 def password_hash(password, salt):
     return hashlib.pbkdf2_hmac(
@@ -536,7 +505,8 @@ def save_result(user_id, subject, topic, score, total):
             user_id, subject, topic, score, total,
             datetime.now().isoformat(timespec="seconds")
         ))
-        
+
+
 def save_reflection(user_id, answer):
     with db() as conn:
         conn.execute("""
@@ -549,29 +519,6 @@ def save_reflection(user_id, answer):
 
 
 init_db()
-
-# =====================================================
-# SUPABASE CONNECTION TEST
-# =====================================================
-
-if st.sidebar.button("🔌 Test Supabase Connection"):
-    try:
-        supabase = get_supabase_client()
-
-        if supabase is not None:
-            response = (
-                supabase.table("profiles")
-                .select("id")
-                .limit(1)
-                .execute()
-            )
-
-            st.success("Supabase connection successful!")
-            st.write("Profiles table is accessible.")
-
-    except Exception as e:
-        st.error("Supabase test failed.")
-        st.write(str(e))
 
 # =====================================================
 # QUESTION BANK
@@ -739,8 +686,6 @@ def make_pdf(user, results):
 
 if "user" not in st.session_state:
     st.session_state.user = None
-    st.session_state.user = None
-    st.session_state.login_session_id = start_login_session(user)
 
 if "language" not in st.session_state:
     st.session_state.language = "English"
@@ -900,7 +845,7 @@ with st.sidebar:
             AB SCHOOL<br>LOOP AI
         </div>
         <div style="font-size:12px;color:#a9c5ff;">
-              · Learning Studio
+            MIDNIGHT AI · Learning Studio
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -925,8 +870,7 @@ with st.sidebar:
         T["quiz"],
         T["mind"],
         T["coach"],
-        T["analytics"],
-        T["health"],
+        T["analytics"]
     ]
 
     if is_teacher:
@@ -954,17 +898,10 @@ with st.sidebar:
         "↩ " + T["logout"],
         use_container_width=True
     ):
-        end_login_session(
-    st.session_state.get("login_session_id")
-)
+        st.session_state.user = None
+        st.rerun()
 
-st.session_state.login_session_id = None
-st.session_state.user = None
-
-st.rerun()
-st.session_state.user = None 
-st.rerun()
-st.caption("Prototype v2.0 ")
+    st.caption("Prototype v2.0 · Mind Power Edition")
 
 
 results = get_user_results(user["id"])
@@ -1007,22 +944,204 @@ def style_chart(fig):
         )
     )
     return fig
-# =====================================================
-# HEALTH POWER AI
-# =====================================================
-if page == T["health"]:
-    render_health_power(
-        st,
-        student_id=str(user["id"])
-    )
 
- 
+
 # =====================================================
 # MIND POWER DASHBOARD
 # =====================================================
-if page == T["mind"]:
-    render_mind_power()
 
+if page == T["mind"]:
+
+    st.markdown("""
+    <div class="mind-banner">
+        <div class="eyebrow">🧠 MIND POWER · PERSONAL GROWTH</div>
+        <h1>Unlock Your Mind Power</h1>
+        <p>Think Better · Focus Deeper · Achieve More</p>
+        <div style="font-size:14px;color:#52669a;">
+            A focused mind builds a brighter future.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # MIND POWER METRICS
+
+    focus_score = avg_score if results else 0
+
+    energy_levels = {
+        "Low": "Growing",
+        "Okay": "Balanced",
+        "Good": "Strong",
+        "High": "High"
+    }
+
+    positive_count = 0
+
+    with db() as conn:
+        reflection_row = conn.execute(
+            "SELECT COUNT(*) FROM reflections WHERE user_id=?",
+            (user["id"],)
+        ).fetchone()
+
+    positive_count = reflection_row[0] if reflection_row else 0
+
+    m1, m2, m3, m4 = st.columns(4)
+
+    m1.metric(
+        "🎯 Focus Score",
+        f"{focus_score}%" if results else "—"
+    )
+
+    m2.metric(
+        "⚡ Brain Energy",
+        energy_levels.get(user.get("energy", ""), "Ready")
+    )
+
+    m3.metric(
+        "🏆 Mind Streak",
+        f"{len(results)} Activities"
+    )
+
+    m4.metric(
+        "⭐ Positive Thoughts",
+        positive_count
+    )
+
+    st.write("")
+
+    # PROGRESS + TIPS
+
+    left, right = st.columns([1.08, 1])
+
+    with left:
+
+        with st.container(border=True):
+
+            st.markdown(
+                "### 📊 Your Mind Progress"
+            )
+
+            if results:
+
+                progress_df = pd.DataFrame({
+                    "Attempt": range(1, len(results) + 1),
+                    "Focus": [
+                        round(
+                            r["score"] /
+                            max(r["total"], 1) * 100
+                        )
+                        for r in reversed(results)
+                    ]
+                })
+
+                fig = px.area(
+                    progress_df,
+                    x="Attempt",
+                    y="Focus",
+                    range_y=[0, 100],
+                    markers=True
+                )
+
+                fig.update_traces(
+                    line_color="#438cf7",
+                    fillcolor="rgba(67,140,247,.20)",
+                    marker_color="#9250ed"
+                )
+
+                style_chart(fig)
+                st.plotly_chart(
+                    fig,
+                    use_container_width=True
+                )
+
+            else:
+                st.info(
+                    "Complete your first quiz to start tracking "
+                    "your learning progress."
+                )
+
+    with right:
+
+        with st.container(border=True):
+
+            st.markdown("### 💡 Mind Power Tips")
+
+            tips = [
+                "Practice deep breathing for 2 minutes daily.",
+                "Use the Pomodoro technique for focused study.",
+                "Replace negative thoughts with constructive ones.",
+                "Maintain a regular and healthy sleep routine."
+            ]
+
+            for tip in tips:
+                st.markdown(
+                    f"""
+                    <div class="tip-card">
+                        <span style="color:#16a34a;">✔</span>
+                        &nbsp; {tip}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+    # QUICK ACTIVITIES
+
+    st.write("")
+
+    with st.container(border=True):
+
+        st.markdown("### 🚀 Quick Activities")
+
+        a1, a2, a3, a4 = st.columns(4)
+
+        with a1:
+            st.markdown(
+                '<div class="activity-card" '
+                'style="background:#eee0ff;">'
+                '<h3>🧠 Memory Booster</h3>'
+                '<p>Train your recall</p></div>',
+                unsafe_allow_html=True
+            )
+
+        with a2:
+            st.markdown(
+                '<div class="activity-card" '
+                'style="background:#d9f7e8;">'
+                '<h3>🧩 Focus Trainer</h3>'
+                '<p>Practice attention</p></div>',
+                unsafe_allow_html=True
+            )
+
+        with a3:
+            st.markdown(
+                '<div class="activity-card" '
+                'style="background:#fff0d6;">'
+                '<h3>😊 Positive Mind</h3>'
+                '<p>Gratitude practice</p></div>',
+                unsafe_allow_html=True
+            )
+
+        with a4:
+            st.markdown(
+                '<div class="activity-card" '
+                'style="background:#d8f7fb;">'
+                '<h3>🧘 Relax & Breathe</h3>'
+                '<p>Take a calm break</p></div>',
+                unsafe_allow_html=True
+            )
+
+    st.write("")
+
+    with st.container(border=True):
+        st.markdown("### ⭐ Remember")
+        st.markdown(
+            "A calm mind is a powerful mind. "
+            "Small consistent steps can support learning."
+        )
+
+
+# =====================================================
+# OVERVIEW
+# =====================================================
 
 # =====================================================
 # PREMIUM HOME DASHBOARD
@@ -1362,8 +1481,7 @@ if page == T["overview"]:
         (q1, "🧠", "Mind Power", "Brain Games & Focus", T["mind"], "#eee0ff"),
         (q2, "🧩", "AI Quiz", "Practice & Test", T["quiz"], "#d7f7e6"),
         (q3, "😊", "AI Coach", "Get Guidance", T["coach"], "#ffefd8"),
-        (q4, "📊", "Analytics", "Track Progress", T["analytics"], "#d9f5fb"),
-        
+        (q4, "📊", "Analytics", "Track Progress", T["analytics"], "#d9f5fb")
     ]
 
     for col, icon, title, subtitle, target_page, color in quick_items:
@@ -1449,7 +1567,7 @@ if page == T["overview"]:
 # =====================================================
 
 elif page == T["learning"]:
-    
+
     st.markdown(
         '<div class="kicker">02 / LEARNING INTELLIGENCE</div>'
         '<div class="section-title">Learning Dashboard</div>',
@@ -1548,6 +1666,7 @@ elif page == T["learning"]:
             "practice_plan.csv",
             "text/csv"
         )
+
 
 # =====================================================
 # AI QUIZ GENERATOR
@@ -1696,6 +1815,12 @@ elif page == T["coach"]:
         "Transparent rule-based educational coaching."
     )
 
+    energy = st.select_slider(
+        "How is your energy right now?",
+        ["Low", "Okay", "Good", "High"],
+        value="Okay"
+    )
+
     target = st.selectbox(
         "What do you want help with?",
         [
@@ -1763,6 +1888,7 @@ elif page == T["coach"]:
 # =====================================================
 # PERFORMANCE ANALYTICS
 # =====================================================
+
 elif page == T["analytics"]:
 
     st.markdown(
@@ -1852,20 +1978,6 @@ elif page == T["analytics"]:
 # =====================================================
 
 elif is_teacher and page == T["teacher_dash"]:
-    st.subheader("🔐 Student Login History")
-
-login_df = get_login_history()
-
-if not login_df.empty:
-
-    st.dataframe(
-        login_df,
-        use_container_width=True,
-        hide_index=True
-    )
-
-else:
-    st.info("No login records available.")
 
     st.markdown(
         '<div class="kicker">06 / TEACHER CONTROL ROOM</div>'
@@ -1957,6 +2069,400 @@ else:
     else:
         st.info("Quiz activity will appear here.")
 
+
+# =====================================================
+# VALUES & REFLECTION
+# =====================================================
+
+elif page == T["values"]:
+
+    st.markdown(
+        '<div class="kicker">07 / PERSONAL GROWTH</div>'
+        '<div class="section-title">Values & Reflection</div>',
+        unsafe_allow_html=True
+    )
+
+    st.caption(
+        "Reflect on learning, honesty, kindness and improvement."
+    )
+
+    prompts = [
+        "What did I learn today?",
+        "Where did I show patience or honesty?",
+        "Who did I help or thank today?",
+        "What is one small improvement for tomorrow?"
+    ]
+
+    with st.form("reflection_form"):
+
+        answers = [
+            st.text_area(
+                prompt,
+                max_chars=300,
+                key=f"reflection_{i}"
+            )
+            for i, prompt in enumerate(prompts)
+        ]
+
+        submitted = st.form_submit_button(
+            "Save Reflection",
+            type="primary"
+        )
+
+    if submitted:
+
+        combined = "\n".join(
+            f"{p} {a.strip()}"
+            for p, a in zip(prompts, answers)
+            if a.strip()
+        )
+
+        if combined:
+            save_reflection(user["id"], combined)
+            st.success("Reflection saved successfully.")
+
+        else:
+            st.warning("Write at least one reflection.")
+
+
+# =====================================================
+# TRANSPARENT PROTOTYPE
+# =====================================================
+
+elif page == T["transparent"]:
+
+    st.markdown(
+        '<div class="kicker">08 / RESPONSIBLE DESIGN</div>'
+        '<div class="section-title">Transparent Prototype</div>',
+        unsafe_allow_html=True
+    )
+
+    st.warning(
+        "This is a rule-based educational prototype, "
+        "not a trained machine-learning model."
+    )
+
+    rules = pd.DataFrame([
+        (
+            "0–49%",
+            "Needs support",
+            "Core revision and guided practice"
+        ),
+        (
+            "50–74%",
+            "Growing",
+            "Concept revision and mixed practice"
+        ),
+        (
+            "75–100%",
+            "Strong",
+            "Spaced revision and challenge questions"
+        )
+    ], columns=[
+        "Score Range",
+        "Status",
+        "Suggested Next Step"
+    ])
+
+    st.dataframe(
+        rules,
+        use_container_width=True,
+        hide_index=True
+    )
+
+    st.markdown("### What the Prototype Does")
+
+    st.write("""
+    - Stores local demo accounts in SQLite.
+    - Uses a built-in question bank.
+    - Checks quiz answers automatically.
+    - Displays progress charts.
+    - Provides rule-based coaching prompts.
+    - Supports teacher and student views.
+    - Does not diagnose health or measure intelligence.
+    """)
+
+
+# =====================================================
+# PROJECT SHOWCASE
+# =====================================================
+
+elif page == T["showcase"]:
+
+    st.markdown(
+        '<div class="kicker">09 / PROJECT PRESENTATION</div>'
+        '<div class="section-title">Project Showcase</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### Problem Statement")
+
+    st.write(
+        "Students may find it difficult to decide what "
+        "to practise next while balancing academic "
+        "learning and everyday routines."
+    )
+
+    st.markdown("### Proposed Solution")
+
+    st.write(
+        "AB SCHOOL LOOP AI combines student learning, "
+        "quiz generation, transparent coaching, reflection, "
+        "teacher overview and performance analytics."
+    )
+
+    st.markdown("### System Architecture")
+
+    st.code(
+        "Student / Teacher → Login → Learning Inputs → "
+        "Quiz / Rule Engine → Analytics → Reflection → "
+        "Next Practice",
+        language="text"
+    )
+
+    st.markdown("### Technology Stack")
+
+    st.write(
+        "Python · Streamlit · SQLite · Pandas · "
+        "Plotly · ReportLab"
+    )
+
+    modules = st.columns(3)
+
+    for col, icon, title, desc in zip(
+        modules,
+        ["🔐", "🧠", "📊"],
+        ["Access", "Learning", "Insights"],
+        [
+            "Local login and role-based views.",
+            "Question bank and coaching prompts.",
+            "Progress charts and teacher activity."
+        ]
+    ):
+
+        with col:
+            with st.container(border=True):
+                st.markdown(f"### {icon} {title}")
+                st.write(desc)
+
+
+# =====================================================
+# ROADMAP & TEAM
+# =====================================================
+
+elif page == T["roadmap"]:
+
+    st.markdown(
+        '<div class="kicker">10 / EXECUTION PLAN</div>'
+        '<div class="section-title">Roadmap & Team</div>',
+        unsafe_allow_html=True
+    )
+
+    roadmap = pd.DataFrame([
+        ("Week 1", 1, "Research and baseline assessment"),
+        ("Week 2", 2, "UI and student registration"),
+        ("Week 3", 3, "Quiz bank and coaching rules"),
+        ("Week 4", 4, "Analytics and teacher dashboard"),
+        ("Week 5", 5, "Testing and feedback"),
+        ("Week 6", 6, "Final validation and presentation")
+    ], columns=["Timeline", "Week", "Milestone"])
+
+    st.dataframe(
+        roadmap[["Timeline", "Milestone"]],
+        use_container_width=True,
+        hide_index=True
+    )
+
+    fig = px.bar(
+        roadmap,
+        x="Week",
+        y="Timeline",
+        orientation="h",
+        color="Week",
+        title="Six-Week Project Roadmap"
+    )
+
+    style_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.markdown("### Team Responsibilities")
+
+    team = pd.DataFrame([
+        ("Student 1", "Research and evaluation"),
+        ("Student 2", "UI/UX and presentation"),
+        ("Student 3", "Python and database"),
+        ("Student 4", "Testing and documentation")
+    ], columns=["Role", "Responsibility"])
+
+    st.dataframe(
+        team,
+        use_container_width=True,
+        hide_index=True
+    )
+
+    st.divider()
+
+    st.markdown("### 📘 Marks-Based Study Assistant")
+
+    subjects = [
+        "Physics", "Chemistry",
+        "Mathematics", "English"
+    ]
+
+    cols = st.columns(4)
+    marks = {}
+
+    for col, subject in zip(cols, subjects):
+
+        with col:
+            marks[subject] = st.number_input(
+                subject,
+                min_value=0,
+                max_value=100,
+                value=60,
+                step=1,
+                key=f"roadmap_{subject}"
+            )
+
+    if st.button(
+        "Generate My Improvement Roadmap",
+        type="primary",
+        use_container_width=True
+    ):
+
+        weakest = min(marks, key=marks.get)
+        average = sum(marks.values()) / len(marks)
+
+        st.metric("Current Average", f"{average:.1f}%")
+
+        st.success(
+            f"Priority Subject: {weakest} "
+            f"({marks[weakest]}%)"
+        )
+
+        advice = []
+
+        for subject, mark in marks.items():
+
+            if mark < 50:
+                level = "Foundation Focus"
+                next_step = (
+                    "Revise definitions and worked examples; "
+                    "solve 5 basic questions."
+                )
+
+            elif mark < 75:
+                level = "Build Consistency"
+                next_step = (
+                    "Revise concepts and solve 8 mixed questions."
+                )
+
+            else:
+                level = "Strengthen Mastery"
+                next_step = (
+                    "Use spaced revision and challenging questions."
+                )
+
+            advice.append(
+                (subject, mark, level, next_step)
+            )
+
+        advice_df = pd.DataFrame(
+            advice,
+            columns=[
+                "Subject",
+                "Marks",
+                "Level",
+                "Recommended Next Steps"
+            ]
+        )
+
+        st.dataframe(
+            advice_df,
+            use_container_width=True,
+            hide_index=True
+        )
+
+        fig = px.bar(
+            advice_df,
+            x="Subject",
+            y="Marks",
+            color="Level",
+            range_y=[0, 100],
+            title="Subject-Wise Marks"
+        )
+
+        style_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.markdown("### Your Next 7-Day Action Plan")
+
+        st.write(
+            f"1. **Day 1–2:** Focus on {weakest}."
+        )
+        st.write(
+            "2. **Day 3–4:** Practise all four subjects."
+        )
+        st.write(
+            "3. **Day 5:** Review incorrect questions."
+        )
+        st.write(
+            "4. **Day 6:** Take a short self-test."
+        )
+        st.write(
+            "5. **Day 7:** Compare progress and set targets."
+        )
+
+
+# =====================================================
+# JUDGE Q&A
+# =====================================================
+
+elif page == T["judge"]:
+
+    st.markdown(
+        '<div class="kicker">11 / PRESENTATION PREPARATION</div>'
+        '<div class="section-title">Judge Questions & Answers</div>',
+        unsafe_allow_html=True
+    )
+
+    qa = [
+        (
+            "What problem does your project solve?",
+            "It helps students turn quiz results into "
+            "clear next practice steps."
+        ),
+        (
+            "Is this a real AI model?",
+            "The current version is a transparent "
+            "rule-based prototype, not a trained ML model."
+        ),
+        (
+            "How does the quiz generator work?",
+            "It selects questions from a reviewed "
+            "subject and topic question bank."
+        ),
+        (
+            "How is student progress shown?",
+            "Quiz attempts are stored locally and "
+            "displayed through score trends."
+        ),
+        (
+            "How is student information handled?",
+            "The demo stores information in a local "
+            "SQLite database."
+        ),
+        (
+            "What can be improved next?",
+            "Curriculum-aligned question banks, "
+            "stronger security and evaluated ML features."
+        )
+    ]
+
+    for question, answer in qa:
+
+        with st.expander(question):
+            st.write(answer)
 
 
 # =====================================================
