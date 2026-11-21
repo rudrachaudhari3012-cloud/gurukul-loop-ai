@@ -459,7 +459,6 @@ def render_mind_power():
         [
             "🧠 Word Memory",
             "🎨 Color Strategy",
-            "🔷 Pattern Master"
         ],
         horizontal=True,
         key="mp_game_selector"
@@ -472,9 +471,6 @@ def render_mind_power():
 
     elif game == "🎨 Color Strategy":
         color_strategy_game()
-
-    elif game == "🔷 Pattern Master":
-        pattern_master_game()
 
     st.divider()
 
