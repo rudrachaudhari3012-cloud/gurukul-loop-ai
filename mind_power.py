@@ -276,8 +276,8 @@ def color_strategy_game():
     st.subheader("🎨 Color Strategy Challenge")
 
     st.write(
-        "Word નો અર્થ નહીં, પરંતુ તેના letters કયા રંગમાં "
-        "દેખાય છે તે ઓળખો."
+        "Not the meaning of the word, but in what color its letters... "
+        "..appear, identify that. ("
     )
 
     colors = {
