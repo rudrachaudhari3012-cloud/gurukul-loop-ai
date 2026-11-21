@@ -416,8 +416,8 @@ def pattern_master_game():
     st.subheader("🔷 Pattern Master Challenge")
 
     st.write(
-        "Glow થતા boxes નો sequence યાદ રાખો અને પછી "
-        "એ જ sequence પસંદ કરો."
+        "Remember the sequence of the glowing boxes, and then "
+        "select that same sequence."
     )
 
     if not st.session_state.mp_pattern:
