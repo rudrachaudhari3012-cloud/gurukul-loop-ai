@@ -950,7 +950,7 @@ def style_chart(fig):
 # =====================================================
 # MIND POWER DASHBOARD
 # =====================================================
-elif page == "Mind Power":
+if page == "Mind Power":
     render_mind_power(st, student_id=st.session_state.get("username")
 # =====================================================
 # OVERVIEW
