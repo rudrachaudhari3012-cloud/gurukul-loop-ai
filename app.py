@@ -1957,62 +1957,6 @@ else:
     else:
         st.info("Quiz activity will appear here.")
 
-
-# =====================================================
-# VALUES & REFLECTION
-# =====================================================
-
-elif page == T["values"]:
-
-    st.markdown(
-        '<div class="kicker">07 / PERSONAL GROWTH</div>'
-        '<div class="section-title">Values & Reflection</div>',
-        unsafe_allow_html=True
-    )
-
-    st.caption(
-        "Reflect on learning, honesty, kindness and improvement."
-    )
-
-    prompts = [
-        "What did I learn today?",
-        "Where did I show patience or honesty?",
-        "Who did I help or thank today?",
-        "What is one small improvement for tomorrow?"
-    ]
-
-    with st.form("reflection_form"):
-
-        answers = [
-            st.text_area(
-                prompt,
-                max_chars=300,
-                key=f"reflection_{i}"
-            )
-            for i, prompt in enumerate(prompts)
-        ]
-
-        submitted = st.form_submit_button(
-            "Save Reflection",
-            type="primary"
-        )
-
-    if submitted:
-
-        combined = "\n".join(
-            f"{p} {a.strip()}"
-            for p, a in zip(prompts, answers)
-            if a.strip()
-        )
-
-        if combined:
-            save_reflection(user["id"], combined)
-            st.success("Reflection saved successfully.")
-
-        else:
-            st.warning("Write at least one reflection.")
-
-
 # =====================================================
 # TRANSPARENT PROTOTYPE
 # =====================================================
