@@ -1851,6 +1851,20 @@ elif page == T["analytics"]:
 # =====================================================
 
 elif is_teacher and page == T["teacher_dash"]:
+    st.subheader("🔐 Student Login History")
+
+login_df = get_login_history()
+
+if not login_df.empty:
+
+    st.dataframe(
+        login_df,
+        use_container_width=True,
+        hide_index=True
+    )
+
+else:
+    st.info("No login records available.")
 
     st.markdown(
         '<div class="kicker">06 / TEACHER CONTROL ROOM</div>'
