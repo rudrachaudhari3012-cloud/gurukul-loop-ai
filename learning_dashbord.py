@@ -11,6 +11,12 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
+import streamlit as st
+
+def show_learning_dashboard():
+    st.title("📚 Learning Dashboard")
+
+    st.write("Welcome to Learning Dashboard")
 
 # ============================================================
 # THEME
