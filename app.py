@@ -962,8 +962,9 @@ st.session_state.login_session_id = None
 st.session_state.user = None
 
 st.rerun()
-       
-    st.caption("Prototype v2.0 ")
+st.session_state.user = None 
+st.rerun()
+st.caption("Prototype v2.0 ")
 
 
 results = get_user_results(user["id"])
