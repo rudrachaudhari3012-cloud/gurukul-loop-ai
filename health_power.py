@@ -205,13 +205,13 @@ def _build_recommendations(activity_df, sleep_df, food_df, habit_df):
             recs.append(("🏃 Active Body", "સારી શરૂઆત! તમારી activity નોંધવાનું ચાલુ રાખો અને આરામ તથા અભ્યાસ વચ્ચે સંતુલન રાખો."))
 
     if sleep_df.empty:
-        recs.append(("🌙 Sleep", "સૂવાનો અને જાગવાનો સમય નોંધો જેથી તમારી sleep routine સમજી શકાય."))
+        recs.append(("🌙 Sleep", "Log your bedtime and wake-up time so your sleep routine can be understood."))
     else:
         avg_sleep = float(sleep_df["duration"].mean())
         if avg_sleep < 7:
-            recs.append(("🌙 Sleep", "તમારી નોંધેલી ઊંઘનો સમય ઓછો દેખાય છે. નિયમિત bedtime માટે સમય ગોઠવો અને જરૂર પડે તો વાલી સાથે વાત કરો."))
+            recs.append(("🌙 Sleep", "Your recorded sleep time looks low. Set a regular bedtime and talk to a parent or guardian if needed."))
         elif avg_sleep <= 10:
-            recs.append(("🌙 Sleep", "તમારી નોંધેલી ઊંઘનો સમય સામાન્ય ભલામણની આસપાસ છે. નિયમિત sleep schedule જાળવવાનો પ્રયત્ન કરો."))
+            recs.append(("🌙 Sleep", "Your recorded sleep time is around the general recommendation. Try to maintain a regular sleep schedule."))
         else:
             recs.append(("🌙 Sleep", "નોંધેલા sleep/wake સમય ફરી તપાસો. સમય દાખલ કરવામાં ભૂલ તો નથી ને?"))
 
