@@ -213,12 +213,12 @@ def _build_recommendations(activity_df, sleep_df, food_df, habit_df):
         elif avg_sleep <= 10:
             recs.append(("🌙 Sleep", "Your recorded sleep time is around the general recommendation. Try to maintain a regular sleep schedule."))
         else:
-            recs.append(("🌙 Sleep", "નોંધેલા sleep/wake સમય ફરી તપાસો. સમય દાખલ કરવામાં ભૂલ તો નથી ને?"))
+            recs.append(("🌙 Sleep", "Please recheck the recorded sleep/wake times. Is there a mistake in entering the time?"))
 
     if food_df.empty:
-        recs.append(("🥗 Smart Food", "Food Library માંથી ખોરાક વિશે જાણો અને આજે શીખેલી એક વાત નોંધો."))
+        recs.append(("🥗 Smart Food", "Learn about food from the Food Library and note down one thing you learned today"))
     else:
-        recs.append(("🥗 Smart Food", "વિવિધ ખોરાક અને પોષક તત્ત્વો વિશે શીખતા રહો. કોઈ એક ખોરાકને સંપૂર્ણ સારો કે ખરાબ ગણશો નહીં."))
+        recs.append(("🥗 Smart Food", "Keep learning about different foods and nutrients. Do not consider any single food completely good or bad."))
 
     if habit_df.empty:
         recs.append(("🎮 Habit Games", "આજનું એક સરળ mission પસંદ કરો. નાની આદતો સતત વિકસાવવી મહત્વપૂર્ણ છે."))
