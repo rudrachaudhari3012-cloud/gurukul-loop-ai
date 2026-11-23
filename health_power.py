@@ -362,8 +362,7 @@ def render_health_power(st, student_id="demo_student"):
             st.line_chart(sleep.set_index("log_date")[["duration"]])
         else:
             st.info("Add your first entry to understand your sleep routine.")
-        st.caption(" General Guidance: Teenagers aged 13–18 are generally recommended to get 8–10 hours of sleep. Individual needs may vary. (સામાન્ય માર્ગદર્શન: 13–18 વર્ષની ઉંમરના કિશોરોને સામાન્ય રીતે 8–10 કલાક ઊંઘની ભલામણ થાય છે. વ્યક્તિગત જરૂરિયાત અલગ હોઈ શકે.)")
-
+        st.caption(" General Guidance: Teenagers aged 13–18 are generally recommended to get 8–10 hours of sleep. Individual needs may vary. 
     # ---------------- SMART FOOD ----------------
     with tabs[2]:
         st.subheader("🥗 Smart Food Guide")
