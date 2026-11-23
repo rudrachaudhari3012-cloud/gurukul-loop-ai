@@ -370,7 +370,7 @@ def render_health_power(st, student_id="demo_student"):
         selected_food = st.selectbox("Choose the Food", list(FOOD_LIBRARY.keys()), key="hp_food_select")
         item = FOOD_LIBRARY[selected_food]
         st.markdown(f"### {selected_food}")
-        st.info(f"**પોષક જૂથ:** {item['group']}\n\n{item['detail']}\n\n**Learning tip:** {item['tip']}")
+        st.info(f"**Nutrient group:** {item['group']}\n\n{item['detail']}\n\n**Learning tip:** {item['tip']}")
 
         with st.form("hp_food_form", clear_on_submit=True):
             f_date = st.date_input("Date", value=date.today(), key="hp_f_date")
