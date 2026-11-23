@@ -1445,7 +1445,9 @@ elif page == T["learning"]:
         unsafe_allow_html=True
     )
 
-    st.caption("Enter a recent score for each subject."),
+    st.caption(
+        "Enter a recent score for each subject."
+    ),
 
     subjects = [
         "Physics", "Chemistry",
