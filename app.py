@@ -1438,16 +1438,14 @@ if page == T["overview"]:
 # =====================================================
 
 if page == T["learning"]:
-    
-       st.markdown(
+    st.markdown(
         '<div class="kicker">02 / LEARNING INTELLIGENCE</div>'
         '<div class="section-title">Learning Dashboard</div>',
         unsafe_allow_html=True
     )
-
-        st.caption (
-        "Enter a recent score for each subject.")
-
+    st.caption(
+        "Enter a recent score for each subject."
+    )
     subjects = [
         "Physics", "Chemistry",
         "Mathematics", "English"
