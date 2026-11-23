@@ -1438,6 +1438,7 @@ if page == T["overview"]:
 # =====================================================
 
 elif page == T["learning"]:
+    
       st.markdown(
         '<div class="kicker">02 / LEARNING INTELLIGENCE</div>'
         '<div class="section-title">Learning Dashboard</div>',
