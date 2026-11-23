@@ -633,3 +633,4 @@ def show_learning_dashboard():
 # ============================================================
 # END OF LEARNING DASHBOARD
 # ============================================================
+# render_learning_dashboard()
