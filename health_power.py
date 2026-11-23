@@ -293,7 +293,7 @@ def render_health_power(st, student_id="demo_student"):
     # ---------------- ACTIVE BODY ----------------
     with tabs[0]:
         st.subheader("🏃 Active Body AI")
-        st.write("તમારી movement અને activity નોંધો. કોઈ wearable અથવા step sensor જરૂરી નથી.")
+        st.write("Track your movement and activity. No wearable or step sensor required.")
         with st.form("hp_activity_form", clear_on_submit=True):
             a_date = st.date_input("Activity date", value=date.today(), key="hp_a_date")
             a_type = st.selectbox("Activity", [
