@@ -1437,8 +1437,10 @@ if page == T["overview"]:
 # LEARNING DASHBOARD
 # =====================================================
 
-if page == T["learning"]:
-    render_learning_dashboard()
+elif page == T["learning"]:
+
+
+    
     
   
 # =====================================================
