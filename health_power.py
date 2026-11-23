@@ -129,7 +129,7 @@ def _query_df(sql, params):
 FOOD_LIBRARY = {
     "દાળ / કઠોળ": {
         "group": "Protein and fibre",
-        "detail": "દાળ અને કઠોળ પ્રોટીન તથા ફાઇબરના સારા સ્ત્રોત છે.",
+        "detail": "Lentils and legumes are good sources of protein and fiber.",
         "tip": "ભોજનમાં વિવિધ દાળ અને કઠોળનો સમાવેશ કરી શકાય."
     },
     "દૂધ / દહીં": {
