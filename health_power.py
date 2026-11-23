@@ -322,7 +322,7 @@ def render_health_power(st, student_id="demo_student"):
             daily = activity.groupby("log_date", as_index=False)["minutes"].sum()
             st.bar_chart(daily.set_index("log_date"))
         else:
-            st.info("હજુ activity record નથી. ઉપરથી પહેલી entry ઉમેરો.")
+            st.info("No activity recorded yet. Add the first entry from above.")
 
     # ---------------- SLEEP ----------------
     with tabs[1]:
