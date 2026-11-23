@@ -441,13 +441,13 @@ def render_health_power(st, student_id="demo_student"):
     # ---------------- AI INSIGHTS ----------------
     with tabs[4]:
         st.subheader("🧠 Health Intelligence Engine")
-        st.write("આ prototype rule-based analysis દ્વારા દાખલ કરેલા records પરથી સૂચનો આપે છે.")
+        st.write("This prototype provides suggestions based on the entered records using rule-based analysis.")
         recs = _build_recommendations(activity, sleep, food, habits)
         for heading, message in recs:
             st.markdown(f"**{heading}**")
             st.info(message)
         st.markdown("""
-        **આ સિસ્ટમનું logic:**
+        **Logic of this system:" or "This system's logic:**
         1. Student-entered records વાંચે છે.
         2. Recent history અને simple patterns તપાસે છે.
         3. Rule-based personalized suggestions પસંદ કરે છે.
