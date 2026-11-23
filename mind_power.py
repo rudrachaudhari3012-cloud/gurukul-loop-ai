@@ -500,7 +500,7 @@ def render_mind_power():
         )
 
     st.caption(
-        "AB SCHOOL LOOP AI • MIND POWER 1.0 • "
+        "AB SCHOOL LOOP AI • MIND POWER "
         "Brain Training & Student Growth"
     )
 
