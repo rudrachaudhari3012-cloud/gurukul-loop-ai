@@ -200,7 +200,7 @@ def _build_recommendations(activity_df, sleep_df, food_df, habit_df):
         if week_activity == 0:
             recs.append(("🏃 Active Body", "આ અઠવાડિયે activity નોંધાઈ નથી. તમારી અનુકૂળતા મુજબ હળવી ચાલ અથવા સ્ટ્રેચિંગનો વિચાર કરો."))
         elif days < 3:
-            recs.append(("🏃 Active Body", "આ અઠવાડિયે થોડા દિવસોની activity નોંધાઈ છે. શક્ય હોય તો અલગ-અલગ દિવસોમાં નાની movement breaks ઉમેરો."))
+            recs.append(("🏃 Active Body", "Activity has been recorded for a few days this week. If possible, add short movement breaks on different days."))
         else:
             recs.append(("🏃 Active Body", "સારી શરૂઆત! તમારી activity નોંધવાનું ચાલુ રાખો અને આરામ તથા અભ્યાસ વચ્ચે સંતુલન રાખો."))
 
