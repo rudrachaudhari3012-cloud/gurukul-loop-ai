@@ -247,8 +247,8 @@ def render_health_power(st, student_id="demo_student"):
     """, unsafe_allow_html=True)
 
     st.markdown(
-        '<div class="hp-note"><b>Sensor-free system:</b> આ module વિદ્યાર્થી દ્વારા દાખલ કરેલી માહિતી પરથી કામ કરે છે. '
-        'આ medical device નથી અને કોઈ રોગનું નિદાન કરતું નથી.</div>',
+        '<div class="hp-note"><b>Sensor-free system:</b> This module works based on the information entered by the student. '
+        'This is not a medical device and does not diagnose any disease.</div>',
         unsafe_allow_html=True
     )
 
