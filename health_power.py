@@ -130,7 +130,7 @@ FOOD_LIBRARY = {
     "દાળ / કઠોળ": {
         "group": "Protein and fibre",
         "detail": "Lentils and legumes are good sources of protein and fiber.",
-        "tip": "ભોજનમાં વિવિધ દાળ અને કઠોળનો સમાવેશ કરી શકાય."
+        "tip": "Various lentils and legumes can be included in meals."
     },
     "દૂધ / દહીં": {
         "group": "Calcium and protein",
