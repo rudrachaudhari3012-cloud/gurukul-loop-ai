@@ -301,7 +301,7 @@ def render_health_power(st, student_id="demo_student"):
                 "Dance", "Yoga", "Sports", "Other"
             ])
             a_minutes = st.number_input("Duration (minutes)", min_value=1, max_value=300, value=15, step=5)
-            a_outdoor = st.checkbox("આ activity બહાર કરી?")
+            a_outdoor = st.checkbox("Did you do this activity outdoors?")
             a_submit = st.form_submit_button("Save Activity", use_container_width=True)
             if a_submit:
                 with _connect() as con:
