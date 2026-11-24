@@ -1138,11 +1138,11 @@ if page == T["overview"]:
     </style>
     """, unsafe_allow_html=True)
 
-    # -------------------------------------------------
+      # -------------------------------------------------
     # HERO BANNER
     # -------------------------------------------------
 
-st.markdown(f"""
+    st.markdown(f"""
     <div class="home-hero">
         <div class="hero-label">
             🎓 WELCOME BACK, {user['full_name'].upper()}!
