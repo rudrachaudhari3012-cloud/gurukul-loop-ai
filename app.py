@@ -964,8 +964,7 @@ with register_tab:
             type="primary",
             use_container_width=True
         )
-          if register_go:
-
+         if register_go:
             if not all([
                 full_name.strip(),
                 username.strip(),
