@@ -1160,7 +1160,7 @@ if page == T["overview"]:
         <p style="font-size:13px;">
             STUDENT GROWTH · SMART LEARNING · MIND POWER
         </p>
-        <div class="hero-art">🧠 ✨</div>
+        <div class="hero-art">🧠 </div>
     </div>
     """, unsafe_allow_html=True)
 
