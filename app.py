@@ -59,9 +59,13 @@ if bg_path.exists():
     st.markdown(f"""
     <style>
     .stApp {{
-        background-image: url(
-            "data:image/png;base64,{bg}"
-        ) !important;
+        background:
+        linear-gradient(
+            rgba(3, 7, 25, 0.15),
+            rgba(3, 7, 25, 0.15)
+        ),
+        url("data:image/png;base64,{bg}");
+
         background-size: cover !important;
         background-position: center !important;
         background-repeat: no-repeat !important;
@@ -78,7 +82,7 @@ if bg_path.exists():
     </style>
     """, unsafe_allow_html=True)
 else:
-    st.error("background.png file not found!")
+    st.error("background.png not found!")
 # =====================================================
 # PREMIUM LIGHT MIND POWER THEME
 # =====================================================
