@@ -6,6 +6,14 @@ import sqlite3
 import hashlib
 import secrets
 import io
+import base64
+
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+# GitHub પર અપલોડ કરેલી ફાઇલનું સાચું નામ અહીં લખો
+logo_base64 = get_base64_image("AB SCHOOL LOOP LOGO.jpg")
 
 from supabase import create_client
 from health_power import render_health_power
@@ -1142,29 +1150,19 @@ if page == T["overview"]:
     # -------------------------------------------------
 
     st.markdown(f"""
-    <div class="home-hero">
-        <div class="hero-label">
-            🎓 WELCOME BACK, {user['full_name'].upper()}!
-        </div>
-        <h1>AB SCHOOL LOOP AI</h1>
-        <h2 style="
-            color:#3978ee;
-            font-size:25px;
-            font-weight:850;
-            margin:5px 0;">
-            Learn &nbsp; • &nbsp;
-            <span style="color:#08a9d9;">Grow</span>
-            &nbsp; • &nbsp;
-            <span style="color:#9250ed;">Thrive</span>
-        </h2>
         <p>Your Smart Learning Partner for a Brighter Future ✨</p>
         <p style="font-size:13px;">
             STUDENT GROWTH · SMART LEARNING · MIND POWER
         </p>
-        <div class="hero-art">🧠 </div>
+        <div class="hero-art">
+            <img src="data:image/jpeg;base64,{logo_base64}" 
+                 alt="AB SCHOOL LOOP AI" 
+                 style="width: 240px; border-radius: 16px; border: 2px solid #A855F7; box-shadow: 0 4px 20px rgba(168, 85, 247, 0.45); margin-top: 10px;">
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
+    
     st.write("")
 
     # -------------------------------------------------
