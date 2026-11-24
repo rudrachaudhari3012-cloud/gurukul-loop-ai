@@ -855,116 +855,119 @@ with head_right:
 T = TEXT[st.session_state.language]
 
 if st.session_state.user is None:
-      st.markdown("""
-      <style>
 
-/* AB SCHOOL LOOP AI - PREMIUM HERO */
-.hero {
-    background: linear-gradient(
-        120deg,
-        #101D36 0%,
-        #142A4B 55%,
-        #211D43 100%
-    ) !important;
+    st.markdown("""
+    <style>
+    /* AB SCHOOL LOOP AI - PREMIUM HERO */
+    .hero {
+        background: linear-gradient(
+            120deg,
+            #101D36 0%,
+            #142A4B 55%,
+            #211D43 100%
+        ) !important;
+        border: 1px solid rgba(72, 210, 255, 0.55) !important;
+        border-radius: 24px !important;
+        padding: 35px !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.30) !important;
+    }
 
-    border: 1px solid rgba(72, 210, 255, 0.55) !important;
-    border-radius: 24px !important;
+    .hero h1 {
+        color: #FFFFFF !important;
+        font-size: 2.5rem !important;
+        font-weight: 800 !important;
+        text-shadow: none !important;
+    }
 
-    padding: 35px !important;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.30) !important;
-}
+    .hero p {
+        color: #EAF2FF !important;
+        font-size: 1.05rem !important;
+        line-height: 1.8 !important;
+    }
 
-/* MAIN TITLE */
-.hero h1 {
-    color: #FFFFFF !important;
-    font-size: 2.5rem !important;
-    font-weight: 800 !important;
-    text-shadow: none !important;
-}
+    .hero .eyebrow {
+        color: #55DFFF !important;
+        font-weight: 700 !important;
+        letter-spacing: 1.5px !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-/* DESCRIPTION */
-.hero p {
-    color: #EAF2FF !important;
-    font-size: 1.05rem !important;
-    line-height: 1.8 !important;
-}
+    st.markdown(
+        """
+        <div class="hero">
+            <div class="eyebrow">STUDENT GROWTH · LEARNING SCIENCE</div>
+            <h1>🎓 AB SCHOOL LOOP AI</h1>
+            <p>
+        """ + T["tagline"] + """<br>""" + T["intro"] + """
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-/* SMALL HEADING */
-.hero .eyebrow {
-    color: #55DFFF !important;
-    font-weight: 700 !important;
-    letter-spacing: 1.5px !important;
-}
+    st.markdown("### Welcome to your learning studio")
 
-</style>
+    login_tab, register_tab = st.tabs([
+        "🔐 " + T["login"],
+        "✨ " + T["register"]
+    ])
 
-<div class="hero">
-    <div class="eyebrow">STUDENT GROWTH · LEARNING SCIENCE</div>
-    <h1>🎓 AB SCHOOL LOOP AI</h1>
-    <p>""" + T['tagline'] + """<br>""" + T['intro'] + """</p>
-</div>
-""", unsafe_allow_html=True)
+    with login_tab:
+        with st.form("login_form"):
+            login_user = st.text_input(T["username"])
 
-st.markdown("### Welcome to your learning studio")
+            login_pass = st.text_input(
+                T["password"],
+                type="password"
+            )
 
-login_tab, register_tab = st.tabs([
-    "🔐 " + T["login"],
-    "✨ " + T["register"]
-])
+            login_go = st.form_submit_button(
+                T["login"],
+                type="primary",
+                use_container_width=True
+            )
 
-with login_tab:
-    with st.form("login_form"):
-        login_user = st.text_input(T["username"])
+        if login_go:
+            found = authenticate(login_user, login_pass)
 
-        login_pass = st.text_input(
-            T["password"],
-            type="password"
-        )
+            if found:
+                st.session_state.user = dict(found)
+                st.rerun()
+            else:
+                st.error("Incorrect username or password.")
 
-        login_go = st.form_submit_button(
-            T["login"],
-            type="primary",
-            use_container_width=True
-        )
+    with register_tab:
+        with st.form("register_form"):
+            full_name = st.text_input(T["name"])
+            username = st.text_input(T["username"])
 
-    if login_go:
-        found = authenticate(login_user, login_pass)
+            password = st.text_input(
+                T["password"] + " (minimum 8 characters)",
+                type="password"
+            )
 
-        if found:
-            st.session_state.user = dict(found)
-            st.rerun()
-        else:
-            st.error("Incorrect username or password.")
-with register_tab:
-    with st.form("register_form"):
-        full_name = st.text_input(T["name"])
-        username = st.text_input(T["username"])
+            role_label = st.selectbox(
+                T["role"],
+                [T["student"], T["teacher"]]
+            )
 
-        password = st.text_input(
-            T["password"] + " (minimum 8 characters)",
-            type="password"
-        )
+            grade = st.selectbox(
+                T["class"],
+                [
+                    "Class 9", "Class 10",
+                    "Class 11", "Class 12",
+                    "Not applicable"
+                ]
+            )
 
-        role_label = st.selectbox(
-            T["role"],
-            [T["student"], T["teacher"]]
-        )
+            register_go = st.form_submit_button(
+                "✅ " + T["register"],
+                type="primary",
+                use_container_width=True
+            )
 
-        grade = st.selectbox(
-            T["class"],
-            [
-                "Class 9", "Class 10",
-                "Class 11", "Class 12",
-                "Not applicable"
-            ]
-        )
-
-        register_go = st.form_submit_button(
-            "✅ " + T["register"],
-            type="primary",
-            use_container_width=True
-        )
-         if register_go:
+        if register_go:
             if not all([
                 full_name.strip(),
                 username.strip(),
@@ -1002,12 +1005,12 @@ with register_tab:
                 except sqlite3.IntegrityError:
                     st.error("Username already exists.")
 
-    st.markdown("""
-    <div class="small-note">
-    🔒 Local demo: account information and quiz results
-    are stored in the local SQLite database.
-    </div>
-    """, unsafe_allow_html=True)
+        st.markdown("""
+        <div class="small-note">
+        🔒 Local demo: account information and quiz results
+        are stored in the local SQLite database.
+        </div>
+        """, unsafe_allow_html=True)
 
     st.stop()
 
