@@ -907,17 +907,17 @@ if st.session_state.user is None:
 
 st.markdown("### Welcome to your learning studio")
 
-    login_tab, register_tab = st.tabs([
-        "🔐 " + T["login"],
-        "✨ " + T["register"]
-    ])
+login_tab, register_tab = st.tabs([
+    "🔐 " + T["login"],
+    "✨ " + T["register"]
+])
 
-    with login_tab:
-        with st.form("login_form"):
-            login_user = st.text_input(T["username"])
-            login_pass = st.text_input(
-                T["password"], type="password"
-            )
+with login_tab:
+    with st.form("login_form"):
+        login_user = st.text_input(T["username"])
+        login_pass = st.text_input(
+            T["password"], type="password"
+        )
 
             login_go = st.form_submit_button(
                 T["login"],
