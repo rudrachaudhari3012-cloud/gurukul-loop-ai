@@ -193,16 +193,16 @@ def _build_recommendations(activity_df, sleep_df, food_df, habit_df):
     recs = []
 
     if activity_df.empty:
-        recs.append(("🏃 Active Body", "તમારી દૈનિક activity નોંધવાનું શરૂ કરો. નાની અને અનુકૂળ movement થી શરૂઆત કરો."))
+        recs.append(("🏃 Active Body", "Start logging your daily activity. Begin with small and convenient movement."))
     else:
         week_activity = int(activity_df["minutes"].sum())
         days = activity_df["log_date"].nunique()
         if week_activity == 0:
-            recs.append(("🏃 Active Body", "આ અઠવાડિયે activity નોંધાઈ નથી. તમારી અનુકૂળતા મુજબ હળવી ચાલ અથવા સ્ટ્રેચિંગનો વિચાર કરો."))
+            recs.append(("🏃 Active Body", "No activity has been logged this week. Consider a light walk or stretching at your convenience."))
         elif days < 3:
             recs.append(("🏃 Active Body", "Activity has been recorded for a few days this week. If possible, add short movement breaks on different days."))
         else:
-            recs.append(("🏃 Active Body", "સારી શરૂઆત! તમારી activity નોંધવાનું ચાલુ રાખો અને આરામ તથા અભ્યાસ વચ્ચે સંતુલન રાખો."))
+            recs.append(("🏃 Active Body", "Good start! Keep logging your activity and maintain a balance between rest and study."))
 
     if sleep_df.empty:
         recs.append(("🌙 Sleep", "Log your bedtime and wake-up time so your sleep routine can be understood."))
@@ -223,7 +223,7 @@ def _build_recommendations(activity_df, sleep_df, food_df, habit_df):
     if habit_df.empty:
         recs.append(("🎮 Habit Games", "Choose one simple mission for today. Developing small habits consistently is important."))
     else:
-        recs.append(("🎮 Habit Games", "તમારી missions ની પ્રગતિ સારી રીતે નોંધાઈ રહી છે. પોતાની જૂની પ્રગતિ સાથે સરખામણી કરો, બીજા વિદ્યાર્થીઓ સાથે નહીં."))
+        recs.append(("🎮 Habit Games", "Your mission progress is being recorded well. Compare yourself with your own past progress, not with other students."))
 
     return recs
 
