@@ -51,21 +51,34 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 ) 
-bg = base64.b64encode(
-    Path("background.png").read_bytes()
-).decode()
+bg_path = Path(__file__).parent / "background.png"
 
-st.markdown(f"""
-<style>
-.stApp {{
-    background-image: url("data:image/png;base64,{bg}");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}}
-</style>
-""", unsafe_allow_html=True)
+if bg_path.exists():
+    bg = base64.b64encode(bg_path.read_bytes()).decode()
+
+    st.markdown(f"""
+    <style>
+    .stApp {{
+        background-image: url(
+            "data:image/png;base64,{bg}"
+        ) !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        background-attachment: fixed !important;
+    }}
+
+    [data-testid="stAppViewContainer"] {{
+        background: transparent !important;
+    }}
+
+    [data-testid="stHeader"] {{
+        background: transparent !important;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+else:
+    st.error("background.png file not found!")
 # =====================================================
 # PREMIUM LIGHT MIND POWER THEME
 # =====================================================
