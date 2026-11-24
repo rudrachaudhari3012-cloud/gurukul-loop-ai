@@ -7,6 +7,8 @@ import hashlib
 import secrets
 import io
 import base64
+from pathlib import path
+import base64
 
 def get_base64_image(image_path):
     with open(image_path, "rb") as img_file:
@@ -48,8 +50,22 @@ st.set_page_config(
     page_icon="🎓",
     layout="wide",
     initial_sidebar_state="expanded"
-)
+) 
+bg = base64.b64encode(
+    Path("background.png").read_bytes()
+).decode()
 
+st.markdown(f"""
+<style>
+.stApp {{
+    background-image: url("data:image/png;base64,{bg}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}}
+</style>
+""", unsafe_allow_html=True)
 # =====================================================
 # PREMIUM LIGHT MIND POWER THEME
 # =====================================================
