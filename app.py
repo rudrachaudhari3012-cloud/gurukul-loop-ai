@@ -408,6 +408,72 @@ hr {
 </style>
 """, unsafe_allow_html=True)
 
+# ==========================================
+# PREMIUM DARK GLASS HERO OVERRIDE
+# ==========================================
+
+st.markdown("""
+<style>
+
+/* PREMIUM DARK HERO BACKGROUND */
+.hero,
+.mind-banner {
+    background: linear-gradient(
+        115deg,
+        #101D36 0%,
+        #142A4B 50%,
+        #201D43 100%
+    ) !important;
+
+    border: 1px solid rgba(91, 190, 255, 0.55) !important;
+    border-radius: 24px !important;
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+/* HERO TITLE */
+.hero h1,
+.mind-banner h1 {
+    color: #FFFFFF !important;
+    text-shadow: none !important;
+    font-weight: 800 !important;
+}
+
+/* HERO DESCRIPTION */
+.hero p,
+.mind-banner p {
+    color: #E3EDFF !important;
+}
+
+/* HERO TAGLINE */
+.hero .eyebrow,
+.mind-banner .eyebrow {
+    color: #55DFFF !important;
+}
+
+/* LEARN GROW THRIVE */
+.hero *,
+.mind-banner * {
+    text-shadow: none;
+}
+
+/* LOGO IMAGE */
+.hero img,
+.mind-banner img {
+    border-radius: 18px;
+}
+
+/* HERO LINKS */
+.hero a,
+.mind-banner a {
+    color: #55DFFF !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 # =====================================================
 # LANGUAGE
 # =====================================================
