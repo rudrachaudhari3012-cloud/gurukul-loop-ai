@@ -904,7 +904,6 @@ if st.session_state.user is None:
     <p>""" + T['tagline'] + """<br>""" + T['intro'] + """</p>
 </div>
 """, unsafe_allow_html=True)
-
 st.markdown("### Welcome to your learning studio")
 
 login_tab, register_tab = st.tabs([
@@ -915,27 +914,28 @@ login_tab, register_tab = st.tabs([
 with login_tab:
     with st.form("login_form"):
         login_user = st.text_input(T["username"])
+
         login_pass = st.text_input(
-            T["password"], type="password"
+            T["password"],
+            type="password"
         )
+
         login_go = st.form_submit_button(
-                T["login"],
-                type="primary",
-                use_container_width=True
-            )
+            T["login"],
+            type="primary",
+            use_container_width=True
+        )
 
-        if login_go:
-            found = authenticate(login_user, login_pass)
+    if login_go:
+        found = authenticate(login_user, login_pass)
 
-            if found:
-                st.session_state.user = dict(found)
-                st.rerun()
-            else:
-                st.error(
-                    "Incorrect username or password."
-                )
-
-    with register_tab:
+        if found:
+            st.session_state.user = dict(found)
+            st.rerun()
+        else:
+            st.error("Incorrect username or password.")
+            
+   with register_tab:
         with st.form("register_form"):
 
             full_name = st.text_input(T["name"])
