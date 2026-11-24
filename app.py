@@ -855,9 +855,8 @@ with head_right:
 T = TEXT[st.session_state.language]
 
 if st.session_state.user is None:
-
-st.markdown("""
-<style>
+      st.markdown("""
+      <style>
 
 /* AB SCHOOL LOOP AI - PREMIUM HERO */
 .hero {
