@@ -6,6 +6,23 @@ import sqlite3
 import hashlib
 import secrets
 import io
+import streamlit as st
+import os
+
+# લોગો ફાઇલનું નામ (જો તમે નામ બદલીને logo.jpg રાખ્યું હોય તો અહીં logo.jpg લખો)
+LOGO_PATH = "AB SCHOOL LOOP LOGO.jpg"
+
+st.set_page_config(
+    page_title="AB SCHOOL LOOP AI",
+    page_icon=LOGO_PATH if os.path.exists(LOGO_PATH) else "🎓",
+    layout="wide"
+)
+
+# ડેશબોર્ડના સાઇડબાર અને ટોપ પર લોગો બતાવવા માટે
+if os.path.exists(LOGO_PATH):
+    st.logo(LOGO_PATH)
+    st.sidebar.image(LOGO_PATH, use_container_width=True)
+
 from supabase import create_client
 from health_power import render_health_power
 from datetime import date, datetime
