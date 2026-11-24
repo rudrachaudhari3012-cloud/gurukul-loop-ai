@@ -958,14 +958,13 @@ with register_tab:
                     "Not applicable"
                 ]
             )
-
-            register_go = st.form_submit_button(
+          register_go = st.form_submit_button(
                 "✅ " + T["register"],
                 type="primary",
                 use_container_width=True
             )
 
-        if register_go:
+          if register_go:
 
             if not all([
                 full_name.strip(),
