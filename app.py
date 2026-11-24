@@ -7,7 +7,7 @@ import hashlib
 import secrets
 import io
 import base64
-from pathlib import path
+from pathlib import Path
 import base64
 
 def get_base64_image(image_path):
