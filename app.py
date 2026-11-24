@@ -950,11 +950,10 @@ with register_tab:
             T["role"],
             [T["student"], T["teacher"]]
         )
-
-            grade = st.selectbox(
+        grade = st.selectbox(
                 T["class"],
                 [
-                    "Class 8", "Class 9", "Class 10",
+                     "Class 9", "Class 10",
                     "Class 11", "Class 12",
                     "Not applicable"
                 ]
