@@ -1138,7 +1138,7 @@ if page == T["overview"]:
     </style>
     """, unsafe_allow_html=True)
 
-      # -------------------------------------------------
+    # -------------------------------------------------
     # HERO BANNER
     # -------------------------------------------------
 
@@ -1162,8 +1162,9 @@ if page == T["overview"]:
         <p style="font-size:13px;">
             STUDENT GROWTH · SMART LEARNING · MIND POWER
         </p>
-        <div class="hero-art">🧠</div>
-    </div>
+        <div class="hero-art">
+            <img src="data:image/png;base64,{logo_base64}" style="width:90px; height:auto; border-radius:12px;">
+        </div>
     """, unsafe_allow_html=True)
    
     # -------------------------------------------------
