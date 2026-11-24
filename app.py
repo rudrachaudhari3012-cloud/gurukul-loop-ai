@@ -935,7 +935,6 @@ with login_tab:
             st.rerun()
         else:
             st.error("Incorrect username or password.")
-
 with register_tab:
     with st.form("register_form"):
         full_name = st.text_input(T["name"])
@@ -950,20 +949,21 @@ with register_tab:
             T["role"],
             [T["student"], T["teacher"]]
         )
-        grade = st.selectbox(
-                T["class"],
-                [
-                     "Class 9", "Class 10",
-                    "Class 11", "Class 12",
-                    "Not applicable"
-                ]
-            )
-          register_go = st.form_submit_button(
-                "✅ " + T["register"],
-                type="primary",
-                use_container_width=True
-            )
 
+        grade = st.selectbox(
+            T["class"],
+            [
+                "Class 9", "Class 10",
+                "Class 11", "Class 12",
+                "Not applicable"
+            ]
+        )
+
+        register_go = st.form_submit_button(
+            "✅ " + T["register"],
+            type="primary",
+            use_container_width=True
+        )
           if register_go:
 
             if not all([
