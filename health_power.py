@@ -448,17 +448,17 @@ def render_health_power(st, student_id="demo_student"):
             st.info(message)
         st.markdown("""
         **Logic of this system:" or "This system's logic:**
-        1. Student-entered records વાંચે છે.
-        2. Recent history અને simple patterns તપાસે છે.
-        3. Rule-based personalized suggestions પસંદ કરે છે.
-        4. નવી entries ઉમેરાય ત્યારે insights ફરી બનાવે છે.
+        1. Reads student-entered records.
+        2. Checks recent history and simple patterns.
+        3. Selects rule-based personalized suggestions.
+        4. Regenerates insights when new entries are added.
         """)
-        st.caption("આ Rule-Based AI prototype છે; trained machine-learning model હોવાનો દાવો કરતું નથી.")
+        st.caption("This is a Rule-Based AI prototype; it does not claim to be a trained machine-learning model.")
 
     # ---------------- GROWTH REPORT ----------------
     with tabs[5]:
         st.subheader("📊 Student Growth Report")
-        st.write("છેલ્લા 7 દિવસના દાખલ કરેલા records નો સારાંશ.")
+        st.write("Summary of records entered in the last 7 days.")
         r1, r2, r3 = st.columns(3)
         r1.metric("Activity records", len(activity))
         r2.metric("Sleep records", len(sleep))
