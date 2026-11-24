@@ -1263,7 +1263,80 @@ if page == T["overview"]:
         color:#273a69;
         font-size:17px;
         font-weight:700;
-    }
+    } 
+    /* =====================================
+   AB SCHOOL LOOP AI - TEXT VISIBILITY
+   ===================================== */
+
+/* HERO SECTION */
+.hero, .mind-banner {
+    background: rgba(3, 15, 48, 0.88) !important;
+    border: 1px solid #168DFF !important;
+    box-shadow: 0 0 22px rgba(0, 140, 255, 0.35) !important;
+}
+
+.hero h1, .mind-banner h1,
+.hero p, .mind-banner p,
+.hero span, .mind-banner span {
+    color: #FFFFFF !important;
+}
+
+/* ALL MAIN TEXT */
+[data-testid="stMain"] p,
+[data-testid="stMain"] label,
+[data-testid="stMain"] li,
+[data-testid="stMain"] span {
+    color: #EAF4FF;
+}
+
+/* SECTION HEADINGS */
+.section-title,
+.kicker,
+.stMarkdown h1,
+.stMarkdown h2,
+.stMarkdown h3 {
+    color: #FFFFFF !important;
+    text-shadow: 0 0 10px rgba(0, 160, 255, 0.4);
+}
+
+/* METRIC CARDS */
+[data-testid="stMetric"] {
+    background: rgba(3, 18, 52, 0.92) !important;
+    border: 1px solid #168DFF !important;
+}
+
+[data-testid="stMetricLabel"],
+[data-testid="stMetricValue"],
+[data-testid="stMetricDelta"] {
+    color: #FFFFFF !important;
+}
+
+/* PROGRESS AND FOCUS CARDS */
+.tip-card,
+.activity-card,
+.small-note {
+    background: rgba(4, 20, 55, 0.92) !important;
+    color: #FFFFFF !important;
+    border: 1px solid #168DFF !important;
+}
+
+.tip-card *,
+.activity-card *,
+.small-note * {
+    color: #FFFFFF !important;
+}
+
+/* CONTAINERS */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background: rgba(3, 15, 45, 0.88) !important;
+    border: 1px solid rgba(0, 170, 255, 0.7) !important;
+}
+
+/* INPUT TEXT */
+.stTextInput input,
+.stTextArea textarea {
+    color: #FFFFFF !important;
+}
     </style>
     """, unsafe_allow_html=True)
 
