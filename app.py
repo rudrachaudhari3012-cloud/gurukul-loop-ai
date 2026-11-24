@@ -2376,7 +2376,7 @@ with st.expander(
 
 st.markdown("""
 <div class="footer">
-    AB SCHOOL LOOP AI · MIND POWER EDITION<br>
+    AB SCHOOL LOOP AI <br>
     Student Learning Support Prototype<br>
     Learn → Recall → Reflect → Improve
 </div>
