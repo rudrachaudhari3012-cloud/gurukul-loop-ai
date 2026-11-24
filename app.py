@@ -918,8 +918,7 @@ with login_tab:
         login_pass = st.text_input(
             T["password"], type="password"
         )
-
-            login_go = st.form_submit_button(
+        login_go = st.form_submit_button(
                 T["login"],
                 type="primary",
                 use_container_width=True
