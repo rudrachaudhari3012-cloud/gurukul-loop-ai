@@ -221,7 +221,7 @@ def _build_recommendations(activity_df, sleep_df, food_df, habit_df):
         recs.append(("🥗 Smart Food", "Keep learning about different foods and nutrients. Do not consider any single food completely good or bad."))
 
     if habit_df.empty:
-        recs.append(("🎮 Habit Games", "આજનું એક સરળ mission પસંદ કરો. નાની આદતો સતત વિકસાવવી મહત્વપૂર્ણ છે."))
+        recs.append(("🎮 Habit Games", "Choose one simple mission for today. Developing small habits consistently is important."))
     else:
         recs.append(("🎮 Habit Games", "તમારી missions ની પ્રગતિ સારી રીતે નોંધાઈ રહી છે. પોતાની જૂની પ્રગતિ સાથે સરખામણી કરો, બીજા વિદ્યાર્થીઓ સાથે નહીં."))
 
