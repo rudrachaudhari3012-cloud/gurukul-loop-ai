@@ -6,7 +6,13 @@ import sqlite3
 import hashlib
 import secrets
 import io
+import base64
 
+    def get_base64_image(image_path):
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+
+    logo_base64 = get_base64_image("logo.png")  
 
 from supabase import create_client
 from health_power import render_health_power
