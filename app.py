@@ -447,6 +447,148 @@ hr {
 
 </style>
 """, unsafe_allow_html=True)
+# ==========================================
+# PREMIUM DARK NEURAL NETWORK THEME
+# ==========================================
+
+st.markdown("""
+<style>
+
+/* MAIN BACKGROUND */
+.stApp {
+    background-color: #020817 !important;
+    color: #F4F8FF !important;
+}
+
+/* MAIN CONTENT */
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"],
+.main,
+.block-container {
+    background: transparent !important;
+}
+
+/* SIDEBAR */
+[data-testid="stSidebar"] {
+    background: linear-gradient(
+        180deg,
+        #020817,
+        #071B3A,
+        #090D29
+    ) !important;
+    border-right: 1px solid #087EFF;
+}
+
+[data-testid="stSidebar"] * {
+    color: #F4F8FF !important;
+}
+
+/* HERO SECTION */
+.hero,
+.mind-banner {
+    background: linear-gradient(
+        120deg,
+        rgba(0, 65, 150, 0.85),
+        rgba(35, 20, 100, 0.85),
+        rgba(0, 35, 90, 0.9)
+    ) !important;
+    border: 1px solid #168DFF !important;
+    border-radius: 22px !important;
+    box-shadow: 0 0 25px rgba(0, 130, 255, 0.3);
+}
+
+.hero h1,
+.mind-banner h1,
+.hero p,
+.mind-banner p {
+    color: #FFFFFF !important;
+}
+
+/* GLASS CARDS */
+[data-testid="stVerticalBlockBorderWrapper"],
+[data-testid="stMetric"] {
+    background: rgba(4, 19, 55, 0.88) !important;
+    border: 1px solid rgba(0, 150, 255, 0.65) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 0 18px rgba(0, 100, 255, 0.2);
+    backdrop-filter: blur(12px);
+}
+
+/* METRIC TEXT */
+[data-testid="stMetric"] * {
+    color: #FFFFFF !important;
+}
+
+/* ALL MAIN TEXT */
+.stApp p,
+.stApp label,
+.stMarkdown,
+.stMarkdown p,
+[data-testid="stWidgetLabel"] {
+    color: #EAF3FF !important;
+}
+
+/* HEADINGS */
+h1, h2, h3, h4 {
+    color: #FFFFFF !important;
+    text-shadow: 0 0 12px rgba(0, 150, 255, 0.5);
+}
+
+/* BUTTONS */
+.stButton > button,
+.stDownloadButton > button,
+[data-testid="stFormSubmitButton"] > button {
+    background: linear-gradient(
+        100deg,
+        #006EFF,
+        #663BFF
+    ) !important;
+    color: white !important;
+    border: 1px solid #35CFFF !important;
+    border-radius: 12px !important;
+    box-shadow: 0 0 14px rgba(0, 130, 255, 0.4);
+}
+
+/* INPUTS */
+.stTextInput input,
+.stTextArea textarea,
+[data-baseweb="select"] > div {
+    background: #0A1B3D !important;
+    color: #FFFFFF !important;
+    border: 1px solid #168DFF !important;
+}
+
+/* TABS */
+.stTabs [data-baseweb="tab-list"] {
+    background: rgba(5, 20, 55, 0.9) !important;
+}
+
+.stTabs [aria-selected="true"] {
+    background: #174B9B !important;
+    color: white !important;
+}
+
+/* HEADER */
+[data-testid="stHeader"] {
+    background: transparent !important;
+}
+
+/* SMALL CARDS */
+.tip-card,
+.activity-card,
+.small-note {
+    background: rgba(5, 25, 65, 0.9) !important;
+    color: #F4F8FF !important;
+    border: 1px solid #176BCB !important;
+}
+
+/* FOOTER */
+.footer {
+    color: #B8D7FF !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 # =====================================================
 # LANGUAGE
