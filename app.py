@@ -1165,7 +1165,7 @@ st.markdown(f"""
         <div class="hero-art">🧠</div>
     </div>
     """, unsafe_allow_html=True)
-
+   
     # -------------------------------------------------
     # DASHBOARD METRICS
     # -------------------------------------------------
