@@ -1428,7 +1428,7 @@ if page == T["overview"]:
 
     st.markdown("""
     <div class="footer">
-        AB SCHOOL LOOP AI · FUTURE LEARNING HUB<br>
+        AB SCHOOL LOOP AI <br>
         LEARN → GROW → THRIVE
     </div>
     """, unsafe_allow_html=True)
