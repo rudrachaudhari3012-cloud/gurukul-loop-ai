@@ -408,72 +408,6 @@ hr {
 </style>
 """, unsafe_allow_html=True)
 
-# ==========================================
-# PREMIUM DARK GLASS HERO OVERRIDE
-# ==========================================
-
-st.markdown("""
-<style>
-
-/* PREMIUM DARK HERO BACKGROUND */
-.hero,
-.mind-banner {
-    background: linear-gradient(
-        115deg,
-        #101D36 0%,
-        #142A4B 50%,
-        #201D43 100%
-    ) !important;
-
-    border: 1px solid rgba(91, 190, 255, 0.55) !important;
-    border-radius: 24px !important;
-
-    box-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.30),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-}
-
-/* HERO TITLE */
-.hero h1,
-.mind-banner h1 {
-    color: #FFFFFF !important;
-    text-shadow: none !important;
-    font-weight: 800 !important;
-}
-
-/* HERO DESCRIPTION */
-.hero p,
-.mind-banner p {
-    color: #E3EDFF !important;
-}
-
-/* HERO TAGLINE */
-.hero .eyebrow,
-.mind-banner .eyebrow {
-    color: #55DFFF !important;
-}
-
-/* LEARN GROW THRIVE */
-.hero *,
-.mind-banner * {
-    text-shadow: none;
-}
-
-/* LOGO IMAGE */
-.hero img,
-.mind-banner img {
-    border-radius: 18px;
-}
-
-/* HERO LINKS */
-.hero a,
-.mind-banner a {
-    color: #55DFFF !important;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
 # =====================================================
 # LANGUAGE
 # =====================================================
@@ -922,15 +856,57 @@ T = TEXT[st.session_state.language]
 
 if st.session_state.user is None:
 
-    st.markdown(f"""
-    <div class="hero">
-        <div class="eyebrow">STUDENT GROWTH · LEARNING SCIENCE</div>
-        <h1>🎓 AB SCHOOL LOOP AI</h1>
-        <p>{T['tagline']}<br>{T['intro']}</p>
-    </div>
-    """, unsafe_allow_html=True)
+st.markdown("""
+<style>
 
-    st.markdown("### Welcome to your learning studio")
+/* AB SCHOOL LOOP AI - PREMIUM HERO */
+.hero {
+    background: linear-gradient(
+        120deg,
+        #101D36 0%,
+        #142A4B 55%,
+        #211D43 100%
+    ) !important;
+
+    border: 1px solid rgba(72, 210, 255, 0.55) !important;
+    border-radius: 24px !important;
+
+    padding: 35px !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.30) !important;
+}
+
+/* MAIN TITLE */
+.hero h1 {
+    color: #FFFFFF !important;
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+    text-shadow: none !important;
+}
+
+/* DESCRIPTION */
+.hero p {
+    color: #EAF2FF !important;
+    font-size: 1.05rem !important;
+    line-height: 1.8 !important;
+}
+
+/* SMALL HEADING */
+.hero .eyebrow {
+    color: #55DFFF !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.5px !important;
+}
+
+</style>
+
+<div class="hero">
+    <div class="eyebrow">STUDENT GROWTH · LEARNING SCIENCE</div>
+    <h1>🎓 AB SCHOOL LOOP AI</h1>
+    <p>""" + T['tagline'] + """<br>""" + T['intro'] + """</p>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("### Welcome to your learning studio")
 
     login_tab, register_tab = st.tabs([
         "🔐 " + T["login"],
