@@ -51,20 +51,29 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 ) 
+# ==========================================
+# AB SCHOOL LOOP AI - PREMIUM NEURAL THEME
+# ==========================================
+
 bg_path = Path(__file__).parent / "background.png"
 
 if bg_path.exists():
-    bg = base64.b64encode(bg_path.read_bytes()).decode()
+
+    bg = base64.b64encode(
+        bg_path.read_bytes()
+    ).decode()
 
     st.markdown(f"""
     <style>
+
+    /* MAIN BACKGROUND */
     .stApp {{
         background:
-        linear-gradient(
-            rgba(3, 7, 25, 0.15),
-            rgba(3, 7, 25, 0.15)
-        ),
-        url("data:image/png;base64,{bg}");
+            linear-gradient(
+                rgba(2, 5, 22, 0.25),
+                rgba(2, 5, 22, 0.25)
+            ),
+            url("data:image/png;base64,{bg}");
 
         background-size: cover !important;
         background-position: center !important;
@@ -72,15 +81,98 @@ if bg_path.exists():
         background-attachment: fixed !important;
     }}
 
-    [data-testid="stAppViewContainer"] {{
+    /* MAIN CONTENT */
+    [data-testid="stAppViewContainer"],
+    [data-testid="stMain"],
+    .main,
+    .block-container {{
         background: transparent !important;
     }}
 
+    /* SIDEBAR */
+    [data-testid="stSidebar"] {{
+        background: linear-gradient(
+            180deg,
+            #020817,
+            #071B3A,
+            #06112B
+        ) !important;
+
+        border-right: 1px solid #008CFF;
+        box-shadow: 5px 0 25px rgba(0, 140, 255, 0.25);
+    }}
+
+    /* GLASS CARDS */
+    [data-testid="stVerticalBlockBorderWrapper"] {{
+        background: rgba(5, 20, 55, 0.72) !important;
+        border: 1px solid rgba(0, 180, 255, 0.65) !important;
+        border-radius: 18px !important;
+        box-shadow:
+            0 0 15px rgba(0, 140, 255, 0.25),
+            inset 0 0 15px rgba(80, 100, 255, 0.08);
+        backdrop-filter: blur(15px);
+    }}
+
+    /* METRIC CARDS */
+    [data-testid="stMetric"] {{
+        background: rgba(5, 20, 55, 0.75);
+        border: 1px solid #087EFF;
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 0 15px rgba(0, 120, 255, 0.25);
+    }}
+
+    /* BUTTONS */
+    .stButton > button {{
+        background: linear-gradient(
+            100deg,
+            #006EFF,
+            #653BFF
+        ) !important;
+
+        color: white !important;
+        border: 1px solid #36D9FF !important;
+        border-radius: 12px !important;
+        box-shadow: 0 0 15px rgba(0, 140, 255, 0.5);
+        transition: 0.3s ease;
+    }}
+
+    .stButton > button:hover {{
+        box-shadow: 0 0 25px #008CFF;
+        border-color: #B35CFF !important;
+        transform: translateY(-2px);
+    }}
+
+    /* TEXT */
+    .stApp,
+    .stApp p,
+    .stApp label {{
+        color: #F1F7FF;
+    }}
+
+    h1, h2, h3 {{
+        color: #FFFFFF !important;
+        text-shadow: 0 0 12px rgba(0, 170, 255, 0.45);
+    }}
+
+    /* HEADER */
     [data-testid="stHeader"] {{
         background: transparent !important;
     }}
+
+    /* INPUT FIELDS */
+    .stTextInput input,
+    .stTextArea textarea,
+    .stSelectbox div[data-baseweb="select"] {{
+        background: rgba(5, 20, 50, 0.85) !important;
+        color: white !important;
+        border: 1px solid #168DFF !important;
+        border-radius: 10px !important;
+    }}
+
     </style>
     """, unsafe_allow_html=True)
+
 else:
     st.error("background.png not found!")
 # =====================================================
