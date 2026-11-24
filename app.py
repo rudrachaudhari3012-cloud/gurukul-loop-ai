@@ -196,10 +196,8 @@ st.markdown("""
 }
 
 .stApp {
-    background:
-      radial-gradient(ellipse at 75% 5%, #dce9ff 0%, transparent 35%),
-      linear-gradient(135deg,#f1f5ff,#ffffff 55%,#f3edff);
-    color: var(--ink);
+    background-color: transparent !important;
+    color: #F1F7FF !important;
     font-family: Inter, sans-serif;
 }
 
