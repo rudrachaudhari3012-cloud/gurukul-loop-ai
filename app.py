@@ -1362,227 +1362,239 @@ if page == T["mind"]:
     render_mind_power()
 
 
+
 # =====================================================
 # PREMIUM HOME DASHBOARD
-# FUTURE LEARNING HUB
+# AB SCHOOL LOOP AI - MIDNIGHT AURORA THEME
 # =====================================================
 
 if page == T["overview"]:
 
     st.markdown("""
     <style>
+
+    /* HOME HERO */
     .home-hero {
         background:
-        radial-gradient(circle at 15% 50%,
-        rgba(36,194,255,.30),transparent 30%),
-        linear-gradient(105deg,#d9eaff,#e9e7ff 55%,#ffe8ef);
-        border:1px solid #cbdcff;
-        border-radius:22px;
-        padding:28px;
-        min-height:205px;
-        box-shadow:0 10px 30px rgba(70,100,180,.13);
-        position:relative;
-        overflow:hidden;
+            radial-gradient(
+                circle at 15% 50%,
+                rgba(36,194,255,.20),
+                transparent 35%
+            ),
+            linear-gradient(
+                110deg,
+                #081B38,
+                #151B46 55%,
+                #092D49
+            ) !important;
+
+        border: 1px solid rgba(72,229,255,.65);
+        border-radius: 22px;
+        padding: 28px;
+        min-height: 225px;
+        box-shadow: 0 10px 30px rgba(0,120,255,.20);
+        position: relative;
+        overflow: hidden;
     }
 
+    /* HERO TITLE */
     .home-hero h1 {
-        color:#101b42;
-        font-size:clamp(25px,3vw,38px);
-        font-weight:850;
-        margin:12px 0 5px;
+        color: #FFFFFF !important;
+        font-size: clamp(25px,3vw,38px);
+        font-weight: 850;
+        margin: 12px 0 5px;
+        text-shadow: 0 0 15px rgba(0,160,255,.35);
+    }
+
+    .home-hero h2 {
+        color: #48E5FF !important;
+        font-size: 25px;
+        font-weight: 850;
+        margin: 5px 0;
     }
 
     .home-hero p {
-        color:#344777;
-        font-size:16px;
-        margin:5px 0;
+        color: #DCEAFF !important;
+        font-size: 15px;
+        margin: 7px 0;
     }
 
+    /* WELCOME LABEL */
     .hero-label {
-        display:inline-block;
-        background:rgba(255,255,255,.72);
-        color:#7544db;
-        padding:7px 15px;
-        border-radius:30px;
-        font-weight:800;
-        font-size:13px;
+        display: inline-block;
+        background: rgba(0,140,255,.16);
+        color: #55DFFF !important;
+        border: 1px solid rgba(72,229,255,.45);
+        padding: 7px 15px;
+        border-radius: 30px;
+        font-weight: 800;
+        font-size: 13px;
     }
 
+    /* LOGO */
     .hero-art {
-        position:absolute;
-        right:25px;
-        top:25px;
-        font-size:95px;
-        filter:drop-shadow(0 8px 12px rgba(80,80,200,.2));
+        position: absolute;
+        right: 25px;
+        top: 25px;
+        font-size: 95px;
+        filter: drop-shadow(0 8px 15px rgba(0,150,255,.30));
     }
 
+    .hero-art img {
+        width: 230px;
+        height: auto;
+        max-height: 180px;
+        object-fit: contain;
+        border-radius: 18px;
+    }
+
+    /* SECTION TITLES */
     .home-section {
-        color:#101b42;
-        font-size:21px;
-        font-weight:800;
-        margin:8px 0 13px;
+        color: #FFFFFF !important;
+        font-size: 21px;
+        font-weight: 800;
+        margin: 8px 0 13px;
+        text-shadow: 0 0 10px rgba(0,150,255,.25);
     }
 
+    /* QUICK ACCESS CARDS */
     .quick-card {
-        padding:17px 12px;
-        border-radius:17px;
-        min-height:105px;
-        border:1px solid rgba(120,140,200,.18);
-        transition:all .2s ease;
+        padding: 17px 12px;
+        border-radius: 17px;
+        min-height: 105px;
+        border: 1px solid rgba(72,160,255,.45);
+        background: rgba(10,35,72,.95) !important;
+        transition: all .2s ease;
     }
 
     .quick-card:hover {
-        transform:translateY(-3px);
-        box-shadow:0 8px 20px rgba(90,100,180,.15);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,130,255,.22);
     }
 
     .quick-icon {
-        font-size:30px;
-        margin-bottom:8px;
+        font-size: 30px;
+        margin-bottom: 8px;
     }
 
     .quick-title {
-        color:#15234d;
-        font-weight:800;
-        font-size:15px;
+        color: #FFFFFF !important;
+        font-weight: 800;
+        font-size: 15px;
     }
 
     .quick-sub {
-        color:#53668d;
-        font-size:12px;
+        color: #C6D9F5 !important;
+        font-size: 12px;
     }
 
+    /* TODAY FOCUS */
     .focus-item {
-        background:linear-gradient(100deg,#f0edff,#edf3ff);
-        border-radius:12px;
-        padding:10px 13px;
-        margin:8px 0;
-        color:#18264d;
-        border:1px solid #e4e8ff;
+        background: linear-gradient(
+            100deg,
+            rgba(12,42,78,.95),
+            rgba(30,30,75,.95)
+        ) !important;
+
+        border-radius: 12px;
+        padding: 10px 13px;
+        margin: 8px 0;
+        color: #FFFFFF !important;
+        border: 1px solid rgba(72,160,255,.40);
     }
 
+    /* REMEMBER CARD */
     .remember-card {
-        background:linear-gradient(120deg,#fff0d8,#ffe7ed);
-        border:1px solid #ffe3c1;
-        border-radius:18px;
-        padding:20px;
-        min-height:120px;
+        background: linear-gradient(
+            120deg,
+            #102B52,
+            #25204F
+        ) !important;
+
+        border: 1px solid #48E5FF;
+        border-radius: 18px;
+        padding: 20px;
+        min-height: 120px;
+        box-shadow: 0 5px 20px rgba(0,120,255,.18);
     }
 
     .remember-card h3 {
-        color:#17264d;
-        font-size:18px;
+        color: #FFFFFF !important;
+        font-size: 18px;
     }
 
     .remember-card p {
-        color:#273a69;
-        font-size:17px;
-        font-weight:700;
-    } 
-    /* =====================================
-   AB SCHOOL LOOP AI - TEXT VISIBILITY
-   ===================================== */
+        color: #DCEAFF !important;
+        font-size: 17px;
+        font-weight: 700;
+    }
 
-/* HERO SECTION */
-.hero, .mind-banner {
-    background: rgba(3, 15, 48, 0.88) !important;
-    border: 1px solid #168DFF !important;
-    box-shadow: 0 0 22px rgba(0, 140, 255, 0.35) !important;
-}
+    /* FOOTER */
+    .footer {
+        color: #AFC4E8 !important;
+        text-align: center;
+    }
 
-.hero h1, .mind-banner h1,
-.hero p, .mind-banner p,
-.hero span, .mind-banner span {
-    color: #FFFFFF !important;
-}
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 768px) {
 
-/* ALL MAIN TEXT */
-[data-testid="stMain"] p,
-[data-testid="stMain"] label,
-[data-testid="stMain"] li,
-[data-testid="stMain"] span {
-    color: #EAF4FF;
-}
+        .home-hero {
+            padding: 20px !important;
+            min-height: 200px;
+        }
 
-/* SECTION HEADINGS */
-.section-title,
-.kicker,
-.stMarkdown h1,
-.stMarkdown h2,
-.stMarkdown h3 {
-    color: #FFFFFF !important;
-    text-shadow: 0 0 10px rgba(0, 160, 255, 0.4);
-}
+        .hero-art {
+            position: relative;
+            right: auto;
+            top: auto;
+            margin-top: 15px;
+            text-align: center;
+        }
 
-/* METRIC CARDS */
-[data-testid="stMetric"] {
-    background: rgba(3, 18, 52, 0.92) !important;
-    border: 1px solid #168DFF !important;
-}
+        .hero-art img {
+            width: 150px;
+            max-height: 120px;
+        }
 
-[data-testid="stMetricLabel"],
-[data-testid="stMetricValue"],
-[data-testid="stMetricDelta"] {
-    color: #FFFFFF !important;
-}
+    }
 
-/* PROGRESS AND FOCUS CARDS */
-.tip-card,
-.activity-card,
-.small-note {
-    background: rgba(4, 20, 55, 0.92) !important;
-    color: #FFFFFF !important;
-    border: 1px solid #168DFF !important;
-}
-
-.tip-card *,
-.activity-card *,
-.small-note * {
-    color: #FFFFFF !important;
-}
-
-/* CONTAINERS */
-[data-testid="stVerticalBlockBorderWrapper"] {
-    background: rgba(3, 15, 45, 0.88) !important;
-    border: 1px solid rgba(0, 170, 255, 0.7) !important;
-}
-
-/* INPUT TEXT */
-.stTextInput input,
-.stTextArea textarea {
-    color: #FFFFFF !important;
-}
     </style>
     """, unsafe_allow_html=True)
 
     # -------------------------------------------------
     # HERO BANNER
     # -------------------------------------------------
+
     st.markdown(f"""
     <div class="home-hero">
-    <div class="hero-label">
-        🎓 WELCOME BACK, {user['full_name'].upper()}!
+
+        <div class="hero-label">
+            🎓 WELCOME BACK, {user['full_name'].upper()}!
+        </div>
+
+        <h1>AB SCHOOL LOOP AI</h1>
+
+        <h2>
+            Learn &nbsp; • &nbsp;
+            <span style="color:#48E5FF;">Grow</span>
+            &nbsp; • &nbsp;
+            <span style="color:#A78BFA;">Thrive</span>
+        </h2>
+
+        <p>
+            Your Smart Learning Partner for a Brighter Future ✨
+        </p>
+
+        <p style="font-size:13px;">
+            STUDENT GROWTH · SMART LEARNING · MIND POWER
+        </p>
+
+        <div class="hero-art">
+            <img src="data:image/png;base64,{logo_base64}">
+        </div>
+
     </div>
-    <h1>AB SCHOOL LOOP AI</h1>
-    <h2 style="
-        color:#3978ee;
-        font-size:25px;
-        font-weight:850;
-        margin:5px 0;">
-        Learn &nbsp; • &nbsp;
-        <span style="color:#08a9d9;">Grow</span>
-        &nbsp; • &nbsp;
-        <span style="color:#9250ed;">Thrive</span>
-    </h2>
-    <p>Your Smart Learning Partner for a Brighter Future ✨</p>
-    <p style="font-size:13px;">
-        STUDENT GROWTH · SMART LEARNING · MIND POWER
-    </p>
-    <div class="hero-art">
-        <img src="data:image/png;base64,{logo_base64}" style="width:280px; height:auto; border-radius:20px;">
-    </div>
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
     # -------------------------------------------------
     # DASHBOARD METRICS
