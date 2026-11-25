@@ -921,29 +921,59 @@ avg_score = (
 # REUSABLE PLOT STYLE
 # =====================================================
 
+
 def style_chart(fig):
     fig.update_layout(
-        paper_bgcolor="rgba(255,255,255,0)",
-        plot_bgcolor="rgba(255,255,255,0)",
+        template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(15,27,48,0.65)",
+
         font=dict(
             family="Inter",
-            color="#EAF4FF"
+            color="#EAF2FF",
+            size=13
         ),
+
         title_font=dict(
             color="#FFFFFF",
-            size=17
+            size=20
         ),
-        margin=dict(l=15, r=15, t=55, b=15),
-        xaxis=dict(
-            gridcolor="rgba(160,190,230,.22)",
-            zerolinecolor="rgba(160,190,230,.28)"
+
+        colorway=[
+            "#3B82F6",
+            "#22D3EE",
+            "#A78BFA",
+            "#34D399",
+            "#F472B6",
+            "#FBBF24"
+        ],
+
+        margin=dict(l=20, r=20, t=55, b=20),
+
+        legend=dict(
+            bgcolor="rgba(0,0,0,0)",
+            font=dict(color="#CBD5E1")
         ),
-        yaxis=dict(
-            gridcolor="rgba(160,190,230,.22)",
-            zerolinecolor="rgba(160,190,230,.28)"
+
+        hoverlabel=dict(
+            bgcolor="#14233B",
+            font_color="#FFFFFF",
+            bordercolor="#22D3EE"
         )
     )
+
+    fig.update_xaxes(
+        showgrid=True,
+        gridcolor="rgba(148,163,184,0.12)"
+    )
+
+    fig.update_yaxes(
+        showgrid=True,
+        gridcolor="rgba(148,163,184,0.12)"
+    )
+
     return fig
+
 # =====================================================
 # HEALTH POWER AI
 # =====================================================
