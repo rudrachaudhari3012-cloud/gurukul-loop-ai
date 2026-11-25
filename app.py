@@ -73,11 +73,15 @@ if bg_path.exists():
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
     :root {{
-        --text: #FFFFFF;
-        --muted: #D6E4F5;
-        --cyan: #48E5FF;
-        --blue: #168DFF;
-    }}
+    --bg: #0B1220;
+    --card: #14233B;
+    --text: #FFFFFF;
+    --muted: #CBD5E1;
+    --cyan: #22D3EE;
+    --blue: #3B82F6;
+    --purple: #8B5CF6;
+    --border: #29415F;
+}}
 
     /* BACKGROUND */
     .stApp {{
