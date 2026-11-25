@@ -971,18 +971,20 @@ if page == T["overview"]:
     st.markdown("""
     <style>
     .home-hero {
-        background:
-        radial-gradient(circle at 15% 50%,
-        rgba(36,194,255,.30),transparent 30%),
-        linear-gradient(115deg,#07152F 0%,#102B55 52%,#211D43 100%);
-        border:1px solid rgba(72,229,255,.55);
-        border-radius:22px;
-        padding:28px;
-        min-height:205px;
-        box-shadow:0 14px 38px rgba(0,0,0,.34),0 0 24px rgba(22,141,255,.12);
-        position:relative;
-        overflow:hidden;
-    }
+    background: linear-gradient(
+        115deg,
+        #0B1220 0%,
+        #14233B 55%,
+        #1B3152 100%
+    );
+    border: 1px solid #22D3EE;
+    border-radius: 22px;
+    padding: 28px;
+    min-height: 205px;
+    box-shadow: 0 14px 38px rgba(0,0,0,.25);
+    position: relative;
+    overflow: hidden;
+}
 
     .home-hero h1 {
         color:#FFFFFF !important;
