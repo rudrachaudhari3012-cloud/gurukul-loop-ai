@@ -1813,6 +1813,7 @@ st.markdown(hero_html, unsafe_allow_html=True)
 
     st.write("")
 
+ 
     # -------------------------------------------------
     # BOTTOM REMEMBER SECTION
     # -------------------------------------------------
@@ -1845,35 +1846,37 @@ st.markdown(hero_html, unsafe_allow_html=True)
 
     with r2:
 
-        remember_html = """
-        <remember_html = """
-        <div class="remember-card">
-         <h3>⭐ Remember</h3>
-        </div>
-        """
-            <p>Dream Big.<br>Study Smart!</p>
-            <div style="text-align:right; font-size:25px; color:#48E5FF;">
-                
-            </div>
-        </div>
-        """
+        remember_html = (
+            '<div class="remember-card">'
+            '<h3>⭐ Remember</h3>'
+            '<p>Dream Big.<br>Study Smart!</p>'
+            '<div style="text-align:right; font-size:25px; color:#48E5FF;">'
+            '&#9825;'
+            '</div>'
+            '</div>'
+        )
 
         st.markdown(
             remember_html,
             unsafe_allow_html=True
         )
 
-    footer_html = """
-    <div class="footer">
-        AB SCHOOL LOOP AI <br>
-        LEARN → GROW → THRIVE
-    </div>
-    """
+    # -------------------------------------------------
+    # FOOTER
+    # -------------------------------------------------
+
+    footer_html = (
+        '<div class="footer">'
+        'AB SCHOOL LOOP AI<br>'
+        'LEARN &rarr; GROW &rarr; THRIVE'
+        '</div>'
+    )
 
     st.markdown(
         footer_html,
         unsafe_allow_html=True
     )
+
 
    
 # =====================================================
