@@ -1344,8 +1344,13 @@ if page == T["overview"]:
     # -------------------------------------------------
     # HERO BANNER
     # -------------------------------------------------
-    st.markdown(f"""
-    <div class="home-hero" style="background: transparent !important;">
+
+  st.markdown(f"""
+    <div class="home-hero" style="
+        background: transparent !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+    ">
         <div class="hero-label">
             🎓 WELCOME BACK, {user['full_name'].upper()}!
         </div>
@@ -1369,7 +1374,7 @@ if page == T["overview"]:
         </div>
     </div>
     """, unsafe_allow_html=True)
-   
+
     # -------------------------------------------------
     # DASHBOARD METRICS
     # -------------------------------------------------
