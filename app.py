@@ -1848,7 +1848,7 @@ st.markdown(hero_html, unsafe_allow_html=True)
         st.markdown("""
         <div class="remember-card">
 
-            <h3>⭐ Remember</h3>
+            <h3>'⭐' Remember</h3>
 
             <p>Dream Big.<br>Study Smart!</p>
             <div style="
