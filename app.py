@@ -1184,7 +1184,7 @@ if page == T["overview"]:
         STUDENT GROWTH · SMART LEARNING · MIND POWER
     </p>
     <div class="hero-art">
-        <img src="data:image/png;base64,{logo_base64}" style="width:280px; height:auto; border-radius:20px;">
+        <img src="data:image/png;base64,{logo_base64}" style="width:280px; height:auto; border-radius:50px;">
     </div>
 </div>
 """, unsafe_allow_html=True)
