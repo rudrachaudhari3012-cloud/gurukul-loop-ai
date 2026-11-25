@@ -1066,7 +1066,7 @@ with st.sidebar:
         st.session_state.user = None
         st.rerun()
 
-    st.caption("Prototype v2.0 · Mind Power Edition")
+    st.caption("Prototype v2.0")
 
 
 results = get_user_results(user["id"])
