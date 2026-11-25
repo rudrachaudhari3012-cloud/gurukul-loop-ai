@@ -1853,7 +1853,7 @@ st.markdown(hero_html, unsafe_allow_html=True)
         """
             <p>Dream Big.<br>Study Smart!</p>
             <div style="text-align:right; font-size:25px; color:#48E5FF;">
-                ♡
+                
             </div>
         </div>
         """
