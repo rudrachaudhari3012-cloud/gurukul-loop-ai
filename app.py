@@ -1857,85 +1857,113 @@ elif page == T["quiz"]:
                 st.caption(why)
 
 
+
 # =====================================================
-# ADVANCED AI COACH
+# ADVANCED AI COACH - GOOGLE GEMINI AI
 # =====================================================
 
 elif page == T["coach"]:
 
     st.markdown(
-        '<div class="kicker">04 / PERSONAL STUDY COACH</div>'
-        '<div class="section-title">Advanced AI Coach</div>',
+        '<div class="kicker">04 / PERSONAL AI LEARNING COACH</div>'
+        '<div class="section-title">🤖 Advanced AI Coach</div>',
         unsafe_allow_html=True
     )
 
     st.caption(
-        "Transparent rule-based educational coaching."
+        "Powered by Google Gemini AI · Your Personal Study Assistant"
     )
 
-    target = st.selectbox(
-        "What do you want help with?",
-        [
-            "Understand a hard concept",
-            "Remember formulas",
-            "Prepare for a quiz",
-            "Reduce distractions",
-            "Plan a balanced study session"
-        ]
-    )
+    # Get API key
+    try:
+        api_key = st.secrets["GEMINI_API_KEY"]
+    except Exception:
+        api_key = os.getenv("GEMINI_API_KEY")
 
-    context = st.text_area(
-        "Topic or chapter (optional)",
-        placeholder="Example: Newton's laws"
-    )
+    if not api_key:
+        st.error("Gemini API Key not found. Please configure your API key.")
+        st.stop()
 
-    if st.button(
-        "Generate My Coaching Steps",
-        type="primary"
+    # Create separate chat for each logged-in user
+    if (
+        "ai_chat" not in st.session_state
+        or st.session_state.get("ai_chat_user") != user["id"]
     ):
+        try:
+            st.session_state.ai_chat = create_ai_chat(api_key)
+            st.session_state.ai_chat_user = user["id"]
+            st.session_state.ai_messages = []
 
-        advice = {
-            "Understand a hard concept": [
-                "Read one worked example slowly.",
-                "Explain the concept in your own words.",
-                "Solve two similar questions."
-            ],
-            "Remember formulas": [
-                "Write the formula from memory.",
-                "Check symbols and units.",
-                "Apply it to two practice problems."
-            ],
-            "Prepare for a quiz": [
-                "List three important subtopics.",
-                "Attempt questions without notes.",
-                "Review mistakes and retry."
-            ],
-            "Reduce distractions": [
-                "Choose one small task.",
-                "Keep notifications away during focus time.",
-                "Take a short break after completing it."
-            ],
-            "Plan a balanced study session": [
-                "Choose one 20–25 minute study block.",
-                "Take a short movement and water break.",
-                "Finish with a two-minute recall check."
-            ]
-        }
+        except Exception as e:
+            st.error(f"AI Coach connection error: {e}")
+            st.stop()
 
-        prefix = (
-            "Start with a gentle 10-minute task."
-            if energy == "Low"
-            else "Use one focused block, then review."
-        )
+    # Chat controls
+    col1, col2 = st.columns([3, 1])
 
-        st.success(prefix)
+    with col1:
+        st.markdown("### 🎓 Hello, " + user["full_name"] + "!")
 
-        if context.strip():
-            st.info(f"Focus topic: {context.strip()}")
+    with col2:
+        if st.button("🗑️ Clear Chat"):
+            st.session_state.ai_chat = create_ai_chat(api_key)
+            st.session_state.ai_messages = []
+            st.rerun()
 
-        for i, step in enumerate(advice[target], 1):
-            st.markdown(f"**{i}.** {step}")
+    st.info(
+        "Ask me anything about Maths, Science, English, "
+        "homework, exams or study planning!"
+    )
 
+    # Display previous messages
+    for message in st.session_state.ai_messages:
+
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+    # Student input
+    question = st.chat_input(
+        "💬 Ask your AI Coach anything..."
+    )
+
+    if question:
+
+        # Display student message
+        st.session_state.ai_messages.append({
+            "role": "user",
+            "content": question
+        })
+
+        with st.chat_message("user"):
+            st.markdown(question)
+
+        # Gemini response
+        with st.chat_message("assistant"):
+
+            with st.spinner("🤖 AI Coach is thinking..."):
+
+                try:
+                    response = st.session_state.ai_chat.send_message(
+                        question
+                    )
+
+                    answer = response.text or "Please try again."
+
+                    st.markdown(answer)
+
+                    st.session_state.ai_messages.append({
+                        "role": "assistant",
+                        "content": answer
+                    })
+
+                except Exception as e:
+                    st.error(f"AI Coach Error: {e}")
+
+    st.divider()
+
+    st.caption(
+        "🌟 AB SCHOOL LOOP AI | Learn • Grow • Thrive"
+    )
 
 # =====================================================
 # PERFORMANCE ANALYTICS
