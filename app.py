@@ -1186,13 +1186,17 @@ if page == T["overview"]:
         font-weight:800;
         margin:8px 0 13px;
     }
-
     .quick-card {
-        padding:17px 12px;
-        border-radius:17px;
-        min-height:105px;
-        border:1px solid rgba(120,140,200,.18);
-        transition:all .2s ease;
+    background:rgba(5,20,55,.90)!important;
+
+    border:1px solid #00BFFF!important;
+
+    color:white!important;
+
+    border-radius:18px;
+
+    box-shadow:
+    0 0 15px rgba(0,191,255,.25);
     }
 
     .quick-card:hover {
@@ -1225,12 +1229,15 @@ if page == T["overview"]:
         border:1px solid #e4e8ff;
     }
 
-    .remember-card {
-        background:linear-gradient(120deg,#fff0d8,#ffe7ed);
-        border:1px solid #ffe3c1;
-        border-radius:18px;
-        padding:20px;
-        min-height:120px;
+   .remember-card {
+    background:
+        linear-gradient(
+        135deg,
+        #071B3A,
+        #101D4A
+        ) !important;
+
+    border:1px solid #00BFFF!important;
     }
 
     .remember-card h3 {
@@ -1532,13 +1539,12 @@ if page == T["overview"]:
 
     q1, q2, q3, q4 = st.columns(4)
 
-    quick_items = [
-        (q1, "🧠", "Mind Power", "Brain Games & Focus", T["mind"], "#eee0ff"),
-        (q2, "🧩", "AI Quiz", "Practice & Test", T["quiz"], "#d7f7e6"),
-        (q3, "😊", "AI Coach", "Get Guidance", T["coach"], "#ffefd8"),
-        (q4, "📊", "Analytics", "Track Progress", T["analytics"], "#d9f5fb"),
-        
-    ]
+   quick_items = [
+    (q1,"🧠","Mind Power","Brain Games & Focus",T["mind"],"#071B3A"),
+    (q2,"🧩","AI Quiz","Practice & Test",T["quiz"],"#071B3A"),
+    (q3,"😊","AI Coach","Get Guidance",T["coach"],"#071B3A"),
+    (q4,"📊","Analytics","Track Progress",T["analytics"],"#071B3A"),
+]
 
     for col, icon, title, subtitle, target_page, color in quick_items:
         with col:
