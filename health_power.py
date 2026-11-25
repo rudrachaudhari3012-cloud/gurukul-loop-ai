@@ -325,7 +325,15 @@ def render_health_power(st, student_id=None):
             answers=[]
             for i,(cat,q,opts,correct) in enumerate(MIND_QUESTIONS):
                 st.markdown(f"**Q{i+1}. ({cat}) {q}**")
-                answers.append(st.radio("Select one answer",options=opts,index=None,key=f"hp_mind_answer_{attempt}_{i}",label_visibility="collapsed"))
+                answers.append(
+    st.radio(
+        "Select one answer",
+        options=opts,
+        index=0,
+        key=f"hp_mind_answer_{attempt}_{i}",
+        label_visibility="collapsed"
+    )
+)
             submit_test=st.form_submit_button("Submit Practice Test",use_container_width=True,disabled=already_saved)
         if submit_test:
             if any(a is None for a in answers):
