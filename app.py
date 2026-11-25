@@ -2578,16 +2578,6 @@ with st.expander(
 # FOOTER
 # =====================================================
 st.markdown("""
-<style>
-.center-content {
-    text-align: center;
-    margin-top: 250px;
-    font-size: 22px;
-    font-weight: bold;
-    color: #4A90E2;
-}
-</style>
-
 <div class="center-content">
     AB SCHOOL LOOP AI <br>
     Student Learning Support Prototype<br>
