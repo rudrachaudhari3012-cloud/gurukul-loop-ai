@@ -1538,8 +1538,7 @@ if page == T["overview"]:
     )
 
     q1, q2, q3, q4 = st.columns(4)
-
-   quick_items = [
+    quick_items = [
     (q1,"🧠","Mind Power","Brain Games & Focus",T["mind"],"#071B3A"),
     (q2,"🧩","AI Quiz","Practice & Test",T["quiz"],"#071B3A"),
     (q3,"😊","AI Coach","Get Guidance",T["coach"],"#071B3A"),
