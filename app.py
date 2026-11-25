@@ -1150,22 +1150,22 @@ if page == T["overview"]:
     }
 
     .home-hero h1 {
-        color:#101b42;
+        color:#FFFFFF !important;
         font-size:clamp(25px,3vw,38px);
         font-weight:850;
         margin:12px 0 5px;
     }
 
     .home-hero p {
-        color:#344777;
+        color:#DCEEFF !important;
         font-size:16px;
         margin:5px 0;
     }
 
     .hero-label {
         display:inline-block;
-        background:rgba(255,255,255,.72);
-        color:#7544db;
+        background:rgba(0,180,255,.15);
+        color:#00d4ff;
         padding:7px 15px;
         border-radius:30px;
         font-weight:800;
@@ -1323,11 +1323,7 @@ if page == T["overview"]:
     # HERO BANNER
     # -------------------------------------------------
     st.markdown(f"""
-<div class="home-hero" style="
-    background: transparent !important;
-    background-color: transparent !important;
-    box-shadow: none !important;
-">
+    <div class="home-hero">
     <div class="hero-label">
         🎓 WELCOME BACK, {user['full_name'].upper()}!
     </div>
