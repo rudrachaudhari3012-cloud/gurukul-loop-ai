@@ -116,6 +116,42 @@ def _init_db():
                 created_at TEXT NOT NULL
             )
         """)
+        con.execute("""
+            CREATE TABLE IF NOT EXISTS bmi_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id TEXT NOT NULL,
+                log_date TEXT NOT NULL,
+                age INTEGER NOT NULL,
+                height_cm REAL NOT NULL,
+                weight_kg REAL NOT NULL,
+                bmi REAL NOT NULL,
+                created_at TEXT NOT NULL
+            )
+        """)
+        con.execute("""
+            CREATE TABLE IF NOT EXISTS music_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id TEXT NOT NULL,
+                log_date TEXT NOT NULL,
+                sound_type TEXT NOT NULL,
+                duration_minutes INTEGER NOT NULL,
+                created_at TEXT NOT NULL
+            )
+        """)
+        con.execute("""
+            CREATE TABLE IF NOT EXISTS mind_test_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id TEXT NOT NULL,
+                log_date TEXT NOT NULL,
+                logic_score INTEGER NOT NULL,
+                pattern_score INTEGER NOT NULL,
+                memory_score INTEGER NOT NULL,
+                reasoning_score INTEGER NOT NULL,
+                total_score INTEGER NOT NULL,
+                total_questions INTEGER NOT NULL,
+                created_at TEXT NOT NULL
+            )
+        """)
         con.commit()
 
 
@@ -177,55 +213,41 @@ FOOD_QUESTIONS = [
      "દૂધ અને દહીં કેલ્શિયમના જાણીતા સ્ત્રોત છે.")
 ]
 
-MISSIONS = [
-    ("Take a gentle movement break", 20, "થોડું ઊભા થાઓ, હળવું સ્ટ્રેચિંગ કરો અથવા ચાલો."),
-    ("Explore one healthy food fact", 20, "આજે એક ખોરાક અને તેના પોષક તત્ત્વ વિશે વાંચો."),
-    ("Record your sleep routine", 20, "ગઈ રાતનો સૂવાનો અને જાગવાનો સમય નોંધો."),
-    ("Play or spend time outdoors", 20, "તમારી અનુકૂળતા મુજબ બહાર રમો અથવા ચાલો."),
-    ("Complete a food knowledge quiz", 20, "Smart Food Guide માં નાનો ક્વિઝ પૂર્ણ કરો."),
-    ("Take a screen break", 20, "સ્ક્રીનથી થોડો વિરામ લો અને આંખોને આરામ આપો.")
-]
 
 
 # ---------------------- INTELLIGENCE ENGINE -------------------
 
-def _build_recommendations(activity_df, sleep_df, food_df, habit_df):
+def _build_recommendations(activity_df, sleep_df, food_df):
     recs = []
-
-    if activity_df.empty:
-        recs.append(("🏃 Active Body", "Start logging your daily activity. Begin with small and convenient movement."))
-    else:
-        week_activity = int(activity_df["minutes"].sum())
-        days = activity_df["log_date"].nunique()
-        if week_activity == 0:
-            recs.append(("🏃 Active Body", "No activity has been logged this week. Consider a light walk or stretching at your convenience."))
-        elif days < 3:
-            recs.append(("🏃 Active Body", "Activity has been recorded for a few days this week. If possible, add short movement breaks on different days."))
-        else:
-            recs.append(("🏃 Active Body", "Good start! Keep logging your activity and maintain a balance between rest and study."))
-
-    if sleep_df.empty:
-        recs.append(("🌙 Sleep", "Log your bedtime and wake-up time so your sleep routine can be understood."))
-    else:
-        avg_sleep = float(sleep_df["duration"].mean())
-        if avg_sleep < 7:
-            recs.append(("🌙 Sleep", "Your recorded sleep time looks low. Set a regular bedtime and talk to a parent or guardian if needed."))
-        elif avg_sleep <= 10:
-            recs.append(("🌙 Sleep", "Your recorded sleep time is around the general recommendation. Try to maintain a regular sleep schedule."))
-        else:
-            recs.append(("🌙 Sleep", "Please recheck the recorded sleep/wake times. Is there a mistake in entering the time?"))
-
-    if food_df.empty:
-        recs.append(("🥗 Smart Food", "Learn about food from the Food Library and note down one thing you learned today"))
-    else:
-        recs.append(("🥗 Smart Food", "Keep learning about different foods and nutrients. Do not consider any single food completely good or bad."))
-
-    if habit_df.empty:
-        recs.append(("🎮 Habit Games", "Choose one simple mission for today. Developing small habits consistently is important."))
-    else:
-        recs.append(("🎮 Habit Games", "Your mission progress is being recorded well. Compare yourself with your own past progress, not with other students."))
-
+    recs.append(("🏃 Active Body", "Keep a comfortable balance of movement, study and rest." if not activity_df.empty else "Record an activity you enjoy."))
+    recs.append(("🌙 Sleep", "Review your sleep pattern and aim for a regular routine." if not sleep_df.empty else "Record your sleep and wake-up times."))
+    recs.append(("🥗 Smart Food", "Continue learning about a variety of foods and nutrients." if not food_df.empty else "Explore the Food Library and learn one nutrition fact."))
     return recs
+
+
+MIND_QUESTIONS = [
+    ("Logic", "All roses are flowers. Which statement must be true?", ["All roses fade", "All roses are flowers", "All flowers are roses", "No roses are flowers"], 1),
+    ("Pattern", "What comes next: 2, 4, 8, 16, ...?", ["18", "24", "32", "30"], 2),
+    ("Memory", "Remember: 7 - 2 - 9. What was the middle number?", ["7", "2", "9", "5"], 1),
+    ("Reasoning", "Mina is taller than Ravi. Ravi is taller than Dev. Who is shortest?", ["Mina", "Ravi", "Dev", "Cannot tell"], 2),
+    ("Logic", "Every book on a shelf is blue. This is a book on that shelf. What colour is it?", ["Red", "Blue", "Green", "Cannot tell"], 1),
+    ("Pattern", "Which shape has the most sides?", ["Triangle", "Square", "Pentagon", "Hexagon"], 3),
+    ("Memory", "Remember: river, candle, mango. Which word was second?", ["River", "Candle", "Mango", "Mountain"], 1),
+    ("Reasoning", "A journey starts at 10:00 and takes one hour. When does it end?", ["10:30", "11:00", "11:30", "12:00"], 1),
+]
+
+
+def _mind_guidance(scores):
+    tips = {
+        "Logic": "Practice short logic puzzles and explain your reasoning step by step.",
+        "Pattern": "Try number sequences, shape patterns and visual matching puzzles.",
+        "Memory": "Try short recall activities: read a few items, hide them, then recall them.",
+        "Reasoning": "Practice everyday word problems and break them into smaller steps."
+    }
+    if not scores:
+        return "Complete the Mind Skills Check to receive practice suggestions."
+    focus = min(scores, key=scores.get)
+    return f"Suggested practice: {tips[focus]} This is a practice snapshot, not an IQ score or a measure of overall intelligence."
 
 
 # --------------------------- MAIN UI --------------------------
@@ -242,7 +264,7 @@ def render_health_power(st, student_id="demo_student"):
     <div class="hp-hero">
       <div class="hp-kicker">AB SCHOOL LOOP AI · STUDENT WELL-BEING</div>
       <h1>🧬 HEALTH POWER AI</h1>
-      <p>Active Body · Sleep Routine · Smart Food · Healthy Habit Games</p>
+      <p>Active Body · Sleep · Smart Food · BMI · Memory Music · Mind Skills</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -252,43 +274,27 @@ def render_health_power(st, student_id="demo_student"):
         unsafe_allow_html=True
     )
 
-    # Fetch recent data
-    activity = _query_df(
-        "SELECT log_date, activity, minutes, outdoor FROM activity_logs WHERE student_id=? AND log_date>=? ORDER BY log_date",
-        (sid, (date.today() - timedelta(days=6)).isoformat())
-    )
-    sleep = _query_df(
-        "SELECT log_date, sleep_time, wake_time, duration FROM sleep_logs WHERE student_id=? AND log_date>=? ORDER BY log_date",
-        (sid, (date.today() - timedelta(days=6)).isoformat())
-    )
-    food = _query_df(
-        "SELECT log_date, food_name, meal_type FROM food_logs WHERE student_id=? AND log_date>=? ORDER BY log_date DESC",
-        (sid, (date.today() - timedelta(days=6)).isoformat())
-    )
-    habits = _query_df(
-        "SELECT log_date, mission, xp FROM habit_logs WHERE student_id=? AND log_date>=? ORDER BY log_date DESC",
-        (sid, (date.today() - timedelta(days=6)).isoformat())
-    )
+    # Fetch recent data for this student
+    week_start = (date.today() - timedelta(days=6)).isoformat()
+    activity = _query_df("SELECT log_date, activity, minutes, outdoor FROM activity_logs WHERE student_id=? AND log_date>=? ORDER BY log_date", (sid, week_start))
+    sleep = _query_df("SELECT log_date, sleep_time, wake_time, duration FROM sleep_logs WHERE student_id=? AND log_date>=? ORDER BY log_date", (sid, week_start))
+    food = _query_df("SELECT log_date, food_name, meal_type FROM food_logs WHERE student_id=? AND log_date>=? ORDER BY log_date DESC", (sid, week_start))
+    bmi_history = _query_df("SELECT log_date, age, height_cm, weight_kg, bmi FROM bmi_logs WHERE student_id=? ORDER BY log_date DESC LIMIT 30", (sid,))
+    music_history = _query_df("SELECT log_date, sound_type, duration_minutes FROM music_logs WHERE student_id=? ORDER BY log_date DESC LIMIT 30", (sid,))
+    mind_history = _query_df("SELECT log_date, logic_score, pattern_score, memory_score, reasoning_score, total_score, total_questions FROM mind_test_logs WHERE student_id=? ORDER BY log_date DESC LIMIT 20", (sid,))
 
-    xp_total = int(habits["xp"].sum()) if not habits.empty else 0
     activity_total = int(activity["minutes"].sum()) if not activity.empty else 0
     sleep_avg = float(sleep["duration"].mean()) if not sleep.empty else 0
-    missions_done = len(habits)
+    latest_bmi = float(bmi_history.iloc[0]["bmi"]) if not bmi_history.empty else None
+    latest_mind = int(mind_history.iloc[0]["total_score"]) if not mind_history.empty else None
 
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("🏃 Activity", f"{activity_total} min", "Last 7 days")
-    m2.metric("🌙 Avg. Sleep", f"{sleep_avg:.1f} hrs" if not sleep.empty else "—", "Self-reported")
-    m3.metric("🎮 Missions", str(missions_done), "Last 7 days")
-    m4.metric("⭐ XP Earned", str(xp_total), "Last 7 days")
+    m2.metric("🌙 Avg. Sleep", f"{sleep_avg:.1f} hrs" if not sleep.empty else "—", "Last 7 days")
+    m3.metric("⚖️ Latest BMI", f"{latest_bmi:.1f}" if latest_bmi is not None else "—", "Informational only")
+    m4.metric("🧠 Mind Skills", f"{latest_mind}/8" if latest_mind is not None else "—", "Latest practice test")
 
-    tabs = st.tabs([
-        "🏃 Active Body",
-        "🌙 Sleep",
-        "🥗 Smart Food",
-        "🎮 Habit Games",
-        "🧠 AI Insights",
-        "📊 Growth Report"
-    ])
+    tabs = st.tabs(["🏃 Active Body", "🌙 Sleep", "🥗 Smart Food", "⚖️ BMI", "🎧 Memory Music", "🧠 IQ & Mind Skills", "✨ AI Insights", "📊 Growth Report"])
 
     # ---------------- ACTIVE BODY ----------------
     with tabs[0]:
@@ -405,44 +411,11 @@ def render_health_power(st, student_id="demo_student"):
                 "log_date": "Date", "food_name": "Food", "meal_type": "Meal"
             }), use_container_width=True, hide_index=True)
 
-    # ---------------- HABIT GAMES ----------------
-    with tabs[3]:
-        st.subheader("🎮 Healthy Habit Games")
-        st.write("નાના, સલામત અને સ્વૈચ્છિક missions પૂર્ણ કરીને XP મેળવો.")
-        st.markdown(f"### ⭐ Your XP: {xp_total}")
-        mission_date = st.date_input("Mission date", value=date.today(), key="hp_mission_date")
-        for idx, (mission, xp, description) in enumerate(MISSIONS):
-            already = _query_df(
-                "SELECT id FROM habit_logs WHERE student_id=? AND log_date=? AND mission=?",
-                (sid, mission_date.isoformat(), mission)
-            )
-            c1, c2 = st.columns([4, 1])
-            with c1:
-                st.markdown(f"**{mission}**")
-                st.caption(description)
-            with c2:
-                if already.empty:
-                    if st.button(f"+{xp} XP", key=f"hp_mission_{idx}", use_container_width=True):
-                        try:
-                            with _connect() as con:
-                                con.execute(
-                                    "INSERT INTO habit_logs(student_id,log_date,mission,xp,created_at) VALUES(?,?,?,?,?)",
-                                    (sid, mission_date.isoformat(), mission, xp, datetime.now().isoformat(timespec="seconds"))
-                                )
-                                con.commit()
-                            st.success("Mission recorded!")
-                            st.rerun()
-                        except sqlite3.IntegrityError:
-                            st.info("આ mission પહેલેથી પૂર્ણ થયેલું છે.")
-                else:
-                    st.success("Done ✓")
-        st.caption("XP માત્ર ભાગીદારી માટે છે; તે health score અથવા medical measurement નથી.")
-
     # ---------------- AI INSIGHTS ----------------
     with tabs[4]:
         st.subheader("🧠 Health Intelligence Engine")
         st.write("This prototype provides suggestions based on the entered records using rule-based analysis.")
-        recs = _build_recommendations(activity, sleep, food, habits)
+        recs = _build_recommendations(activity, sleep, food)
         for heading, message in recs:
             st.markdown(f"**{heading}**")
             st.info(message)
@@ -455,43 +428,63 @@ def render_health_power(st, student_id="demo_student"):
         """)
         st.caption("This is a Rule-Based AI prototype; it does not claim to be a trained machine-learning model.")
 
-    # ---------------- GROWTH REPORT ----------------
-    with tabs[5]:
+    # ---------------- GROWTH REPORT (ALWAYS LAST) ----------------
+    with tabs[7]:
         st.subheader("📊 Student Growth Report")
-        st.write("Summary of records entered in the last 7 days.")
-        r1, r2, r3 = st.columns(3)
-        r1.metric("Activity records", len(activity))
-        r2.metric("Sleep records", len(sleep))
-        r3.metric("Food entries", len(food))
+        st.write("Personal summary of activity, sleep, food learning, BMI, music preferences and mind-skills practice.")
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Activity records", len(activity))
+        c2.metric("Sleep records", len(sleep))
+        c3.metric("Food entries", len(food))
+        c4.metric("Mind tests", len(mind_history))
 
+        st.markdown("#### 🏃 Active Body")
+        st.write(f"Recorded activity in the last 7 days: **{activity_total} minutes**.")
         if not activity.empty:
-            st.markdown("#### Activity by day")
             st.bar_chart(activity.groupby("log_date")["minutes"].sum())
+
+        st.markdown("#### 🌙 Sleep")
+        st.write(f"Average recorded sleep: **{sleep_avg:.1f} hours**." if not sleep.empty else "No sleep records yet.")
         if not sleep.empty:
-            st.markdown("#### Sleep duration by day")
             st.line_chart(sleep.set_index("log_date")[["duration"]])
-        if not habits.empty:
-            st.markdown("#### Missions completed")
-            st.bar_chart(habits.groupby("log_date")["xp"].sum())
 
-        report_parts = []
-        report_parts.append(f"HEALTH POWER AI - WEEKLY REPORT\nStudent ID: {sid}\nGenerated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
-        report_parts.append(f"Activity minutes: {activity_total}")
-        report_parts.append(f"Average recorded sleep hours: {sleep_avg:.2f}" if not sleep.empty else "Average recorded sleep hours: No records")
-        report_parts.append(f"Food entries: {len(food)}")
-        report_parts.append(f"Missions completed: {missions_done}")
-        report_parts.append(f"XP earned: {xp_total}")
-        report_text = "\n".join(report_parts)
-        st.download_button(
-            "⬇️ Download Weekly Summary (TXT)",
-            data=report_text,
-            file_name="health_power_weekly_report.txt",
-            mime="text/plain",
-            use_container_width=True
-        )
+        st.markdown("#### 🥗 Smart Food")
+        st.write(f"Food learning entries in the last 7 days: **{len(food)}**.")
+        if not food.empty:
+            st.dataframe(food.rename(columns={"log_date":"Date","food_name":"Food","meal_type":"Meal"}), use_container_width=True, hide_index=True)
 
+        st.markdown("#### ⚖️ BMI")
+        st.write(f"Latest BMI number: **{float(bmi_history.iloc[0]['bmi']):.1f}** (informational only; teen interpretation needs age- and sex-specific growth charts)." if not bmi_history.empty else "No BMI records yet.")
+        if not bmi_history.empty:
+            st.dataframe(bmi_history.rename(columns={"log_date":"Date","age":"Age","height_cm":"Height (cm)","weight_kg":"Weight (kg)","bmi":"BMI number"}), use_container_width=True, hide_index=True)
+
+        st.markdown("#### 🎧 Memory Booster Music")
+        st.write(f"Saved music sessions: **{len(music_history)}**.")
+        if not music_history.empty:
+            st.dataframe(music_history.rename(columns={"log_date":"Date","sound_type":"Sound","duration_minutes":"Minutes"}), use_container_width=True, hide_index=True)
+
+        st.markdown("#### 🧠 Mind Skills Practice")
+        st.write(f"Completed practice tests: **{len(mind_history)}**.")
+        if not mind_history.empty:
+            latest = mind_history.iloc[0]
+            st.write(f"Latest practice result: **{int(latest['total_score'])}/{int(latest['total_questions'])}**. This is not an IQ score.")
+            st.dataframe(mind_history.rename(columns={"log_date":"Date","logic_score":"Logic","pattern_score":"Patterns","memory_score":"Memory","reasoning_score":"Reasoning","total_score":"Correct","total_questions":"Questions"}), use_container_width=True, hide_index=True)
+
+        report_parts = [
+            f"HEALTH POWER AI - STUDENT GROWTH REPORT\nStudent ID: {sid}\nGenerated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n",
+            f"Activity minutes (last 7 days): {activity_total}",
+            f"Average sleep hours (last 7 days): {sleep_avg:.2f}" if not sleep.empty else "Average sleep hours: No records",
+            f"Food learning entries (last 7 days): {len(food)}",
+            f"BMI records: {len(bmi_history)}",
+            f"Music sessions: {len(music_history)}",
+            f"Mind-skills practice tests: {len(mind_history)}",
+            f"Latest mind-skills result: {int(mind_history.iloc[0]['total_score'])}/{int(mind_history.iloc[0]['total_questions'])} (not an IQ score)" if not mind_history.empty else "Latest mind-skills result: No records"
+        ]
+        st.download_button("⬇️ Download Student Growth Report (TXT)", data="\n".join(report_parts),
+                           file_name="health_power_student_growth_report.txt", mime="text/plain", use_container_width=True)
         st.markdown("---")
-        st.caption("Privacy: records are stored locally in health_power_ai.db and are associated with the supplied student_id. Use a stable, non-public internal student identifier; do not display sensitive records to other students.")
+        st.caption("Privacy: records are stored in health_power_ai.db and separated by student_id. This is an educational dashboard, not a medical diagnosis or standardized IQ assessment.")
+
 
 
 # ---------------------- STANDALONE RUN ------------------------
