@@ -45,248 +45,12 @@ def get_supabase_client():
         st.error(f"Supabase connection setup error: {e}")
         return None
 
-
-# =====================================================
-# AB SCHOOL LOOP AI - UNIFIED PREMIUM THEME
-# =====================================================
-
-st.markdown("""
-<style>
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-:root {
-    --bg: #050B1B;
-    --panel: rgba(9, 24, 52, 0.94);
-    --panel2: rgba(13, 33, 69, 0.94);
-    --cyan: #48E5FF;
-    --blue: #168DFF;
-    --purple: #875CFF;
-    --white: #FFFFFF;
-    --text: #EAF2FF;
-    --muted: #AFC4E8;
-}
-
-/* GLOBAL */
-.stApp {
-    font-family: 'Inter', sans-serif !important;
-    color: var(--text) !important;
-}
-
-/* MAIN BACKGROUND */
-[data-testid="stAppViewContainer"] {
-    background:
-        radial-gradient(circle at 10% 10%,
-        rgba(0,140,255,.16), transparent 35%),
-        radial-gradient(circle at 90% 20%,
-        rgba(120,60,255,.15), transparent 35%),
-        linear-gradient(135deg,#050B1B,#09162D,#10112C)
-        !important;
-}
-
-/* CONTENT */
-[data-testid="stMain"],
-.main,
-.block-container {
-    background: transparent !important;
-}
-
-/* HEADINGS */
-.stApp h1,
-.stApp h2,
-.stApp h3,
-.stApp h4 {
-    color: #FFFFFF !important;
-    font-weight: 800 !important;
-    text-shadow: 0 0 12px rgba(0,150,255,.28);
-}
-
-/* NORMAL TEXT */
-.stApp p,
-.stApp label,
-.stApp li,
-.stMarkdown,
-.stMarkdown p {
-    color: #EAF2FF !important;
-}
-
-/* SIDEBAR */
-[data-testid="stSidebar"] {
-    background: linear-gradient(
-        180deg,
-        #020817,
-        #091B3B,
-        #11122F
-    ) !important;
-    border-right: 1px solid rgba(72,229,255,.45);
-    box-shadow: 5px 0 25px rgba(0,120,255,.15);
-}
-
-[data-testid="stSidebar"] * {
-    color: #F2F7FF !important;
-}
-
-/* HERO */
-.hero,
-.mind-banner,
-.home-hero {
-    background:
-        radial-gradient(circle at 10% 50%,
-        rgba(0,180,255,.18), transparent 35%),
-        linear-gradient(
-            120deg,
-            rgba(10,35,75,.98),
-            rgba(29,25,76,.98),
-            rgba(5,48,75,.98)
-        ) !important;
-
-    border: 1px solid rgba(72,229,255,.65) !important;
-    border-radius: 24px !important;
-    padding: 30px !important;
-    box-shadow: 0 10px 35px rgba(0,130,255,.20);
-}
-
-/* HERO TEXT */
-.hero h1,
-.home-hero h1,
-.mind-banner h1 {
-    color: #FFFFFF !important;
-}
-
-.hero p,
-.home-hero p,
-.mind-banner p {
-    color: #EAF2FF !important;
-}
-
-/* GLASS CARDS */
-[data-testid="stVerticalBlockBorderWrapper"] {
-    background: rgba(8,24,54,.88) !important;
-    border: 1px solid rgba(45,150,255,.45) !important;
-    border-radius: 18px !important;
-    box-shadow: 0 7px 24px rgba(0,0,0,.20);
-    backdrop-filter: blur(12px);
-}
-
-/* METRIC CARDS */
-[data-testid="stMetric"] {
-    background: linear-gradient(
-        145deg,
-        rgba(9,34,72,.97),
-        rgba(22,27,69,.97)
-    ) !important;
-
-    border: 1px solid #168DFF !important;
-    border-radius: 17px !important;
-    padding: 17px !important;
-    box-shadow: 0 0 18px rgba(0,120,255,.16);
-}
-
-[data-testid="stMetricLabel"],
-[data-testid="stMetricValue"],
-[data-testid="stMetricDelta"] {
-    color: #FFFFFF !important;
-}
-
-/* BUTTONS */
-.stButton > button,
-.stDownloadButton > button,
-[data-testid="stFormSubmitButton"] > button {
-    background: linear-gradient(
-        100deg,
-        #087EFF,
-        #6848D9
-    ) !important;
-
-    color: #FFFFFF !important;
-    border: 1px solid #55DFFF !important;
-    border-radius: 12px !important;
-    font-weight: 700 !important;
-    min-height: 43px;
-    box-shadow: 0 5px 18px rgba(0,120,255,.25);
-    transition: .25s ease;
-}
-
-.stButton > button:hover,
-.stDownloadButton > button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 22px rgba(0,160,255,.45);
-}
-
-/* INPUTS */
-.stTextInput input,
-.stTextArea textarea,
-.stNumberInput input,
-[data-baseweb="select"] > div {
-    background: #101F3A !important;
-    color: #FFFFFF !important;
-    border: 1px solid #398DDF !important;
-    border-radius: 10px !important;
-}
-
-.stTextInput input::placeholder,
-.stTextArea textarea::placeholder {
-    color: #AFC4E8 !important;
-}
-
-/* TABS */
-.stTabs [data-baseweb="tab-list"] {
-    background: rgba(9,25,54,.95) !important;
-    border-radius: 12px;
-}
-
-.stTabs [data-baseweb="tab"] {
-    color: #DCEAFF !important;
-}
-
-.stTabs [aria-selected="true"] {
-    color: #48E5FF !important;
-}
-
-/* ALERTS */
-[data-testid="stAlert"] {
-    background: #102746 !important;
-    border: 1px solid #168DFF;
-    border-radius: 13px;
-}
-
-/* TABLES */
-[data-testid="stDataFrame"] {
-    border: 1px solid #168DFF;
-    border-radius: 12px;
-}
-
-/* EXPANDER */
-[data-testid="stExpander"] {
-    background: rgba(9,25,54,.90) !important;
-    border: 1px solid rgba(45,150,255,.45) !important;
-    border-radius: 13px !important;
-}
-
-/* DIVIDER */
-hr {
-    border-color: rgba(72,229,255,.25) !important;
-}
-
-/* HEADER */
-[data-testid="stHeader"] {
-    background: transparent !important;
-}
-
-/* FOOTER */
-footer {
-    visibility: hidden;
-}
-
-/* REMOVE EXTRA TOP SPACE */
-.block-container {
-    padding-top: 1.5rem !important;
-    padding-bottom: 2rem !important;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
+st.set_page_config(
+    page_title=APP_TITLE,
+    page_icon="🎓",
+    layout="wide",
+    initial_sidebar_state="expanded"
+) 
 # ==========================================
 # AB SCHOOL LOOP AI - PREMIUM NEURAL THEME
 # ==========================================
@@ -878,6 +642,28 @@ def save_reflection(user_id, answer):
 init_db()
 init_db()
 
+# =====================================================
+# SUPABASE CONNECTION TEST
+# =====================================================
+
+if st.sidebar.button("🔌 Test Supabase Connection"):
+    try:
+        supabase = get_supabase_client()
+
+        if supabase is not None:
+            response = (
+                supabase.table("profiles")
+                .select("id")
+                .limit(1)
+                .execute()
+            )
+
+            st.success("Supabase connection successful!")
+            st.write("Profiles table is accessible.")
+
+    except Exception as e:
+        st.error("Supabase test failed.")
+        st.write(str(e))
 
 # =====================================================
 # QUESTION BANK
@@ -1362,241 +1148,231 @@ if page == T["mind"]:
     render_mind_power()
 
 
-
 # =====================================================
 # PREMIUM HOME DASHBOARD
-# AB SCHOOL LOOP AI - MIDNIGHT AURORA THEME
+# FUTURE LEARNING HUB
 # =====================================================
 
 if page == T["overview"]:
 
     st.markdown("""
     <style>
-
-    /* HOME HERO */
     .home-hero {
         background:
-            radial-gradient(
-                circle at 15% 50%,
-                rgba(36,194,255,.20),
-                transparent 35%
-            ),
-            linear-gradient(
-                110deg,
-                #081B38,
-                #151B46 55%,
-                #092D49
-            ) !important;
-
-        border: 1px solid rgba(72,229,255,.65);
-        border-radius: 22px;
-        padding: 28px;
-        min-height: 225px;
-        box-shadow: 0 10px 30px rgba(0,120,255,.20);
-        position: relative;
-        overflow: hidden;
+        radial-gradient(circle at 15% 50%,
+        rgba(36,194,255,.30),transparent 30%),
+        linear-gradient(105deg,#d9eaff,#e9e7ff 55%,#ffe8ef);
+        border:1px solid #cbdcff;
+        border-radius:22px;
+        padding:28px;
+        min-height:205px;
+        box-shadow:0 10px 30px rgba(70,100,180,.13);
+        position:relative;
+        overflow:hidden;
     }
 
-    /* HERO TITLE */
     .home-hero h1 {
-        color: #FFFFFF !important;
-        font-size: clamp(25px,3vw,38px);
-        font-weight: 850;
-        margin: 12px 0 5px;
-        text-shadow: 0 0 15px rgba(0,160,255,.35);
-    }
-
-    .home-hero h2 {
-        color: #48E5FF !important;
-        font-size: 25px;
-        font-weight: 850;
-        margin: 5px 0;
+        color:#101b42;
+        font-size:clamp(25px,3vw,38px);
+        font-weight:850;
+        margin:12px 0 5px;
     }
 
     .home-hero p {
-        color: #DCEAFF !important;
-        font-size: 15px;
-        margin: 7px 0;
+        color:#344777;
+        font-size:16px;
+        margin:5px 0;
     }
 
-    /* WELCOME LABEL */
     .hero-label {
-        display: inline-block;
-        background: rgba(0,140,255,.16);
-        color: #55DFFF !important;
-        border: 1px solid rgba(72,229,255,.45);
-        padding: 7px 15px;
-        border-radius: 30px;
-        font-weight: 800;
-        font-size: 13px;
+        display:inline-block;
+        background:rgba(255,255,255,.72);
+        color:#7544db;
+        padding:7px 15px;
+        border-radius:30px;
+        font-weight:800;
+        font-size:13px;
     }
 
-    /* LOGO */
     .hero-art {
-        position: absolute;
-        right: 25px;
-        top: 25px;
-        font-size: 95px;
-        filter: drop-shadow(0 8px 15px rgba(0,150,255,.30));
+        position:absolute;
+        right:25px;
+        top:25px;
+        font-size:95px;
+        filter:drop-shadow(0 8px 12px rgba(80,80,200,.2));
     }
 
-    .hero-art img {
-        width: 230px;
-        height: auto;
-        max-height: 180px;
-        object-fit: contain;
-        border-radius: 18px;
-    }
-
-    /* SECTION TITLES */
     .home-section {
-        color: #FFFFFF !important;
-        font-size: 21px;
-        font-weight: 800;
-        margin: 8px 0 13px;
-        text-shadow: 0 0 10px rgba(0,150,255,.25);
+        color:#101b42;
+        font-size:21px;
+        font-weight:800;
+        margin:8px 0 13px;
     }
 
-    /* QUICK ACCESS CARDS */
     .quick-card {
-        padding: 17px 12px;
-        border-radius: 17px;
-        min-height: 105px;
-        border: 1px solid rgba(72,160,255,.45);
-        background: rgba(10,35,72,.95) !important;
-        transition: all .2s ease;
+        padding:17px 12px;
+        border-radius:17px;
+        min-height:105px;
+        border:1px solid rgba(120,140,200,.18);
+        transition:all .2s ease;
     }
 
     .quick-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0,130,255,.22);
+        transform:translateY(-3px);
+        box-shadow:0 8px 20px rgba(90,100,180,.15);
     }
 
     .quick-icon {
-        font-size: 30px;
-        margin-bottom: 8px;
+        font-size:30px;
+        margin-bottom:8px;
     }
 
     .quick-title {
-        color: #FFFFFF !important;
-        font-weight: 800;
-        font-size: 15px;
+        color:#15234d;
+        font-weight:800;
+        font-size:15px;
     }
 
     .quick-sub {
-        color: #C6D9F5 !important;
-        font-size: 12px;
+        color:#53668d;
+        font-size:12px;
     }
 
-    /* TODAY FOCUS */
     .focus-item {
-        background: linear-gradient(
-            100deg,
-            rgba(12,42,78,.95),
-            rgba(30,30,75,.95)
-        ) !important;
-
-        border-radius: 12px;
-        padding: 10px 13px;
-        margin: 8px 0;
-        color: #FFFFFF !important;
-        border: 1px solid rgba(72,160,255,.40);
+        background:linear-gradient(100deg,#f0edff,#edf3ff);
+        border-radius:12px;
+        padding:10px 13px;
+        margin:8px 0;
+        color:#18264d;
+        border:1px solid #e4e8ff;
     }
 
-    /* REMEMBER CARD */
     .remember-card {
-        background: linear-gradient(
-            120deg,
-            #102B52,
-            #25204F
-        ) !important;
-
-        border: 1px solid #48E5FF;
-        border-radius: 18px;
-        padding: 20px;
-        min-height: 120px;
-        box-shadow: 0 5px 20px rgba(0,120,255,.18);
+        background:linear-gradient(120deg,#fff0d8,#ffe7ed);
+        border:1px solid #ffe3c1;
+        border-radius:18px;
+        padding:20px;
+        min-height:120px;
     }
 
     .remember-card h3 {
-        color: #FFFFFF !important;
-        font-size: 18px;
+        color:#17264d;
+        font-size:18px;
     }
 
     .remember-card p {
-        color: #DCEAFF !important;
-        font-size: 17px;
-        font-weight: 700;
-    }
+        color:#273a69;
+        font-size:17px;
+        font-weight:700;
+    } 
+    /* =====================================
+   AB SCHOOL LOOP AI - TEXT VISIBILITY
+   ===================================== */
 
-    /* FOOTER */
-    .footer {
-        color: #AFC4E8 !important;
-        text-align: center;
-    }
+/* HERO SECTION */
+.hero, .mind-banner {
+    background: rgba(3, 15, 48, 0.88) !important;
+    border: 1px solid #168DFF !important;
+    box-shadow: 0 0 22px rgba(0, 140, 255, 0.35) !important;
+}
 
-    /* MOBILE RESPONSIVE */
-    @media (max-width: 768px) {
+.hero h1, .mind-banner h1,
+.hero p, .mind-banner p,
+.hero span, .mind-banner span {
+    color: #FFFFFF !important;
+}
 
-        .home-hero {
-            padding: 20px !important;
-            min-height: 200px;
-        }
+/* ALL MAIN TEXT */
+[data-testid="stMain"] p,
+[data-testid="stMain"] label,
+[data-testid="stMain"] li,
+[data-testid="stMain"] span {
+    color: #EAF4FF;
+}
 
-        .hero-art {
-            position: relative;
-            right: auto;
-            top: auto;
-            margin-top: 15px;
-            text-align: center;
-        }
+/* SECTION HEADINGS */
+.section-title,
+.kicker,
+.stMarkdown h1,
+.stMarkdown h2,
+.stMarkdown h3 {
+    color: #FFFFFF !important;
+    text-shadow: 0 0 10px rgba(0, 160, 255, 0.4);
+}
 
-        .hero-art img {
-            width: 150px;
-            max-height: 120px;
-        }
+/* METRIC CARDS */
+[data-testid="stMetric"] {
+    background: rgba(3, 18, 52, 0.92) !important;
+    border: 1px solid #168DFF !important;
+}
 
-    }
+[data-testid="stMetricLabel"],
+[data-testid="stMetricValue"],
+[data-testid="stMetricDelta"] {
+    color: #FFFFFF !important;
+}
 
+/* PROGRESS AND FOCUS CARDS */
+.tip-card,
+.activity-card,
+.small-note {
+    background: rgba(4, 20, 55, 0.92) !important;
+    color: #FFFFFF !important;
+    border: 1px solid #168DFF !important;
+}
+
+.tip-card *,
+.activity-card *,
+.small-note * {
+    color: #FFFFFF !important;
+}
+
+/* CONTAINERS */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background: rgba(3, 15, 45, 0.88) !important;
+    border: 1px solid rgba(0, 170, 255, 0.7) !important;
+}
+
+/* INPUT TEXT */
+.stTextInput input,
+.stTextArea textarea {
+    color: #FFFFFF !important;
+}
     </style>
     """, unsafe_allow_html=True)
 
     # -------------------------------------------------
     # HERO BANNER
     # -------------------------------------------------
-
     st.markdown(f"""
-    <div class="home-hero">
+<div class="home-hero" style="
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+">
     <div class="hero-label">
         🎓 WELCOME BACK, {user['full_name'].upper()}!
     </div>
-
     <h1>AB SCHOOL LOOP AI</h1>
-
-    <h2>
+    <h2 style="
+        color:#3978ee;
+        font-size:25px;
+        font-weight:850;
+        margin:5px 0;">
         Learn &nbsp; • &nbsp;
-        <span style="color:#48E5FF;">Grow</span>
+        <span style="color:#08a9d9;">Grow</span>
         &nbsp; • &nbsp;
-        <span style="color:#A78BFA;">Thrive</span>
+        <span style="color:#9250ed;">Thrive</span>
     </h2>
-
-    <p>
-        Your Smart Learning Partner for a Brighter Future ✨
-    </p>
-
+    <p>Your Smart Learning Partner for a Brighter Future ✨</p>
     <p style="font-size:13px;">
         STUDENT GROWTH · SMART LEARNING · MIND POWER
     </p>
-
     <div class="hero-art">
-        <img src="data:image/png;base64,{logo_base64}">
-</div>
-"""
-
-st.markdown(hero_html, unsafe_allow_html=True)
-       
+        <img src="data:image/png;base64,{logo_base64}" style="width:280px; height:auto; border-radius:20px;">
     </div>
-    """, unsafe_allow_html=True)
+</div>
+""", unsafe_allow_html=True)
 
     # -------------------------------------------------
     # DASHBOARD METRICS
@@ -1813,7 +1589,6 @@ st.markdown(hero_html, unsafe_allow_html=True)
 
     st.write("")
 
- 
     # -------------------------------------------------
     # BOTTOM REMEMBER SECTION
     # -------------------------------------------------
@@ -1824,7 +1599,9 @@ st.markdown(hero_html, unsafe_allow_html=True)
 
         with st.container(border=True):
 
-            st.markdown("### 🌟 Your Growth Journey")
+            st.markdown(
+                "### 🌟 Your Growth Journey"
+            )
 
             st.write(
                 "Learn something new. Practise consistently. "
@@ -1835,50 +1612,35 @@ st.markdown(hero_html, unsafe_allow_html=True)
                 min(learning_score / 100, 1.0)
             )
 
-            if results:
-                st.caption(
-                    f"Your current quiz accuracy: {learning_score}%"
-                )
-            else:
-                st.caption(
-                    "Your progress will appear after your first quiz."
-                )
+            st.caption(
+                f"Your current quiz accuracy: "
+                f"{learning_score}%"
+                if results else
+                "Your progress will appear after your first quiz."
+            )
 
     with r2:
 
-        remember_html = (
-            '<div class="remember-card">'
-            '<h3>⭐ Remember</h3>'
-            '<p>Dream Big.<br>Study Smart!</p>'
-            '<div style="text-align:right; font-size:25px; color:#48E5FF;">'
-            '&#9825;'
-            '</div>'
-            '</div>'
-        )
+        st.markdown("""
+        <div class="remember-card">
+            <h3>⭐ Remember</h3>
+            <p>Dream Big.<br>Study Smart!</p>
+            <div style="
+                text-align:right;
+                font-size:25px;
+                color:#7654e8;">
+                ♡
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-        st.markdown(
-            remember_html,
-            unsafe_allow_html=True
-        )
+    st.markdown("""
+    <div class="footer">
+        AB SCHOOL LOOP AI <br>
+        LEARN → GROW → THRIVE
+    </div>
+    """, unsafe_allow_html=True)
 
-    # -------------------------------------------------
-    # FOOTER
-    # -------------------------------------------------
-
-    footer_html = (
-        '<div class="footer">'
-        'AB SCHOOL LOOP AI<br>'
-        'LEARN &rarr; GROW &rarr; THRIVE'
-        '</div>'
-    )
-
-    st.markdown(
-        footer_html,
-        unsafe_allow_html=True
-    )
-
-
-   
 # =====================================================
 # LEARNING DASHBOARD
 # =====================================================
@@ -2823,6 +2585,6 @@ st.markdown("""
 <div class="footer" style="text-align: center;">
     AB SCHOOL LOOP AI <br>
     Student Learning Support Prototype<br>
-    Learn - Recall - Reflect - Improve
+    Learn → Recall → Reflect → Improve
 </div>
 """, unsafe_allow_html=True)
