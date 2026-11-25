@@ -1344,37 +1344,35 @@ if page == T["overview"]:
     # -------------------------------------------------
     # HERO BANNER
     # -------------------------------------------------
-
-  st.markdown(f"""
-    <div class="home-hero" style="
-        background: transparent !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-    ">
-        <div class="hero-label">
-            🎓 WELCOME BACK, {user['full_name'].upper()}!
-        </div>
-        <h1>AB SCHOOL LOOP AI</h1>
-        <h2 style="
-            color:#3978ee;
-            font-size:25px;
-            font-weight:850;
-            margin:5px 0;">
-            Learn &nbsp; • &nbsp;
-            <span style="color:#08a9d9;">Grow</span>
-            &nbsp; • &nbsp;
-            <span style="color:#9250ed;">Thrive</span>
-        </h2>
-        <p>Your Smart Learning Partner for a Brighter Future ✨</p>
-        <p style="font-size:13px;">
-            STUDENT GROWTH · SMART LEARNING · MIND POWER
-        </p>
-        <div class="hero-art">
-            <img src="data:image/png;base64,{logo_base64}" style="width:280px; height:auto; border-radius:20px;">
-        </div>
+st.markdown(f"""
+<div class="home-hero" style="
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+">
+    <div class="hero-label">
+        🎓 WELCOME BACK, {user['full_name'].upper()}!
     </div>
-    """, unsafe_allow_html=True)
-
+    <h1>AB SCHOOL LOOP AI</h1>
+    <h2 style="
+        color:#3978ee;
+        font-size:25px;
+        font-weight:850;
+        margin:5px 0;">
+        Learn &nbsp; • &nbsp;
+        <span style="color:#08a9d9;">Grow</span>
+        &nbsp; • &nbsp;
+        <span style="color:#9250ed;">Thrive</span>
+    </h2>
+    <p>Your Smart Learning Partner for a Brighter Future ✨</p>
+    <p style="font-size:13px;">
+        STUDENT GROWTH · SMART LEARNING · MIND POWER
+    </p>
+    <div class="hero-art">
+        <img src="data:image/png;base64,{logo_base64}" style="width:280px; height:auto; border-radius:20px;">
+    </div>
+</div>
+""", unsafe_allow_html=True)
     # -------------------------------------------------
     # DASHBOARD METRICS
     # -------------------------------------------------
