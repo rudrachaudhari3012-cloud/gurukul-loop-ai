@@ -45,12 +45,248 @@ def get_supabase_client():
         st.error(f"Supabase connection setup error: {e}")
         return None
 
-st.set_page_config(
-    page_title=APP_TITLE,
-    page_icon="🎓",
-    layout="wide",
-    initial_sidebar_state="expanded"
-) 
+
+# =====================================================
+# AB SCHOOL LOOP AI - UNIFIED PREMIUM THEME
+# =====================================================
+
+st.markdown("""
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+    --bg: #050B1B;
+    --panel: rgba(9, 24, 52, 0.94);
+    --panel2: rgba(13, 33, 69, 0.94);
+    --cyan: #48E5FF;
+    --blue: #168DFF;
+    --purple: #875CFF;
+    --white: #FFFFFF;
+    --text: #EAF2FF;
+    --muted: #AFC4E8;
+}
+
+/* GLOBAL */
+.stApp {
+    font-family: 'Inter', sans-serif !important;
+    color: var(--text) !important;
+}
+
+/* MAIN BACKGROUND */
+[data-testid="stAppViewContainer"] {
+    background:
+        radial-gradient(circle at 10% 10%,
+        rgba(0,140,255,.16), transparent 35%),
+        radial-gradient(circle at 90% 20%,
+        rgba(120,60,255,.15), transparent 35%),
+        linear-gradient(135deg,#050B1B,#09162D,#10112C)
+        !important;
+}
+
+/* CONTENT */
+[data-testid="stMain"],
+.main,
+.block-container {
+    background: transparent !important;
+}
+
+/* HEADINGS */
+.stApp h1,
+.stApp h2,
+.stApp h3,
+.stApp h4 {
+    color: #FFFFFF !important;
+    font-weight: 800 !important;
+    text-shadow: 0 0 12px rgba(0,150,255,.28);
+}
+
+/* NORMAL TEXT */
+.stApp p,
+.stApp label,
+.stApp li,
+.stMarkdown,
+.stMarkdown p {
+    color: #EAF2FF !important;
+}
+
+/* SIDEBAR */
+[data-testid="stSidebar"] {
+    background: linear-gradient(
+        180deg,
+        #020817,
+        #091B3B,
+        #11122F
+    ) !important;
+    border-right: 1px solid rgba(72,229,255,.45);
+    box-shadow: 5px 0 25px rgba(0,120,255,.15);
+}
+
+[data-testid="stSidebar"] * {
+    color: #F2F7FF !important;
+}
+
+/* HERO */
+.hero,
+.mind-banner,
+.home-hero {
+    background:
+        radial-gradient(circle at 10% 50%,
+        rgba(0,180,255,.18), transparent 35%),
+        linear-gradient(
+            120deg,
+            rgba(10,35,75,.98),
+            rgba(29,25,76,.98),
+            rgba(5,48,75,.98)
+        ) !important;
+
+    border: 1px solid rgba(72,229,255,.65) !important;
+    border-radius: 24px !important;
+    padding: 30px !important;
+    box-shadow: 0 10px 35px rgba(0,130,255,.20);
+}
+
+/* HERO TEXT */
+.hero h1,
+.home-hero h1,
+.mind-banner h1 {
+    color: #FFFFFF !important;
+}
+
+.hero p,
+.home-hero p,
+.mind-banner p {
+    color: #EAF2FF !important;
+}
+
+/* GLASS CARDS */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background: rgba(8,24,54,.88) !important;
+    border: 1px solid rgba(45,150,255,.45) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 7px 24px rgba(0,0,0,.20);
+    backdrop-filter: blur(12px);
+}
+
+/* METRIC CARDS */
+[data-testid="stMetric"] {
+    background: linear-gradient(
+        145deg,
+        rgba(9,34,72,.97),
+        rgba(22,27,69,.97)
+    ) !important;
+
+    border: 1px solid #168DFF !important;
+    border-radius: 17px !important;
+    padding: 17px !important;
+    box-shadow: 0 0 18px rgba(0,120,255,.16);
+}
+
+[data-testid="stMetricLabel"],
+[data-testid="stMetricValue"],
+[data-testid="stMetricDelta"] {
+    color: #FFFFFF !important;
+}
+
+/* BUTTONS */
+.stButton > button,
+.stDownloadButton > button,
+[data-testid="stFormSubmitButton"] > button {
+    background: linear-gradient(
+        100deg,
+        #087EFF,
+        #6848D9
+    ) !important;
+
+    color: #FFFFFF !important;
+    border: 1px solid #55DFFF !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    min-height: 43px;
+    box-shadow: 0 5px 18px rgba(0,120,255,.25);
+    transition: .25s ease;
+}
+
+.stButton > button:hover,
+.stDownloadButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 22px rgba(0,160,255,.45);
+}
+
+/* INPUTS */
+.stTextInput input,
+.stTextArea textarea,
+.stNumberInput input,
+[data-baseweb="select"] > div {
+    background: #101F3A !important;
+    color: #FFFFFF !important;
+    border: 1px solid #398DDF !important;
+    border-radius: 10px !important;
+}
+
+.stTextInput input::placeholder,
+.stTextArea textarea::placeholder {
+    color: #AFC4E8 !important;
+}
+
+/* TABS */
+.stTabs [data-baseweb="tab-list"] {
+    background: rgba(9,25,54,.95) !important;
+    border-radius: 12px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    color: #DCEAFF !important;
+}
+
+.stTabs [aria-selected="true"] {
+    color: #48E5FF !important;
+}
+
+/* ALERTS */
+[data-testid="stAlert"] {
+    background: #102746 !important;
+    border: 1px solid #168DFF;
+    border-radius: 13px;
+}
+
+/* TABLES */
+[data-testid="stDataFrame"] {
+    border: 1px solid #168DFF;
+    border-radius: 12px;
+}
+
+/* EXPANDER */
+[data-testid="stExpander"] {
+    background: rgba(9,25,54,.90) !important;
+    border: 1px solid rgba(45,150,255,.45) !important;
+    border-radius: 13px !important;
+}
+
+/* DIVIDER */
+hr {
+    border-color: rgba(72,229,255,.25) !important;
+}
+
+/* HEADER */
+[data-testid="stHeader"] {
+    background: transparent !important;
+}
+
+/* FOOTER */
+footer {
+    visibility: hidden;
+}
+
+/* REMOVE EXTRA TOP SPACE */
+.block-container {
+    padding-top: 1.5rem !important;
+    padding-bottom: 2rem !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 # ==========================================
 # AB SCHOOL LOOP AI - PREMIUM NEURAL THEME
 # ==========================================
@@ -1323,11 +1559,7 @@ if page == T["overview"]:
     # HERO BANNER
     # -------------------------------------------------
     st.markdown(f"""
-<div class="home-hero" style="
-    background: transparent !important;
-    background-color: transparent !important;
-    box-shadow: none !important;
-">
+    <div class="home-hero">
     <div class="hero-label">
         🎓 WELCOME BACK, {user['full_name'].upper()}!
     </div>
