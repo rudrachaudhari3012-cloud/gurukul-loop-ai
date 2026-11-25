@@ -926,20 +926,20 @@ def style_chart(fig):
         plot_bgcolor="rgba(255,255,255,0)",
         font=dict(
             family="Inter",
-            color="#24345f"
+            color="#EAF4FF"
         ),
         title_font=dict(
-            color="#101b42",
+            color="#FFFFFF",
             size=17
         ),
         margin=dict(l=15, r=15, t=55, b=15),
         xaxis=dict(
-            gridcolor="#e5eafa",
-            zerolinecolor="#e5eafa"
+            gridcolor="rgba(160,190,230,.22)",
+            zerolinecolor="rgba(160,190,230,.28)"
         ),
         yaxis=dict(
-            gridcolor="#e5eafa",
-            zerolinecolor="#e5eafa"
+            gridcolor="rgba(160,190,230,.22)",
+            zerolinecolor="rgba(160,190,230,.28)"
         )
     )
     return fig
@@ -973,12 +973,12 @@ if page == T["overview"]:
         background:
         radial-gradient(circle at 15% 50%,
         rgba(36,194,255,.30),transparent 30%),
-        linear-gradient(105deg,#d9eaff,#e9e7ff 55%,#ffe8ef);
-        border:1px solid #cbdcff;
+        linear-gradient(115deg,#07152F 0%,#102B55 52%,#211D43 100%);
+        border:1px solid rgba(72,229,255,.55);
         border-radius:22px;
         padding:28px;
         min-height:205px;
-        box-shadow:0 10px 30px rgba(70,100,180,.13);
+        box-shadow:0 14px 38px rgba(0,0,0,.34),0 0 24px rgba(22,141,255,.12);
         position:relative;
         overflow:hidden;
     }
@@ -1015,7 +1015,7 @@ if page == T["overview"]:
     }
 
     .home-section {
-        color:#101b42;
+        color:#FFFFFF;
         font-size:21px;
         font-weight:800;
         margin:8px 0 13px;
@@ -1044,23 +1044,23 @@ if page == T["overview"]:
     }
 
     .quick-title {
-        color:#15234d;
+        color:#FFFFFF;
         font-weight:800;
         font-size:15px;
     }
 
     .quick-sub {
-        color:#53668d;
+        color:#C6DDF7;
         font-size:12px;
     }
 
     .focus-item {
-        background:linear-gradient(100deg,#f0edff,#edf3ff);
+        background:linear-gradient(105deg,rgba(8,31,68,.96),rgba(24,37,82,.96));
         border-radius:12px;
         padding:10px 13px;
         margin:8px 0;
-        color:#18264d;
-        border:1px solid #e4e8ff;
+        color:#EAF4FF;
+        border:1px solid rgba(72,229,255,.32);
     }
 
    .remember-card {
@@ -1075,12 +1075,12 @@ if page == T["overview"]:
     }
 
     .remember-card h3 {
-        color:#17264d;
+        color:#FFFFFF;
         font-size:18px;
     }
 
     .remember-card p {
-        color:#273a69;
+        color:#DCEBFF;
         font-size:17px;
         font-weight:700;
     } 
@@ -1301,13 +1301,13 @@ if page == T["overview"]:
                     paper_bgcolor="rgba(0,0,0,0)",
                     plot_bgcolor="rgba(0,0,0,0)",
                     margin=dict(l=5,r=10,t=20,b=5),
-                    font=dict(color="#24345f"),
+                    font=dict(color="#EAF4FF"),
                     yaxis=dict(
                         range=[0,100],
-                        gridcolor="#e3eafa"
+                        gridcolor="rgba(160,190,230,.22)"
                     ),
                     xaxis=dict(
-                        gridcolor="#e3eafa"
+                        gridcolor="rgba(160,190,230,.22)"
                     )
                 )
 
