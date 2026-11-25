@@ -85,11 +85,11 @@ if bg_path.exists():
 
     /* BACKGROUND */
     .stApp {{
-    background: linear-gradient(
-        135deg,
-        #0B1220 0%,
-        #101B30 50%,
-        #0B1220 100%
+    background: radial-gradient(
+        circle at 50% 0%,
+        #172B4D 0%,
+        #0B1220 48%,
+        #070D19 100%
     ) !important;
 
     background-attachment: fixed !important;
