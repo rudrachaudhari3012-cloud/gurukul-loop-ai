@@ -2578,7 +2578,7 @@ with st.expander(
 # FOOTER
 # =====================================================
 st.markdown("""
-<div class="center-content">
+<div class="footer" style="text-align: center;">
     AB SCHOOL LOOP AI <br>
     Student Learning Support Prototype<br>
     Learn → Recall → Reflect → Improve
