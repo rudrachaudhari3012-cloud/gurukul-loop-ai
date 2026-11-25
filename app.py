@@ -2823,6 +2823,6 @@ st.markdown("""
 <div class="footer" style="text-align: center;">
     AB SCHOOL LOOP AI <br>
     Student Learning Support Prototype<br>
-    Learn → Recall → Reflect → Improve
+    Learn - Recall - Reflect - Improve
 </div>
 """, unsafe_allow_html=True)
