@@ -1823,9 +1823,7 @@ st.markdown(hero_html, unsafe_allow_html=True)
 
         with st.container(border=True):
 
-            st.markdown(
-                "### 🌟 Your Growth Journey"
-            )
+            st.markdown("### 🌟 Your Growth Journey")
 
             st.write(
                 "Learn something new. Practise consistently. "
@@ -1836,37 +1834,45 @@ st.markdown(hero_html, unsafe_allow_html=True)
                 min(learning_score / 100, 1.0)
             )
 
-            st.caption(
-                f"Your current quiz accuracy: "
-                f"{learning_score}%"
-                if results else
-                "Your progress will appear after your first quiz."
-            )
+            if results:
+                st.caption(
+                    f"Your current quiz accuracy: {learning_score}%"
+                )
+            else:
+                st.caption(
+                    "Your progress will appear after your first quiz."
+                )
 
     with r2:
 
-        st.markdown("""
+        remember_html = """
         <div class="remember-card">
-
-            <h3>'⭐' Remember</h3>
-
+            <h3>⭐ Remember</h3>
             <p>Dream Big.<br>Study Smart!</p>
-            <div style="
-                text-align:right;
-                font-size:25px;
-                color:#7654e8;">
+            <div style="text-align:right; font-size:25px; color:#48E5FF;">
                 ♡
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """
 
-    st.markdown("""
+        st.markdown(
+            remember_html,
+            unsafe_allow_html=True
+        )
+
+    footer_html = """
     <div class="footer">
         AB SCHOOL LOOP AI <br>
         LEARN → GROW → THRIVE
     </div>
-    """, unsafe_allow_html=True)
+    """
 
+    st.markdown(
+        footer_html,
+        unsafe_allow_html=True
+    )
+
+   
 # =====================================================
 # LEARNING DASHBOARD
 # =====================================================
