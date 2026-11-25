@@ -53,34 +53,45 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 ) 
+
 # ==========================================
-# AB SCHOOL LOOP AI - PREMIUM NEURAL THEME
+# AB SCHOOL LOOP AI - PREMIUM CLEAR THEME
 # ==========================================
+
+from pathlib import Path
+import base64
+import streamlit as st
 
 bg_path = Path(__file__).parent / "background.png"
 
 if bg_path.exists():
-
-    bg = base64.b64encode(
-        bg_path.read_bytes()
-    ).decode()
+    bg = base64.b64encode(bg_path.read_bytes()).decode()
 
     st.markdown(f"""
     <style>
 
-    /* MAIN BACKGROUND */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    :root {{
+        --text: #FFFFFF;
+        --muted: #D6E4F5;
+        --cyan: #48E5FF;
+        --blue: #168DFF;
+    }}
+
+    /* BACKGROUND */
     .stApp {{
         background:
             linear-gradient(
-                rgba(2, 5, 22, 0.25),
-                rgba(2, 5, 22, 0.25)
+                rgba(3, 9, 27, 0.82),
+                rgba(3, 9, 27, 0.88)
             ),
             url("data:image/png;base64,{bg}");
 
         background-size: cover !important;
         background-position: center !important;
-        background-repeat: no-repeat !important;
         background-attachment: fixed !important;
+        font-family: 'Inter', sans-serif !important;
     }}
 
     /* MAIN CONTENT */
@@ -91,70 +102,128 @@ if bg_path.exists():
         background: transparent !important;
     }}
 
+    /* HEADINGS */
+    .stApp h1,
+    .stApp h2,
+    .stApp h3,
+    .stApp h4 {{
+        color: #FFFFFF !important;
+        font-weight: 800 !important;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }}
+
+    /* ALL TEXT */
+    .stApp p,
+    .stApp li,
+    .stApp label,
+    .stApp span,
+    .stMarkdown,
+    [data-testid="stWidgetLabel"] {{
+        color: #F4F8FF !important;
+    }}
+
+    /* SECONDARY TEXT */
+    [data-testid="stCaptionContainer"] {{
+        color: #D6E4F5 !important;
+    }}
+
     /* SIDEBAR */
     [data-testid="stSidebar"] {{
         background: linear-gradient(
             180deg,
-            #020817,
-            #071B3A,
-            #06112B
+            #061329,
+            #0B2043,
+            #101633
         ) !important;
 
-        border-right: 1px solid #008CFF;
-        box-shadow: 5px 0 25px rgba(0, 140, 255, 0.25);
+        border-right: 1px solid #168DFF;
+    }}
+
+    [data-testid="stSidebar"] * {{
+        color: #FFFFFF !important;
     }}
 
     /* GLASS CARDS */
     [data-testid="stVerticalBlockBorderWrapper"] {{
-        background: rgba(5, 20, 55, 0.72) !important;
-        border: 1px solid rgba(0, 180, 255, 0.65) !important;
+        background: rgba(7, 22, 48, 0.97) !important;
+        border: 1px solid rgba(72, 229, 255, 0.55) !important;
         border-radius: 18px !important;
-        box-shadow:
-            0 0 15px rgba(0, 140, 255, 0.25),
-            inset 0 0 15px rgba(80, 100, 255, 0.08);
-        backdrop-filter: blur(15px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     }}
 
-    /* METRIC CARDS */
+    /* METRICS */
     [data-testid="stMetric"] {{
-        background: rgba(5, 20, 55, 0.75);
-        border: 1px solid #087EFF;
-        border-radius: 16px;
-        padding: 18px;
-        box-shadow: 0 0 15px rgba(0, 120, 255, 0.25);
+        background: #0B2043 !important;
+        border: 1px solid #168DFF !important;
+        border-radius: 16px !important;
+        padding: 18px !important;
+    }}
+
+    [data-testid="stMetricLabel"],
+    [data-testid="stMetricLabel"] p {{
+        color: #D6E4F5 !important;
+    }}
+
+    [data-testid="stMetricValue"],
+    [data-testid="stMetricValue"] * {{
+        color: #FFFFFF !important;
+        font-weight: 800 !important;
     }}
 
     /* BUTTONS */
-    .stButton > button {{
+    .stButton > button,
+    .stDownloadButton > button,
+    [data-testid="stFormSubmitButton"] > button {{
         background: linear-gradient(
             100deg,
-            #006EFF,
-            #653BFF
+            #087EFF,
+            #6848D9
         ) !important;
 
-        color: white !important;
-        border: 1px solid #36D9FF !important;
-        border-radius: 12px !important;
-        box-shadow: 0 0 15px rgba(0, 140, 255, 0.5);
-        transition: 0.3s ease;
-    }}
-
-    .stButton > button:hover {{
-        box-shadow: 0 0 25px #008CFF;
-        border-color: #B35CFF !important;
-        transform: translateY(-2px);
-    }}
-
-    /* TEXT */
-    .stApp,
-    .stApp p,
-    .stApp label {{
-        color: #F1F7FF;
-    }}
-
-    h1, h2, h3 {{
         color: #FFFFFF !important;
-        text-shadow: 0 0 12px rgba(0, 170, 255, 0.45);
+        border: 1px solid #48E5FF !important;
+        border-radius: 12px !important;
+        font-weight: 700 !important;
+        min-height: 44px;
+    }}
+
+    /* INPUTS */
+    .stTextInput input,
+    .stTextArea textarea,
+    [data-baseweb="select"] > div {{
+        background: #102443 !important;
+        color: #FFFFFF !important;
+        border: 1px solid #48A9FF !important;
+        border-radius: 10px !important;
+    }}
+
+    input::placeholder,
+    textarea::placeholder {{
+        color: #C5D5E9 !important;
+        opacity: 1 !important;
+    }}
+
+    /* TABS */
+    .stTabs [data-baseweb="tab-list"] {{
+        background: #0B1C38 !important;
+        border-radius: 12px;
+    }}
+
+    .stTabs [data-baseweb="tab"] {{
+        color: #FFFFFF !important;
+    }}
+
+    .stTabs [aria-selected="true"] {{
+        color: #48E5FF !important;
+    }}
+
+    /* ALERTS */
+    [data-testid="stAlert"] {{
+        background: #102443 !important;
+    }}
+
+    [data-testid="stAlert"] * {{
+        color: #FFFFFF !important;
     }}
 
     /* HEADER */
@@ -162,14 +231,9 @@ if bg_path.exists():
         background: transparent !important;
     }}
 
-    /* INPUT FIELDS */
-    .stTextInput input,
-    .stTextArea textarea,
-    .stSelectbox div[data-baseweb="select"] {{
-        background: rgba(5, 20, 50, 0.85) !important;
-        color: white !important;
-        border: 1px solid #168DFF !important;
-        border-radius: 10px !important;
+    /* DIVIDERS */
+    hr {{
+        border-color: rgba(72,229,255,0.3) !important;
     }}
 
     </style>
@@ -177,238 +241,6 @@ if bg_path.exists():
 
 else:
     st.error("background.png not found!")
-
-# ==========================================
-# AB SCHOOL LOOP AI - MIDNIGHT AURORA THEME
-# ==========================================
-
-st.markdown("""
-<style>
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-:root {
-    --bg: #080F20;
-    --card: rgba(15, 30, 57, 0.94);
-    --white: #FFFFFF;
-    --text: #EAF2FF;
-    --muted: #B9C9E2;
-    --cyan: #48E5FF;
-    --blue: #168DFF;
-    --purple: #9B7BFF;
-}
-
-/* MAIN WEBSITE */
-.stApp {
-    color: var(--text) !important;
-    font-family: 'Inter', sans-serif !important;
-}
-
-/* MAIN CONTENT */
-[data-testid="stAppViewContainer"],
-[data-testid="stMain"],
-.main,
-.block-container {
-    background: transparent !important;
-}
-
-/* MAIN HEADINGS */
-.stApp h1,
-.stApp h2,
-.stApp h3,
-.stApp h4 {
-    color: #FFFFFF !important;
-    font-weight: 800 !important;
-    text-shadow: 0 2px 12px rgba(0, 150, 255, 0.22);
-}
-
-/* ALL NORMAL TEXT */
-.stApp p,
-.stApp li,
-.stApp label,
-.stMarkdown,
-.stMarkdown p,
-[data-testid="stWidgetLabel"],
-[data-testid="stWidgetLabel"] p {
-    color: #EAF2FF !important;
-}
-
-/* SECONDARY TEXT */
-.stCaption,
-[data-testid="stCaptionContainer"] {
-    color: #B9C9E2 !important;
-}
-
-/* SIDEBAR */
-[data-testid="stSidebar"] {
-    background: linear-gradient(
-        180deg,
-        #071326,
-        #101C3A,
-        #11152F
-    ) !important;
-    border-right: 1px solid rgba(72, 229, 255, 0.35);
-}
-
-[data-testid="stSidebar"] p,
-[data-testid="stSidebar"] label,
-[data-testid="stSidebar"] span {
-    color: #F2F7FF !important;
-}
-
-/* HERO SECTION */
-.hero,
-.mind-banner {
-    background: linear-gradient(
-        120deg,
-        rgba(13, 39, 77, 0.97),
-        rgba(28, 28, 75, 0.97),
-        rgba(9, 49, 82, 0.97)
-    ) !important;
-    border: 1px solid rgba(72, 229, 255, 0.65) !important;
-    border-radius: 24px !important;
-    padding: 28px !important;
-    box-shadow: 0 12px 35px rgba(0, 100, 220, 0.20);
-}
-
-.hero h1,
-.hero p,
-.mind-banner h1,
-.mind-banner p {
-    color: #FFFFFF !important;
-}
-
-/* GLASS CARDS */
-[data-testid="stVerticalBlockBorderWrapper"],
-[data-testid="stMetric"] {
-    background: rgba(13, 29, 56, 0.96) !important;
-    border: 1px solid rgba(72, 160, 255, 0.48) !important;
-    border-radius: 18px !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.20);
-}
-
-/* METRIC TEXT */
-[data-testid="stMetricLabel"],
-[data-testid="stMetricLabel"] p {
-    color: #D5E5FF !important;
-}
-
-[data-testid="stMetricValue"],
-[data-testid="stMetricValue"] * {
-    color: #FFFFFF !important;
-    font-weight: 800 !important;
-}
-
-/* BUTTONS */
-.stButton > button,
-.stDownloadButton > button,
-[data-testid="stFormSubmitButton"] > button {
-    background: linear-gradient(100deg, #087EFF, #6848D9) !important;
-    color: #FFFFFF !important;
-    border: 1px solid #55DFFF !important;
-    border-radius: 12px !important;
-    font-weight: 700 !important;
-    min-height: 42px;
-    box-shadow: 0 5px 18px rgba(0, 120, 255, 0.24);
-}
-
-.stButton > button:hover,
-.stDownloadButton > button:hover {
-    border-color: #FFFFFF !important;
-    filter: brightness(1.15);
-}
-
-/* INPUT FIELDS */
-.stTextInput input,
-.stTextArea textarea,
-[data-baseweb="select"] > div {
-    background: #101F3A !important;
-    color: #FFFFFF !important;
-    border: 1px solid #398DDF !important;
-    border-radius: 10px !important;
-}
-
-/* PLACEHOLDER TEXT */
-.stTextInput input::placeholder,
-.stTextArea textarea::placeholder {
-    color: #B9C9E2 !important;
-    opacity: 1 !important;
-}
-
-/* DROPDOWN MENU */
-[data-baseweb="popover"],
-[data-baseweb="menu"] {
-    background: #142541 !important;
-}
-
-[data-baseweb="menu"] * {
-    color: #FFFFFF !important;
-}
-
-/* TABS */
-.stTabs [data-baseweb="tab-list"] {
-    background: rgba(12, 27, 52, 0.95) !important;
-    border-radius: 12px;
-}
-
-.stTabs [data-baseweb="tab"] {
-    color: #DCEAFF !important;
-}
-
-.stTabs [aria-selected="true"] {
-    color: #48E5FF !important;
-    border-bottom-color: #48E5FF !important;
-}
-
-/* RADIO AND CHECKBOX */
-.stRadio label,
-.stCheckbox label {
-    color: #F2F7FF !important;
-}
-
-/* ALERTS */
-[data-testid="stAlert"] {
-    background: #132541 !important;
-    border-radius: 13px;
-}
-
-[data-testid="stAlert"] p {
-    color: #FFFFFF !important;
-}
-
-/* CUSTOM CARDS */
-.tip-card,
-.activity-card,
-.small-note {
-    background: rgba(13, 30, 58, 0.96) !important;
-    color: #F2F7FF !important;
-    border: 1px solid rgba(72, 160, 255, 0.45) !important;
-    border-radius: 15px;
-}
-
-/* CUSTOM LABELS */
-.eyebrow,
-.kicker {
-    color: #65E8FF !important;
-}
-
-/* FOOTER */
-.footer {
-    color: #B9C9E2 !important;
-}
-
-/* DIVIDERS */
-hr {
-    border-color: rgba(150, 190, 255, 0.22) !important;
-}
-
-/* HEADER */
-[data-testid="stHeader"] {
-    background: transparent !important;
-}
-
-</style>
-""", unsafe_allow_html=True)
 
 # =====================================================
 # LANGUAGE
