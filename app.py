@@ -85,19 +85,16 @@ if bg_path.exists():
 
     /* BACKGROUND */
     .stApp {{
-        background:
-            linear-gradient(
-                rgba(3, 9, 27, 0.82),
-                rgba(3, 9, 27, 0.88)
-            ),
-            url("data:image/png;base64,{bg}");
+    background: linear-gradient(
+        135deg,
+        #0B1220 0%,
+        #101B30 50%,
+        #0B1220 100%
+    ) !important;
 
-        background-size: cover !important;
-        background-position: center !important;
-        background-attachment: fixed !important;
-        font-family: 'Inter', sans-serif !important;
-    }}
-
+    background-attachment: fixed !important;
+    font-family: 'Inter', sans-serif !important;
+}}
     /* MAIN CONTENT */
     [data-testid="stAppViewContainer"],
     [data-testid="stMain"],
