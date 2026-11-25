@@ -1846,8 +1846,11 @@ st.markdown(hero_html, unsafe_allow_html=True)
     with r2:
 
         remember_html = """
+        <remember_html = """
         <div class="remember-card">
-            <h3>⭐ Remember</h3>
+         <h3>⭐ Remember</h3>
+        </div>
+        """
             <p>Dream Big.<br>Study Smart!</p>
             <div style="text-align:right; font-size:25px; color:#48E5FF;">
                 ♡
