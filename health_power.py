@@ -325,15 +325,15 @@ def render_health_power(st, student_id=None):
             answers=[]
             for i,(cat,q,opts,correct) in enumerate(MIND_QUESTIONS):
                 st.markdown(f"**Q{i+1}. ({cat}) {q}**")
-                answers.append(st.radio("Select one answer",opts=opts,index=None,key=f"hp_mind_answer_{attempt}_{i}",label_visibility="collapsed"))
+                answers.append(st.radio("Select one answer",options=opts,index=None,key=f"hp_mind_answer_{attempt}_{i}",label_visibility="collapsed"))
             submit_test=st.form_submit_button("Submit Practice Test",use_container_width=True,disabled=already_saved)
         if submit_test:
             if any(a is None for a in answers):
                 st.warning("સબમિટ કરતા પહેલાં બધા 16 પ્રશ્નોના જવાબ પસંદ કરો.")
             else:
                 scores={"Logic":0,"Pattern Recognition":0,"Memory":0,"Reasoning":0}
-                for a,(cat,q,opts,correct) in zip(answers,MIND_QUESTIONS):
-                    if opts.index(a)==correct: scores[cat]+=1
+                for a,(cat,q,question_options,correct) in zip(answers,MIND_QUESTIONS):
+                    if question_options.index(a)==correct: scores[cat]+=1
                 total=sum(scores.values())
                 st.session_state.hp_mind_result={"scores":scores,"total":total,"answers":answers}
                 st.session_state.hp_mind_saved_attempt=attempt
