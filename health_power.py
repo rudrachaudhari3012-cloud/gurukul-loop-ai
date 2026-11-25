@@ -392,7 +392,11 @@ def render_health_power(st, student_id=None):
         if not f_all.empty: st.markdown("**Food learning records**"); st.dataframe(f_all,use_container_width=True,hide_index=True)
         if not b_all.empty: st.markdown("**BMI calculations (number only; no categories)**"); st.dataframe(b_all,use_container_width=True,hide_index=True)
         if not mu_all.empty: st.markdown("**Music sessions**"); st.dataframe(mu_all,use_container_width=True,hide_index=True)
-        if not m_all.empty: st.markdown("**Mind Skills attempts**"); st.dataframe(m_all,use_container_width,hide_index=True)
+        if not m_all.empty: st.markdown("**Mind Skills attempts**"); st.dataframe(
+    m_all,
+    use_container_width=True,
+    hide_index=True
+)
         report_lines=["AB SCHOOL LOOP AI — HEALTH POWER AI WEEKLY REPORT",f"Student ID: {sid}",f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}","Period: Last 7 days",f"Activity minutes: {int(a_all.minutes.sum()) if not a_all.empty else 0}",f"Sleep average hours: {float(s_all.duration.mean()):.2f}" if not s_all.empty else "Sleep average hours: No records",f"Food learning entries: {len(f_all)}",f"BMI calculations: {len(b_all)}",f"Music sessions: {len(mu_all)}",f"Mind Skills attempts: {len(m_all)}"]
         report_text="\n".join(report_lines)
         st.download_button("⬇ Download TXT Report",report_text,"health_power_weekly_report.txt","text/plain",use_container_width=True)
