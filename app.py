@@ -1344,9 +1344,8 @@ if page == T["overview"]:
     # -------------------------------------------------
     # HERO BANNER
     # -------------------------------------------------
-
     st.markdown(f"""
-    <div class="home-hero">
+    <div class="home-hero" style="background: transparent !important;">
         <div class="hero-label">
             🎓 WELCOME BACK, {user['full_name'].upper()}!
         </div>
@@ -1368,6 +1367,7 @@ if page == T["overview"]:
         <div class="hero-art">
             <img src="data:image/png;base64,{logo_base64}" style="width:280px; height:auto; border-radius:20px;">
         </div>
+    </div>
     """, unsafe_allow_html=True)
    
     # -------------------------------------------------
