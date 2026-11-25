@@ -642,28 +642,6 @@ def save_reflection(user_id, answer):
 init_db()
 init_db()
 
-# =====================================================
-# SUPABASE CONNECTION TEST
-# =====================================================
-
-if st.sidebar.button("🔌 Test Supabase Connection"):
-    try:
-        supabase = get_supabase_client()
-
-        if supabase is not None:
-            response = (
-                supabase.table("profiles")
-                .select("id")
-                .limit(1)
-                .execute()
-            )
-
-            st.success("Supabase connection successful!")
-            st.write("Profiles table is accessible.")
-
-    except Exception as e:
-        st.error("Supabase test failed.")
-        st.write(str(e))
 
 # =====================================================
 # QUESTION BANK
