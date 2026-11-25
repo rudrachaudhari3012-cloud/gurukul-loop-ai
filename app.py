@@ -1567,7 +1567,33 @@ if page == T["overview"]:
 
     st.markdown(f"""
     <div class="home-hero">
+    <div class="hero-label">
+        🎓 WELCOME BACK, {user['full_name'].upper()}!
+    </div>
 
+    <h1>AB SCHOOL LOOP AI</h1>
+
+    <h2>
+        Learn &nbsp; • &nbsp;
+        <span style="color:#48E5FF;">Grow</span>
+        &nbsp; • &nbsp;
+        <span style="color:#A78BFA;">Thrive</span>
+    </h2>
+
+    <p>
+        Your Smart Learning Partner for a Brighter Future ✨
+    </p>
+
+    <p style="font-size:13px;">
+        STUDENT GROWTH · SMART LEARNING · MIND POWER
+    </p>
+
+    <div class="hero-art">
+        <img src="data:image/png;base64,{logo_base64}">
+</div>
+"""
+
+st.markdown(hero_html, unsafe_allow_html=True)
        
     </div>
     """, unsafe_allow_html=True)
