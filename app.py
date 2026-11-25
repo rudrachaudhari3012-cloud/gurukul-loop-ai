@@ -6,6 +6,7 @@ import sqlite3
 import hashlib
 import secrets
 import io
+from ai_coach import create_ai_chat
 import base64
 from pathlib import Path
 import base64
