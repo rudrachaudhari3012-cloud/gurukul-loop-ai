@@ -1236,51 +1236,51 @@ st.markdown(f"""
     # -------------------------------------------------
     # DASHBOARD METRICS
     # -------------------------------------------------
+    if results:
+        total_attempts = len(results)
 
-    total_attempts = len(results)
-
-    total_correct = sum(
+        total_correct = sum(
         r["score"] for r in results
-    )
+        )
 
-    total_questions = sum(
+        total_questions = sum(
         r["total"] for r in results
-    )
+        )
 
-    learning_score = (
+        learning_score = (
         round(total_correct / total_questions * 100)
         if total_questions else 0
-    )
+        )
 
-    brain_energy = user.get("energy") or "Ready"
+        brain_energy = user.get("energy") or "Ready"
 
-    m1, m2, m3, m4 = st.columns(4)
+        m1, m2, m3, m4 = st.columns(4)
 
-    with m1:
+        with m1:
         st.metric(
             "🎯 Learning Score",
             f"{learning_score}%" if results else "—"
-        )
+            )
 
-    with m2:
+        with m2:
         st.metric(
             "⚡ Brain Energy",
             brain_energy
-        )
+            )
 
-    with m3:
+        with m3:
         st.metric(
             "🏆 Quiz Attempts",
             total_attempts
-        )
+            )
 
-    with m4:
+        with m4:
         st.metric(
             "⭐ Growth Points",
             total_attempts * 10
-        )
+            )
 
-    st.write("")
+        st.write("")
 
     # -------------------------------------------------
     # PROGRESS GRAPH
