@@ -1,3 +1,9 @@
+
+Loading library
+
+
+
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -6,31 +12,27 @@ import hashlib
 import secrets
 import io
 import os
-import base64
-import textwrap
-from pathlib import Path
-
 from ai_coach import create_ai_chat
+import base64
+from pathlib import Path
+import base64
+
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+logo_base64 = get_base64_image("logo.png")
+
 from supabase import create_client
 from health_power import render_health_power
 from datetime import date, datetime
 from mind_power import render_mind_power
-
 try:
     from reportlab.lib.pagesizes import A4
     from reportlab.pdfgen import canvas
     PDF_AVAILABLE = True
 except ImportError:
     PDF_AVAILABLE = False
-
-BASE_DIR = Path(__file__).parent
-LOGO_PATH = BASE_DIR / "logo.png"
-
-def get_base64_image(image_path):
-    with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode("utf-8")
-
-logo_base64 = get_base64_image(LOGO_PATH)
 
 APP_TITLE = "AB SCHOOL LOOP AI"
 DB_PATH = "ab_school_loop_ai.db"
@@ -76,28 +78,27 @@ if bg_path.exists():
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
     :root {{
-    --bg: #0B1220;
-    --card: #14233B;
-    --text: #FFFFFF;
-    --muted: #CBD5E1;
-    --cyan: #22D3EE;
-    --blue: #3B82F6;
-    --purple: #8B5CF6;
-    --border: #29415F;
-}}
+        --text: #FFFFFF;
+        --muted: #D6E4F5;
+        --cyan: #48E5FF;
+        --blue: #168DFF;
+    }}
 
     /* BACKGROUND */
     .stApp {{
-    background: radial-gradient(
-        circle at 50% 0%,
-        #172B4D 0%,
-        #0B1220 48%,
-        #070D19 100%
-    ) !important;
+        background:
+            linear-gradient(
+                rgba(3, 9, 27, 0.82),
+                rgba(3, 9, 27, 0.88)
+            ),
+            url("data:image/png;base64,{bg}");
 
-    background-attachment: fixed !important;
-    font-family: 'Inter', sans-serif !important;
-}}
+        background-size: cover !important;
+        background-position: center !important;
+        background-attachment: fixed !important;
+        font-family: 'Inter', sans-serif !important;
+    }}
+
     /* MAIN CONTENT */
     [data-testid="stAppViewContainer"],
     [data-testid="stMain"],
@@ -924,59 +925,29 @@ avg_score = (
 # REUSABLE PLOT STYLE
 # =====================================================
 
-
 def style_chart(fig):
     fig.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(15,27,48,0.65)",
-
+        paper_bgcolor="rgba(255,255,255,0)",
+        plot_bgcolor="rgba(255,255,255,0)",
         font=dict(
             family="Inter",
-            color="#EAF2FF",
-            size=13
+            color="#EAF4FF"
         ),
-
         title_font=dict(
             color="#FFFFFF",
-            size=20
+            size=17
         ),
-
-        colorway=[
-            "#3B82F6",
-            "#22D3EE",
-            "#A78BFA",
-            "#34D399",
-            "#F472B6",
-            "#FBBF24"
-        ],
-
-        margin=dict(l=20, r=20, t=55, b=20),
-
-        legend=dict(
-            bgcolor="rgba(0,0,0,0)",
-            font=dict(color="#CBD5E1")
+        margin=dict(l=15, r=15, t=55, b=15),
+        xaxis=dict(
+            gridcolor="rgba(160,190,230,.22)",
+            zerolinecolor="rgba(160,190,230,.28)"
         ),
-
-        hoverlabel=dict(
-            bgcolor="#14233B",
-            font_color="#FFFFFF",
-            bordercolor="#22D3EE"
+        yaxis=dict(
+            gridcolor="rgba(160,190,230,.22)",
+            zerolinecolor="rgba(160,190,230,.28)"
         )
     )
-
-    fig.update_xaxes(
-        showgrid=True,
-        gridcolor="rgba(148,163,184,0.12)"
-    )
-
-    fig.update_yaxes(
-        showgrid=True,
-        gridcolor="rgba(148,163,184,0.12)"
-    )
-
     return fig
-
 # =====================================================
 # HEALTH POWER AI
 # =====================================================
@@ -1004,20 +975,18 @@ if page == T["overview"]:
     st.markdown("""
     <style>
     .home-hero {
-    background: linear-gradient(
-        115deg,
-        #0B1220 0%,
-        #14233B 55%,
-        #1B3152 100%
-    );
-    border: 1px solid #22D3EE;
-    border-radius: 22px;
-    padding: 28px;
-    min-height: 205px;
-    box-shadow: 0 14px 38px rgba(0,0,0,.25);
-    position: relative;
-    overflow: hidden;
-}
+        background:
+        radial-gradient(circle at 15% 50%,
+        rgba(36,194,255,.30),transparent 30%),
+        linear-gradient(115deg,#07152F 0%,#102B55 52%,#211D43 100%);
+        border:1px solid rgba(72,229,255,.55);
+        border-radius:22px;
+        padding:28px;
+        min-height:205px;
+        box-shadow:0 14px 38px rgba(0,0,0,.34),0 0 24px rgba(22,141,255,.12);
+        position:relative;
+        overflow:hidden;
+    }
 
     .home-hero h1 {
         color:#FFFFFF !important;
@@ -1196,19 +1165,15 @@ if page == T["overview"]:
     </style>
     """, unsafe_allow_html=True)
 
-  
-# -------------------------------------------------
-# HERO BANNER
-# -------------------------------------------------
-
-    st.markdown(textwrap.dedent(f"""
+    # -------------------------------------------------
+    # HERO BANNER
+    # -------------------------------------------------
+    st.markdown(f"""
     <div class="home-hero">
     <div class="hero-label">
         🎓 WELCOME BACK, {user['full_name'].upper()}!
     </div>
-
     <h1>AB SCHOOL LOOP AI</h1>
-
     <h2 style="
         color:#3978ee;
         font-size:25px;
@@ -1219,62 +1184,64 @@ if page == T["overview"]:
         &nbsp; • &nbsp;
         <span style="color:#9250ed;">Thrive</span>
     </h2>
-
     <p>Your Smart Learning Partner for a Brighter Future ✨</p>
-
     <p style="font-size:13px;">
         STUDENT GROWTH · SMART LEARNING · MIND POWER
     </p>
-
     <div class="hero-art">
-        {f'<img src="data:image/png;base64,{logo_base64}" style="width:280px; height:auto; border-radius:150px;">' if logo_base64 else ''}
+        <img src="data:image/png;base64,{logo_base64}" style="width:280px; height:auto; border-radius:20px;">
     </div>
-
 </div>
-    """), unsafe_allow_html=True)
-
+""", unsafe_allow_html=True)
 
     # -------------------------------------------------
     # DASHBOARD METRICS
     # -------------------------------------------------
-    if results:
-        total_attempts = len(results)
-        total_correct = sum(r["score"] for r in results)
-        total_questions = sum(r["total"] for r in results)
 
-        learning_score = (
-            round(total_correct / total_questions * 100)
-            if total_questions else 0
+    total_attempts = len(results)
+
+    total_correct = sum(
+        r["score"] for r in results
+    )
+
+    total_questions = sum(
+        r["total"] for r in results
+    )
+
+    learning_score = (
+        round(total_correct / total_questions * 100)
+        if total_questions else 0
+    )
+
+    brain_energy = user.get("energy") or "Ready"
+
+    m1, m2, m3, m4 = st.columns(4)
+
+    with m1:
+        st.metric(
+            "🎯 Learning Score",
+            f"{learning_score}%" if results else "—"
         )
 
-        brain_energy = user.get("energy") or "Ready"
-        m1, m2, m3, m4 = st.columns(4)
+    with m2:
+        st.metric(
+            "⚡ Brain Energy",
+            brain_energy
+        )
 
-        with m1:
-            st.metric(
-                "🎯 Learning Score",
-                f"{learning_score}%" if results else "—"
-            )
+    with m3:
+        st.metric(
+            "🏆 Quiz Attempts",
+            total_attempts
+        )
 
-        with m2:
-            st.metric(
-                "⚡ Brain Energy",
-                brain_energy
-            )
+    with m4:
+        st.metric(
+            "⭐ Growth Points",
+            total_attempts * 10
+        )
 
-        with m3:
-            st.metric(
-                "🏆 Quiz Attempts",
-                total_attempts
-            )
-
-        with m4:
-            st.metric(
-                "⭐ Growth Points",
-                total_attempts * 10
-            )
-
-        st.write("")
+    st.write("")
 
     # -------------------------------------------------
     # PROGRESS GRAPH
@@ -2467,3 +2434,6 @@ st.markdown("""
     Learn → Recall → Reflect → Improve
 </div>
 """, unsafe_allow_html=True)
+
+
+
