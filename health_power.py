@@ -125,13 +125,13 @@ def _inject_css():
 
 
 FOOD_LIBRARY = {
-    "દાળ / કઠોળ": ("Protein and fibre", "દાળ અને કઠોળ પ્રોટીન તથા ફાઇબરના સ્ત્રોત છે.", "વિવિધ કઠોળ વિશે શીખો."),
-    "દૂધ / દહીં": ("Calcium and protein", "દૂધ અને દહીં કેલ્શિયમ તથા પ્રોટીન આપી શકે છે.", "ખોરાકની પસંદગી વ્યક્તિ પ્રમાણે બદલાય છે."),
-    "ફળો": ("Vitamins and fibre", "ફળોમાં વિવિધ વિટામિન, ખનિજ અને ફાઇબર હોય છે.", "મોસમી ફળો વિશે જાણો."),
-    "શાકભાજી": ("Vitamins, minerals and fibre", "શાકભાજી વિવિધ પોષક તત્ત્વો આપે છે.", "વિવિધ શાકભાજી વિશે શીખો."),
-    "અનાજ / રોટલી": ("Energy-giving carbohydrates", "અનાજ કાર્બોહાઇડ્રેટ્સનો સ્ત્રોત છે.", "વિવિધ અનાજના પ્રકારો જાણો."),
-    "સૂકા મેવા / બીજ": ("Nutrients and fats", "સૂકા મેવા અને બીજમાં વિવિધ પોષક તત્ત્વો હોય છે.", "એલર્જી હોય તો સાવચેતી રાખો."),
-    "પાણી": ("Hydration", "પાણી શરીરના સામાન્ય કાર્યો માટે જરૂરી છે.", "દિવસભર પાણી ઉપલબ્ધ રાખો."),
+    "Lentils / Beans": ("Protein and fibre", "Lentils and beans are sources of protein and fibre.", "Learn about different types of beans."),
+    "Milk / Yogurt": ("Calcium and protein", "Milk and yogurt can provide calcium and protein.", "Food choices can vary from person to person."),
+    "Fruits": ("Vitamins and fibre", "Fruits contain different vitamins, minerals, and fibre.", "Learn about seasonal fruits."),
+    "Vegetables": ("Vitamins, minerals and fibre", "Vegetables provide different nutrients.", "Learn about different vegetables."),
+    "Grains / Bread": ("Energy-giving carbohydrates", "Grains are a source of carbohydrates.", "Learn about different types of grains."),
+    "Nuts / Seeds": ("Nutrients and fats", "Nuts and seeds contain different nutrients.", "Be careful if you have allergies."),
+    "Water": ("Hydration", "Water is needed for normal body functions.", "Keep water available throughout the day."),
 }
 
 
@@ -165,22 +165,22 @@ def _recent(sid, table, columns, days=7, order="log_date DESC"):
 def _make_insights(activity, sleep, food, bmi, music, mind):
     tips = []
     if activity.empty:
-        tips.append(("Active Body", "તમારી અનુકૂળ પ્રવૃત્તિનો એક રેકોર્ડ ઉમેરો. આરામ અને પ્રવૃત્તિ બંને મહત્વના છે."))
+        tips.append(("Active Body", "Add a record of an activity you enjoy. Both movement and rest are important."))
     else:
-        tips.append(("Active Body", f"છેલ્લા 7 દિવસમાં {int(activity.minutes.sum())} મિનિટની પ્રવૃત્તિ નોંધાઈ છે. પોતાની સુવિધા મુજબ નિયમિત વિરામ અને હલનચલન રાખો."))
+        tips.append(("Active Body", f"You recorded {int(activity.minutes.sum())} minutes of activity in the last 7 days. Take regular breaks and move in a way that feels comfortable."))
     if sleep.empty:
-        tips.append(("Sleep", "સૂવાનો અને જાગવાનો સમય નોંધવાથી તમારી રૂટિન સમજવામાં મદદ મળશે."))
+        tips.append(("Sleep", "Recording your bedtime and wake-up time can help you understand your routine."))
     else:
         avg = float(sleep.duration.mean())
-        tips.append(("Sleep", f"નોંધાયેલા સમયનો સરેરાશ {avg:.1f} કલાક છે. નિયમિત સૂવાની રૂટિન રાખવાનો પ્રયત્ન કરો."))
-    tips.append(("Smart Food", "વિવિધ ખોરાક અને પોષક તત્ત્વો વિશે શીખતા રહો; એક જ ખોરાકને સર્વથા સારો કે ખરાબ ન ગણો." if not food.empty else "Food Libraryમાંથી એક ખોરાક પસંદ કરી તેની પોષક માહિતી વાંચો અને નોંધ ઉમેરો."))
-    tips.append(("BMI", "BMI માત્ર ગણિતીય સૂચક છે. બાળકો અને કિશોરો માટે તેનું અર્થઘટન ઉંમર અને અન્ય સંદર્ભો સાથે જ થાય છે; અહીં કોઈ નિદાન થતું નથી." if not bmi.empty else "BMI ગણતરી કરવી વૈકલ્પિક છે. કિશોરો માટે BMIનું અર્થઘટન અહીં આપવામાં આવતું નથી."))
-    tips.append(("Memory Music", "ઓડિયો સાંભળો તો આરામદાયક વોલ્યુમ રાખો અને વચ્ચે વિરામ લો." if not music.empty else "જો ઓડિયો ફાઇલ ઉપલબ્ધ હોય તો ટૂંકું આરામદાયક listening session અજમાવી શકો."))
+        tips.append(("Sleep", f"Your recorded average is {avg:.1f} hours. Try to keep a regular sleep routine."))
+    tips.append(("Smart Food", "Keep learning about different foods and nutrients. Do not label one food as always good or bad." if not food.empty else "Choose a food from the Food Library, read its nutrition information, and add a note."))
+    tips.append(("BMI", "BMI is only a calculation. For children and teens, it must be understood with age and other context. This is not a diagnosis." if not bmi.empty else "BMI calculation is optional. This app does not interpret BMI for teens."))
+    tips.append(("Memory Music", "If you listen to audio, keep the volume comfortable and take breaks." if not music.empty else "If audio is available, you can try a short, relaxing listening session."))
     if mind.empty:
-        tips.append(("Mind Skills", "Mind Skills practice test અજમાવો. આ શીખવા માટેની કસરત છે, પ્રમાણિત IQ પરીક્ષણ નથી."))
+        tips.append(("Mind Skills", "Try the Mind Skills practice test. It is a learning activity, not a standardized IQ test."))
     else:
         last = int(mind.iloc[0].total_score)
-        tips.append(("Mind Skills", f"તમારા તાજેતરના અભ્યાસ-કૌશલ્ય અભ્યાસમાં {last}/16 જવાબ સાચા હતા. પોતાની અગાઉની કોશિશ સાથે પ્રગતિ જોવી ઉપયોગી છે."))
+        tips.append(("Mind Skills", f"You got {last}/16 correct in your latest Mind Skills practice. Comparing attempts can help you track learning."))
     return tips
 
 
@@ -189,15 +189,15 @@ def _bmi_growth_report(age):
     """Safe, non-diagnostic age-context and supportive steps."""
     age = int(age)
     if age < 20:
-        age_note = "બાળકો અને કિશોરોમાં BMI ને ઉંમર, sex-specific growth chart અને સમય સાથેના માપથી સમજવું પડે છે; BMI એકલો growth category નક્કી કરતો નથી."
+        age_note = "For children and teens, BMI is understood using age, sex-specific growth charts, and measurements over time. BMI alone cannot determine a growth category."
     else:
-        age_note = "BMI એક screening ગણતરી છે; તે એકલી આરોગ્ય નક્કી કરતી નથી."
+        age_note = "BMI is a screening calculation. It cannot determine health on its own."
     steps = [
-        "• નિયમિત ભોજન લો અને અનાજ, દાળ, શાકભાજી, ફળ તથા અન્ય ખોરાકમાં વિવિધતા રાખો.",
-        "• ભોજન છોડવાને બદલે ભૂખ અને શરીરની જરૂરિયાત પ્રમાણે ખાવાનું ધ્યાન રાખો.",
-        "• ચાલવું, રમત, નૃત્ય અથવા તમને ગમતી પ્રવૃત્તિ આનંદથી કરો; આરામ પણ જરૂરી છે.",
-        "• ઉંમર મુજબ પૂરતી ઊંઘ અને નિયમિત sleep routine રાખો.",
-        "• Growth વિશે ચિંતા હોય તો trusted adult સાથે વાત કરી આરોગ્ય નિષ્ણાત પાસે growth chart review કરાવો."
+        "• Eat regular meals and include a variety of foods such as grains, beans, vegetables, and fruits.",
+        "• Avoid skipping meals; pay attention to hunger and your body’s needs.",
+        "• Enjoy walking, sports, dancing, or other activities you like. Rest is important too.",
+        "• Get enough sleep for your age and try to keep a regular sleep routine.",
+        "• If you have concerns about growth, talk with a trusted adult and ask a health professional to review your growth chart."
     ]
     return age_note, steps
 
@@ -232,7 +232,7 @@ def _mind_history_profile(total, total_questions=16):
 def render_health_power(st, student_id=None):
     """Render Health Power inside the authenticated AB SCHOOL LOOP AI app."""
     if student_id is None or not str(student_id).strip():
-        st.warning("Health Power ખોલવા માટે માન્ય logged-in student ID જરૂરી છે.")
+        st.warning("A valid logged-in student ID is required to open Health Power.")
         return
     sid = str(student_id).strip()[:100]
     _init_db()
@@ -261,7 +261,7 @@ def render_health_power(st, student_id=None):
     # Active Body
     with tabs[0]:
         st.subheader("🏃 Active Body")
-        st.write("તમારી રોજિંદી હલનચલન નોંધો. કોઈ sensor જરૂરી નથી.")
+        st.write("Record your daily movement. No sensor is needed.")
         with st.form("hp_activity_form", clear_on_submit=True):
             d = st.date_input("Activity date", date.today(), key="hp_act_date")
             kind = st.selectbox("Activity type", ["Walking", "Cycling", "Outdoor play", "Stretching", "Dance", "Yoga", "Sports", "Other"], key="hp_act_kind")
@@ -274,7 +274,7 @@ def render_health_power(st, student_id=None):
         if not activity.empty:
             st.dataframe(activity.rename(columns={"log_date":"Date","activity":"Activity","minutes":"Minutes","outdoor":"Outdoor"}), use_container_width=True, hide_index=True)
             st.bar_chart(activity.groupby("log_date").minutes.sum())
-        else: st.info("હજુ activity record નથી. ઉપરથી ઉમેરો.")
+        else: st.info("No activity records yet. Add one above.")
 
     # Sleep
     with tabs[1]:
@@ -288,15 +288,15 @@ def render_health_power(st, student_id=None):
             if save_sleep:
                 bm=bed.hour*60+bed.minute; wm=wake.hour*60+wake.minute
                 dur=((wm-bm)%(24*60))/60
-                if dur<=0 or dur>18: st.error("સમય ફરી તપાસો; દાખલ કરેલો સમય માન્ય નથી.")
+                if dur<=0 or dur>18: st.error("Please check the time again. The entered duration is not valid.")
                 else:
                     _save("INSERT INTO sleep_logs(student_id,log_date,sleep_time,wake_time,duration,created_at) VALUES(?,?,?,?,?,?)", (sid,sd.isoformat(),bed.strftime("%H:%M"),wake.strftime("%H:%M"),round(dur,2),datetime.now().isoformat(timespec="seconds")))
                     st.success(f"Sleep entry saved: {dur:.1f} hours"); st.rerun()
         if not sleep.empty:
             st.dataframe(sleep.rename(columns={"log_date":"Date","sleep_time":"Bedtime","wake_time":"Wake-up","duration":"Hours"}),use_container_width=True,hide_index=True)
             st.line_chart(sleep.set_index("log_date")[["duration"]])
-        else: st.info("તમારી પ્રથમ sleep entry ઉમેરો.")
-        st.caption("સામાન્ય માર્ગદર્શન: 13–18 વર્ષની કિશોરો માટે સામાન્ય રીતે 8–10 કલાક ઊંઘ સૂચવાય છે; વ્યક્તિગત જરૂરિયાત બદલાય શકે.")
+        else: st.info("Add your first sleep entry.")
+        st.caption("General guidance: Teens aged 13–18 are usually advised to get 8–10 hours of sleep, though individual needs may vary.")
 
     # Smart Food
     with tabs[2]:
@@ -314,12 +314,12 @@ def render_health_power(st, student_id=None):
                 _save("INSERT INTO food_logs(student_id,log_date,food_name,meal_type,created_at) VALUES(?,?,?,?,?)", (sid,fd.isoformat(),food_label,meal,datetime.now().isoformat(timespec="seconds")))
                 st.success("Food learning record saved."); st.rerun()
         if not food.empty: st.dataframe(food.rename(columns={"log_date":"Date","food_name":"Food / Note","meal_type":"Meal"}),use_container_width=True,hide_index=True)
-        else: st.info("Food learning records અહીં દેખાશે.")
+        else: st.info("Food learning records will appear here.")
 
     # BMI Calculator
     with tabs[3]:
         st.subheader("📊 BMI Calculator")
-        st.warning("BMI માત્ર ગણિતીય આંકડો છે. બાળકો/કિશોરોમાં તેનો અર્થ ઉંમર અને sex-specific growth references વડે સમજાય છે. આ પ્રોટોટાઇપ કોઈ category, diagnosis કે weight advice આપતું નથી.")
+        st.warning("BMI is only a calculation. For children and teens, it is understood using age and sex-specific growth references. This prototype does not provide a category, diagnosis, or weight advice.")
         with st.form("hp_bmi_form", clear_on_submit=True):
             bd = st.date_input("Record date", date.today(), key="hp_bmi_date")
             age = st.number_input("Age (years)", min_value=2, max_value=100, value=16, step=1, key="hp_bmi_age")
@@ -347,7 +347,7 @@ def render_health_power(st, student_id=None):
     with tabs[4]:
         st.subheader("🎵 Memory Booster Music")
         st.write("Optional original background audio for a quiet study or relaxation session. Music is not guaranteed to improve memory.")
-        st.caption("ત્રણેય audio tracks આ app પહેલી વાર ખોલાય ત્યારે આપમેળે બને છે; અલગથી audio download કરવાની જરૂર નથી.")
+        st.caption("All three audio tracks are created automatically when the app is opened for the first time. No separate audio download is needed.")
         sound_options = {"Calm Ambient":"memory_booster_ambient.wav", "Soft Nature":"soft_nature.wav", "Focus Background":"focus_background.wav"}
         available = {label: ASSETS_DIR / fname for label,fname in sound_options.items() if (ASSETS_DIR/fname).is_file()}
         if available:
@@ -362,7 +362,7 @@ def render_health_power(st, student_id=None):
                     _save("INSERT INTO music_logs(student_id,log_date,sound_type,duration_minutes,created_at) VALUES(?,?,?,?,?)", (sid,session_date.isoformat(),chosen,int(duration),datetime.now().isoformat(timespec="seconds")))
                     st.success("Listening session saved."); st.rerun()
         else:
-            st.warning("Audio files generate થઈ શકી નથી. App ને ફરીથી reload કરો અથવા deployment logs તપાસો.")
+            st.warning("Audio files could not be generated. Reload the app or check the deployment logs.")
         if not music.empty: st.dataframe(music.rename(columns={"log_date":"Date","sound_type":"Sound","duration_minutes":"Minutes"}),use_container_width=True,hide_index=True)
         else: st.caption("Listening history will appear here after you save a session.")
 
@@ -381,7 +381,7 @@ def render_health_power(st, student_id=None):
             submit_test=st.form_submit_button("Submit Practice Test",use_container_width=True,disabled=already_saved)
         if submit_test:
             if any(a is None for a in answers):
-                st.warning("સબમિટ કરતા પહેલાં બધા 16 પ્રશ્નોના જવાબ પસંદ કરો.")
+                st.warning("Please select answers for all 16 questions before submitting.")
             else:
                 scores={"Logic":0,"Pattern Recognition":0,"Memory":0,"Reasoning":0}
                 for a,(cat,q,question_options,correct) in zip(answers,MIND_QUESTIONS):
