@@ -1,8 +1,3 @@
-
-Loading library
-
-
-
 # ============================================================
 # AB SCHOOL LOOP AI - HEALTH POWER AI
 # Student wellness learning dashboard (sensor-free, non-diagnostic)
