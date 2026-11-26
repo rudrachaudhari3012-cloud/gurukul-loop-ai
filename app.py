@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -7,21 +6,15 @@ import hashlib
 import secrets
 import io
 import os
-from ai_coach import create_ai_chat
 import base64
 from pathlib import Path
-import base64
 
-def get_base64_image(image_path):
-    with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode()
-
-logo_base64 = get_base64_image("logo.png")
-
+from ai_coach import create_ai_chat
 from supabase import create_client
 from health_power import render_health_power
 from datetime import date, datetime
 from mind_power import render_mind_power
+
 try:
     from reportlab.lib.pagesizes import A4
     from reportlab.pdfgen import canvas
