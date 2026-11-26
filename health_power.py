@@ -338,7 +338,6 @@ def render_health_power(st, student_id=None):
                 for step in bmi_steps:
                     st.markdown(step)
                 st.caption("Formula: weight (kg) ÷ [height (m)]². BMI is not a diagnosis or a target number.")
-                st.rerun()
         if not bmi.empty:
             st.markdown("#### BMI History")
             st.dataframe(bmi.rename(columns={"log_date":"Date","age":"Age","height_cm":"Height (cm)","weight_kg":"Weight (kg)","bmi":"BMI calculation"}),use_container_width=True,hide_index=True)
