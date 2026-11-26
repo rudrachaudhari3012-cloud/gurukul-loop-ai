@@ -185,14 +185,21 @@ def _make_insights(activity, sleep, food, bmi, music, mind):
 
 
 
-def _bmi_growth_report(row=None):
-    """Non-diagnostic note: BMI alone cannot classify adolescent growth."""
-    return (
-        "Growth assessment needs age-specific context",
-        "BMI is a calculation only. For children and teens, growth is reviewed using age- and sex-specific references and growth history. "
-        "Keep regular meals, varied foods, comfortable everyday movement, and sleep. "
-        "If you are concerned about growth, ask a parent/guardian and qualified health professional to review your growth chart."
-    )
+def _bmi_growth_report(age):
+    """Safe, non-diagnostic age-context and supportive steps."""
+    age = int(age)
+    if age < 20:
+        age_note = "બાળકો અને કિશોરોમાં BMI ને ઉંમર, sex-specific growth chart અને સમય સાથેના માપથી સમજવું પડે છે; BMI એકલો growth category નક્કી કરતો નથી."
+    else:
+        age_note = "BMI એક screening ગણતરી છે; તે એકલી આરોગ્ય નક્કી કરતી નથી."
+    steps = [
+        "• નિયમિત ભોજન લો અને અનાજ, દાળ, શાકભાજી, ફળ તથા અન્ય ખોરાકમાં વિવિધતા રાખો.",
+        "• ભોજન છોડવાને બદલે ભૂખ અને શરીરની જરૂરિયાત પ્રમાણે ખાવાનું ધ્યાન રાખો.",
+        "• ચાલવું, રમત, નૃત્ય અથવા તમને ગમતી પ્રવૃત્તિ આનંદથી કરો; આરામ પણ જરૂરી છે.",
+        "• ઉંમર મુજબ પૂરતી ઊંઘ અને નિયમિત sleep routine રાખો.",
+        "• Growth વિશે ચિંતા હોય તો trusted adult સાથે વાત કરી આરોગ્ય નિષ્ણાત પાસે growth chart review કરાવો."
+    ]
+    return age_note, steps
 
 
 def _mind_practice_profile(total, scores):
@@ -324,18 +331,18 @@ def render_health_power(st, student_id=None):
                 val=weight/(hm**2)
                 _save("INSERT INTO bmi_logs(student_id,log_date,age,height_cm,weight_kg,bmi,created_at) VALUES(?,?,?,?,?,?,?)", (sid,bd.isoformat(),int(age),float(height),float(weight),round(val,1),datetime.now().isoformat(timespec="seconds")))
                 st.success(f"BMI calculation saved: {val:.1f}")
-                st.info("Growth status: BMI alone cannot tell whether a teen's growth is good, average, or low. Growth needs age-specific chart context and measurements over time.")
-                st.markdown("**What you can do:**")
-                st.markdown("- Keep regular meals with a variety of foods.\n- Keep everyday movement comfortable and enjoyable.\n- Maintain a consistent sleep routine.\n- If you have a growth concern, review your growth chart with a parent/guardian and qualified health professional.")
-                st.caption("Formula: weight (kg) ÷ [height (m)]². BMI is not a diagnosis.")
+                age_note, bmi_steps = _bmi_growth_report(int(age))
+                st.markdown("### Growth context")
+                st.info(age_note)
+                st.markdown("### Suggestions")
+                for step in bmi_steps:
+                    st.markdown(step)
+                st.caption("Formula: weight (kg) ÷ [height (m)]². BMI is not a diagnosis or a target number.")
                 st.rerun()
         if not bmi.empty:
-            st.markdown("#### BMI History & Growth Report")
-            bmi_view = bmi.copy()
-            bmi_view["Growth report"] = "BMI alone cannot classify teen growth; age-specific chart review is needed."
-            bmi_view["Support steps"] = "Regular varied meals • comfortable movement • sleep • discuss concerns with a trusted adult/health professional"
-            st.dataframe(bmi_view.rename(columns={"log_date":"Date","age":"Age","height_cm":"Height (cm)","weight_kg":"Weight (kg)","bmi":"BMI calculation"}),use_container_width=True,hide_index=True)
-            st.caption("Height/weight entries are personal measurements. This report does not assign a growth category or recommend weight changes.")
+            st.markdown("#### BMI History")
+            st.dataframe(bmi.rename(columns={"log_date":"Date","age":"Age","height_cm":"Height (cm)","weight_kg":"Weight (kg)","bmi":"BMI calculation"}),use_container_width=True,hide_index=True)
+            st.caption("BMI entries are calculation history only; growth interpretation requires age-appropriate chart context.")
 
     # Memory Booster Music
     with tabs[4]:
@@ -392,10 +399,10 @@ def render_health_power(st, student_id=None):
             for col,(cat,score) in zip(cols,result["scores"].items()): col.metric(cat,f"{score}/4")
             profile, focus, tips = _mind_practice_profile(result["total"], result["scores"])
             st.markdown(f"**Practice profile:** {profile}")
-            st.info(f"**{focus}**")
-            st.markdown("#### Skill-by-skill practice steps")
+            st.markdown("#### Suggestions")
+            st.markdown(f"• {focus}")
             for cat, score in result["scores"].items():
-                st.markdown(f"**{cat} ({score}/4):** {tips[cat]}")
+                st.markdown(f"• **{cat} ({score}/4):** {tips[cat]}")
             st.caption("This is a short learning practice quiz. It does not measure IQ or determine intelligence.")
             if st.button("Start a new practice attempt",key="hp_new_mind_attempt"):
                 st.session_state.hp_mind_attempt = attempt + 1
@@ -403,9 +410,7 @@ def render_health_power(st, student_id=None):
                 st.rerun()
         if not mind.empty:
             st.markdown("#### Previous attempts")
-            mind_view = mind.copy()
-            mind_view["Practice profile"] = mind_view.apply(lambda row: _mind_history_profile(row.total_score, row.total_questions), axis=1)
-            st.dataframe(mind_view.rename(columns={"log_date":"Date","logic_score":"Logic /4","pattern_score":"Patterns /4","memory_score":"Memory /4","reasoning_score":"Reasoning /4","total_score":"Total /16","total_questions":"Questions"}),use_container_width=True,hide_index=True)
+            st.dataframe(mind.rename(columns={"log_date":"Date","logic_score":"Logic /4","pattern_score":"Patterns /4","memory_score":"Memory /4","reasoning_score":"Reasoning /4","total_score":"Total /16","total_questions":"Questions"}),use_container_width=True,hide_index=True)
 
 
     # AI Insights
