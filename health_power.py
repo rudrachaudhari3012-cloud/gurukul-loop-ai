@@ -1,4 +1,5 @@
-    # Smart Food
+def render_health_power(st, student_id):
+# Smart Food
     with tabs[2]:
         st.subheader("🥗 Smart Food Learning")
         selected = st.selectbox("Food Library", list(FOOD_LIBRARY), key="hp_food_select")
