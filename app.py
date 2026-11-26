@@ -7,6 +7,7 @@ import secrets
 import io
 import os
 import base64
+import textwrap
 from pathlib import Path
 
 from ai_coach import create_ai_chat
@@ -1200,37 +1201,37 @@ if page == T["overview"]:
 # HERO BANNER
 # -------------------------------------------------
 
-    st.markdown(f"""
+    st.markdown(textwrap.dedent(f"""
     <div class="home-hero">
-        <div class="hero-label">
-            🎓 WELCOME BACK, {user['full_name'].upper()}!
-        </div>
-
-        <h1>AB SCHOOL LOOP AI</h1>
-
-        <h2 style="
-            color:#3978ee;
-            font-size:25px;
-            font-weight:850;
-            margin:5px 0;">
-            Learn &nbsp; • &nbsp;
-            <span style="color:#08a9d9;">Grow</span>
-            &nbsp; • &nbsp;
-            <span style="color:#9250ed;">Thrive</span>
-        </h2>
-
-        <p>Your Smart Learning Partner for a Brighter Future ✨</p>
-
-        <p style="font-size:13px;">
-            STUDENT GROWTH · SMART LEARNING · MIND POWER
-        </p>
-
-        <div class="hero-art">
-            {f'<img src="data:image/png;base64,{logo_base64}" style="width:280px; height:auto; border-radius:150px;">' if logo_base64 else ''}
-        </div>
-
+    <div class="hero-label">
+        🎓 WELCOME BACK, {user['full_name'].upper()}!
     </div>
-    """, unsafe_allow_html=True)
+
+    <h1>AB SCHOOL LOOP AI</h1>
+
+    <h2 style="
+        color:#3978ee;
+        font-size:25px;
+        font-weight:850;
+        margin:5px 0;">
+        Learn &nbsp; • &nbsp;
+        <span style="color:#08a9d9;">Grow</span>
+        &nbsp; • &nbsp;
+        <span style="color:#9250ed;">Thrive</span>
+    </h2>
+
+    <p>Your Smart Learning Partner for a Brighter Future ✨</p>
+
+    <p style="font-size:13px;">
+        STUDENT GROWTH · SMART LEARNING · MIND POWER
+    </p>
+
+    <div class="hero-art">
+        {f'<img src="data:image/png;base64,{logo_base64}" style="width:280px; height:auto; border-radius:150px;">' if logo_base64 else ''}
+    </div>
+
+</div>
+    """), unsafe_allow_html=True)
 
 
     # -------------------------------------------------
@@ -1238,14 +1239,8 @@ if page == T["overview"]:
     # -------------------------------------------------
     if results:
         total_attempts = len(results)
-
-        total_correct = sum(
-            r["score"] for r in results
-        )
-
-        total_questions = sum(
-            r["total"] for r in results
-        )
+        total_correct = sum(r["score"] for r in results)
+        total_questions = sum(r["total"] for r in results)
 
         learning_score = (
             round(total_correct / total_questions * 100)
@@ -1253,7 +1248,6 @@ if page == T["overview"]:
         )
 
         brain_energy = user.get("energy") or "Ready"
-
         m1, m2, m3, m4 = st.columns(4)
 
         with m1:
