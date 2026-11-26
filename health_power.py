@@ -1,3 +1,10 @@
+import streamlit as st
+import pandas as pd
+import sqlite3
+import io
+import csv
+from datetime import date, datetime
+
 def render_health_power(st, student_id):
 # Smart Food
     with tabs[2]:
