@@ -165,15 +165,16 @@ def _recent(sid, table, columns, days=7, order="log_date DESC"):
 def _make_insights(activity, sleep, food, bmi, music, mind):
     tips = []
     if activity.empty:
-        tips.append(("Active Body", "તમારી અનુકૂળ પ્રવૃત્તિનો એક રેકોર્ડ ઉમેરો. આરામ અને પ્રવૃત્તિ બંને મહત્વના છે."))
+        tips.append(("Active Body", "Add a record of your preferred activity. Both rest and activity are important.
+"))
     else:
-        tips.append(("Active Body", f"છેલ્લા 7 દિવસમાં {int(activity.minutes.sum())} મિનિટની પ્રવૃત્તિ નોંધાઈ છે. પોતાની સુવિધા મુજબ નિયમિત વિરામ અને હલનચલન રાખો."))
+        tips.append(("Active Body", f"{int(activity.minutes.sum())} minutes of activity have been recorded in the last 7 days. Take regular breaks and stay active according to your comfort."))
     if sleep.empty:
-        tips.append(("Sleep", "સૂવાનો અને જાગવાનો સમય નોંધવાથી તમારી રૂટિન સમજવામાં મદદ મળશે."))
+        tips.append(("Sleep", "Recording your sleep and wake times will help you understand your routine."))
     else:
         avg = float(sleep.duration.mean())
-        tips.append(("Sleep", f"નોંધાયેલા સમયનો સરેરાશ {avg:.1f} કલાક છે. નિયમિત સૂવાની રૂટિન રાખવાનો પ્રયત્ન કરો."))
-    tips.append(("Smart Food", "વિવિધ ખોરાક અને પોષક તત્ત્વો વિશે શીખતા રહો; એક જ ખોરાકને સર્વથા સારો કે ખરાબ ન ગણો." if not food.empty else "Food Libraryમાંથી એક ખોરાક પસંદ કરી તેની પોષક માહિતી વાંચો અને નોંધ ઉમેરો."))
+        tips.append(("Sleep", f"The average of the recorded time is {avg:.1f} hours. Try to maintain a regular sleep routine."))
+    tips.append(("Smart Food", "Keep learning about different foods and nutrients; do not consider any single food to be completely good or bad." if not food.empty else "Select a food from the Food Library, read its nutritional information, and add a note."))
     tips.append(("BMI", "BMI માત્ર ગણિતીય સૂચક છે. બાળકો અને કિશોરો માટે તેનું અર્થઘટન ઉંમર અને અન્ય સંદર્ભો સાથે જ થાય છે; અહીં કોઈ નિદાન થતું નથી." if not bmi.empty else "BMI ગણતરી કરવી વૈકલ્પિક છે. કિશોરો માટે BMIનું અર્થઘટન અહીં આપવામાં આવતું નથી."))
     tips.append(("Memory Music", "ઓડિયો સાંભળો તો આરામદાયક વોલ્યુમ રાખો અને વચ્ચે વિરામ લો." if not music.empty else "જો ઓડિયો ફાઇલ ઉપલબ્ધ હોય તો ટૂંકું આરામદાયક listening session અજમાવી શકો."))
     if mind.empty:
