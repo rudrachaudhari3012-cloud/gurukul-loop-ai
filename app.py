@@ -22,6 +22,15 @@ try:
 except ImportError:
     PDF_AVAILABLE = False
 
+BASE_DIR = Path(__file__).parent
+LOGO_PATH = BASE_DIR / "logo.png"
+
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode("utf-8")
+
+logo_base64 = get_base64_image(LOGO_PATH)
+
 APP_TITLE = "AB SCHOOL LOOP AI"
 DB_PATH = "ab_school_loop_ai.db"
 # =====================================================
@@ -1186,15 +1195,19 @@ if page == T["overview"]:
     </style>
     """, unsafe_allow_html=True)
 
-    # -------------------------------------------------
-    # HERO BANNER
-    # -------------------------------------------------
-    st.markdown(f"""
-    <div class="home-hero">
+  
+# -------------------------------------------------
+# HERO BANNER
+# -------------------------------------------------
+
+st.markdown(f"""
+<div class="home-hero">
     <div class="hero-label">
         🎓 WELCOME BACK, {user['full_name'].upper()}!
     </div>
+
     <h1>AB SCHOOL LOOP AI</h1>
+
     <h2 style="
         color:#3978ee;
         font-size:25px;
@@ -1205,15 +1218,20 @@ if page == T["overview"]:
         &nbsp; • &nbsp;
         <span style="color:#9250ed;">Thrive</span>
     </h2>
+
     <p>Your Smart Learning Partner for a Brighter Future ✨</p>
+
     <p style="font-size:13px;">
         STUDENT GROWTH · SMART LEARNING · MIND POWER
     </p>
+
     <div class="hero-art">
-        <img src="data:image/png;base64,{logo_base64}" style="width:280px; height:auto; border-radius:150px;">
+        {f'<img src="data:image/png;base64,{logo_base64}" style="width:280px; height:auto; border-radius:150px;">' if logo_base64 else ''}
     </div>
+
 </div>
 """, unsafe_allow_html=True)
+
 
     # -------------------------------------------------
     # DASHBOARD METRICS
