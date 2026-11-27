@@ -553,5 +553,6 @@ def render_mind_power():
     )
 
 
+
 # Optional direct testing:
 # render_mind_power()
