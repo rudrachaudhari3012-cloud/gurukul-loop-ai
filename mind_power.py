@@ -1,4 +1,3 @@
-
 import streamlit as st
 import random
 import time
@@ -278,26 +277,30 @@ def color_strategy_game():
 
     st.write(
         "Not the meaning of the word, but in what color its letters "
-        "appear, identify that. "
+        "appear, identify that."
     )
 
     colors = {
         "RED": "#FF4545",
         "GREEN": "#27D980",
-        "BLUE": "#3295FF",
+        "BLUE": "#3295FF,
         "YELLOW": "#FFD43B",
         "PURPLE": "#B58AFF"
     }
 
+    # Start a new challenge
     if not st.session_state.mp_color_questions:
 
-        if st.button("🚀 Start Color Challenge",
-                     key="mp_start_color",
-                     use_container_width=True):
+        if st.button(
+            "🚀 Start Color Challenge",
+            key="mp_start_color",
+            use_container_width=True
+        ):
 
             questions = []
 
             for _ in range(10):
+
                 word = random.choice(list(colors.keys()))
                 font_color = random.choice(list(colors.keys()))
 
@@ -309,21 +312,34 @@ def color_strategy_game():
             st.session_state.mp_color_questions = questions
             st.session_state.mp_color_start = time.time()
             st.session_state.mp_color_submitted = False
+            st.session_state.mp_color_score = None
+
             st.rerun()
 
     questions = st.session_state.mp_color_questions
 
+    # -----------------------------------------------------
+    # COLOR QUESTIONS
+    # -----------------------------------------------------
+
     if questions and not st.session_state.mp_color_submitted:
 
-        elapsed = time.time() - st.session_state.mp_color_start
+        elapsed = (
+            time.time() - st.session_state.mp_color_start
+            if st.session_state.mp_color_start
+            else 0
+        )
+
         remaining = max(0, 20 - int(elapsed))
 
         st.progress(min(elapsed / 20, 1.0))
-        st.metric("Time Remaining", f"{remaining} seconds")
+        st.metric("⏱️ Time Remaining", f"{remaining} seconds")
 
         with st.form("mp_color_form"):
 
-            st.write("Select the FONT COLOR, not the written word.")
+            st.write(
+                "Select the FONT COLOR, not the written word."
+            )
 
             answers = []
 
@@ -354,8 +370,14 @@ def color_strategy_game():
                 answers.append(
                     st.selectbox(
                         f"Choose font color — Q{i+1}",
-                        ["Select", "RED", "GREEN", "BLUE",
-                         "YELLOW", "PURPLE"],
+                        [
+                            "Select",
+                            "RED",
+                            "GREEN",
+                            "BLUE",
+                            "YELLOW",
+                            "PURPLE"
+                        ],
                         key=f"mp_color_answer_{i}"
                     )
                 )
@@ -365,27 +387,34 @@ def color_strategy_game():
                 use_container_width=True
             )
 
+        # -------------------------------------------------
+        # SUBMIT ANSWERS
+        # -------------------------------------------------
+
         if submitted:
 
             elapsed = time.time() - st.session_state.mp_color_start
 
+            score = sum(
+                1 for i, q in enumerate(questions)
+                if answers[i] == q["font_color"]
+            )
+
+            st.session_state.mp_color_score = score
+            st.session_state.mp_color_submitted = True
+
+            save_result("Color Strategy", score, 10)
+
             if elapsed > 20:
-                st.session_state.mp_color_submitted = True
-                st.session_state.mp_color_score = 0
-                st.error("Time is over! Challenge completed.")
-                st.rerun()
-
+                st.warning("Time limit exceeded. Your answers have been submitted.")
             else:
-                score = sum(
-                    1 for i, q in enumerate(questions)
-                    if answers[i] == q["font_color"]
-                )
+                st.success("Answers submitted successfully!")
 
-                st.session_state.mp_color_score = score
-                st.session_state.mp_color_submitted = True
+            st.rerun()
 
-                save_result("Color Strategy", score, 10)
-                st.rerun()
+    # -----------------------------------------------------
+    # RESULT
+    # -----------------------------------------------------
 
     if st.session_state.mp_color_submitted:
 
@@ -398,15 +427,33 @@ def color_strategy_game():
             "Color recognition challenge completed."
         )
 
-        if st.button("🔄 Restart Color Challenge",
-                     key="mp_color_again"):
+        if score == 10:
+            st.success("🏆 Perfect! Excellent color recognition!")
+        elif score >= 7:
+            st.success("🔥 Great performance! Keep challenging yourself.")
+        elif score >= 4:
+            st.info("👍 Good effort! Practice can help you improve.")
+        else:
+            st.info("🧠 Keep practising and try again!")
 
+        if st.button(
+            "🔄 Restart Color Challenge",
+            key="mp_color_again"
+        ):
+
+            # Reset color game state
             st.session_state.mp_color_questions = []
             st.session_state.mp_color_start = None
             st.session_state.mp_color_submitted = False
             st.session_state.mp_color_score = None
-            st.rerun()
 
+            # Reset old selections
+            for i in range(10):
+                key = f"mp_color_answer_{i}"
+                if key in st.session_state:
+                    del st.session_state[key]
+
+            st.rerun()
 
 
 # ---------------------------------------------------------
