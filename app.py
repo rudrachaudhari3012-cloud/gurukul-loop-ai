@@ -83,8 +83,8 @@ if bg_path.exists():
     .stApp {{
         background:
             linear-gradient(
-                rgba(3, 9, 27, 0.82),
-                rgba(3, 9, 27, 0.88)
+                rgba(3, 9, 27, 0.2),
+                rgba(3, 9, 27, 0.2)
             ),
             url("data:image/png;base64,{bg}");
 
