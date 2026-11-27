@@ -1014,27 +1014,29 @@ if page == T["overview"]:
     <style>
     .home-hero {
         background:
-        radial-gradient(circle at 15% 50%,
-        rgba(36,194,255,.30),transparent 30%),
-        linear-gradient(105deg,#d9eaff,#e9e7ff 55%,#ffe8ef);
-        border:1px solid #cbdcff;
+        radial-gradient(circle at 15% 50%, rgba(0,210,255,.24),transparent 34%),
+        radial-gradient(circle at 85% 10%, rgba(63,105,255,.22),transparent 36%),
+        linear-gradient(115deg,#06152f,#0b2348 58%,#101b3b) !important;
+        border:1px solid #168dff !important;
         border-radius:22px;
         padding:28px;
         min-height:205px;
-        box-shadow:0 10px 30px rgba(70,100,180,.13);
+        box-shadow:0 10px 30px rgba(0,80,180,.25);
         position:relative;
         overflow:hidden;
     }
 
+
     .home-hero h1 {
-        color:#FFFFFF !important;
+        color:#F4F8FF !important;
         font-size:clamp(25px,3vw,38px);
         font-weight:850;
         margin:12px 0 5px;
+        text-shadow:0 2px 12px rgba(0,190,255,.22);
     }
 
     .home-hero p {
-        color:#DCEEFF !important;
+        color:#C6DDF7 !important;
         font-size:16px;
         margin:5px 0;
     }
@@ -1058,10 +1060,11 @@ if page == T["overview"]:
     }
 
     .home-section {
-        color:#101b42;
+        color:#42D9FF !important;
         font-size:21px;
         font-weight:800;
         margin:8px 0 13px;
+        text-shadow:0 0 10px rgba(0,190,255,.18);
     }
     .quick-card {
     background:rgba(5,20,55,.90)!important;
@@ -1087,23 +1090,25 @@ if page == T["overview"]:
     }
 
     .quick-title {
-        color:#15234d;
+        color:#B9EFFF !important;
         font-weight:800;
         font-size:15px;
     }
 
+
     .quick-sub {
-        color:#53668d;
+        color:#B6CAE5 !important;
         font-size:12px;
     }
 
+
     .focus-item {
-        background:linear-gradient(100deg,#f0edff,#edf3ff);
+        background:linear-gradient(110deg,#081a37,#10284b) !important;
         border-radius:12px;
         padding:10px 13px;
         margin:8px 0;
-        color:#18264d;
-        border:1px solid #e4e8ff;
+        color:#EAF5FF !important;
+        border:1px solid rgba(35,170,255,.55) !important;
     }
 
    .remember-card {
@@ -1118,15 +1123,27 @@ if page == T["overview"]:
     }
 
     .remember-card h3 {
-        color:#17264d;
+        color:#8DEBFF !important;
         font-size:18px;
     }
 
     .remember-card p {
-        color:#273a69;
+        color:#E2F1FF !important;
         font-size:17px;
         font-weight:700;
-    } 
+    }
+    /* OVERVIEW DASHBOARD: dark premium theme + readable text */
+    .home-hero, .home-hero * { color-scheme: dark; }
+    .home-hero .hero-label { color:#00D9FF !important; background:rgba(0,190,255,.13) !important; }
+    .home-section { color:#42D9FF !important; }
+    .home-section span, .home-section div { color:#42D9FF !important; }
+    .focus-item, .focus-item * { color:#EAF5FF !important; }
+    .quick-card, .quick-card * { color:#EAF5FF !important; }
+    .quick-title { color:#B9EFFF !important; }
+    .quick-sub { color:#B6CAE5 !important; }
+    .remember-card, .remember-card * { color:#EAF5FF !important; }
+    .remember-card h3 { color:#8DEBFF !important; }
+
     /* =====================================
    AB SCHOOL LOOP AI - TEXT VISIBILITY
    ===================================== */
