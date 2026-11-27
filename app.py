@@ -1520,10 +1520,13 @@ if page == T["learning"]:
     .ld-hero h1 {color:#17345c !important;font-size:clamp(26px,3vw,38px);font-weight:850;margin:8px 0;}
     .ld-hero p {color:#345779 !important;margin:4px 0;}
     .ld-kicker {color:#087eaa;font-size:11px;letter-spacing:2.5px;font-weight:800;}
-    .ld-panel {background:linear-gradient(145deg,#f4f9ff,#eaf3ff);border:1px solid #c5ddf4;border-radius:18px;padding:20px;margin:8px 0 16px;}
-    .ld-subject {background:linear-gradient(145deg,#f7fbff,#eaf4ff);border:1px solid #c5ddf4;border-radius:16px;padding:16px 18px;margin-bottom:8px;}
-    .ld-plan {background:linear-gradient(110deg,#e0f7ff,#e6eaff);border:1px solid #a6d8f5;border-radius:18px;padding:22px;text-align:center;margin:12px 0;}
-    .ld-plan h3 {color:#16466d !important;margin:4px;}
+    .ld-panel {background:linear-gradient(135deg,#101e36 0%,#172b49 55%,#123c55 100%);border:1px solid #2879a5;border-radius:18px;padding:20px;margin:8px 0 16px;color:#edf7ff;box-shadow:0 8px 24px rgba(0,0,0,.18);}
+    .ld-panel h3 {color:#e8f7ff !important;}
+    .ld-panel p {color:#b9d9ee !important;}
+    .ld-subject {background:linear-gradient(145deg,#101f36,#173653);border:1px solid #2879a5;border-radius:16px;padding:16px 18px;margin-bottom:8px;color:#eaf6ff;}
+    .ld-plan {background:linear-gradient(110deg,#10243c,#173b58 65%,#204e66);border:1px solid #31b9d5;border-radius:18px;padding:22px;text-align:center;margin:12px 0;color:#eaf6ff;box-shadow:0 8px 24px rgba(0,0,0,.18);}
+    .ld-plan h3 {color:#eaf8ff !important;margin:4px;}
+    .ld-plan p {color:#b9d9ee !important;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -1582,124 +1585,130 @@ if page == T["learning"]:
             mime="text/csv", key=f"class_subject_report_{user['id']}"
         )
 
-    # Stream selection
-    st.markdown("### 🚀 Choose Your Science Stream")
-    stream_options = ["PCM", "PCB", "PCMB"]
-    current_stream = st.session_state.learning_stream
-    stream_cols = st.columns(3)
-    for col, option, emoji in zip(stream_cols, stream_options, ["⚛️", "🧬", "🔬"]):
-        with col:
-            if st.button(f"{emoji} {option}", use_container_width=True, key=f"learning_stream_btn_{option}"):
-                st.session_state.learning_stream = option
+    # Science stream selector is available only to logged-in Class 11/12 students.
+    eligible_stream_student = (user.get("role") == "Student" and user.get("grade") in ("Class 11", "Class 12"))
+    if eligible_stream_student:
+        # Stream selection
+        st.markdown("### 🚀 Choose Your Science Stream")
+        stream_options = ["PCM", "PCB", "PCMB"]
+        current_stream = st.session_state.learning_stream
+        stream_cols = st.columns(3)
+        for col, option, emoji in zip(stream_cols, stream_options, ["⚛️", "🧬", "🔬"]):
+            with col:
+                if st.button(f"{emoji} {option}", use_container_width=True, key=f"learning_stream_btn_{option}"):
+                    st.session_state.learning_stream = option
+                    st.session_state.learning_plan_stream = None
+                    st.rerun()
+
+        stream = st.session_state.learning_stream
+        if stream is None:
+            st.info("Select PCM, PCB or PCMB to open your personalized dashboard.")
+            st.markdown("<div class='ld-panel'><h3 style='text-align:center;color:#eaf6ff'>Your learning journey starts here</h3><p style='text-align:center;color:#b9d9ee'>Subject progress • Personalized practice • Learning reflection</p></div>", unsafe_allow_html=True)
+        else:
+            st.caption(f"Selected stream: **{stream}**")
+            if st.button("↩ Change / Reset Stream", key="learning_reset_stream"):
+                st.session_state.learning_stream = None
                 st.session_state.learning_plan_stream = None
                 st.rerun()
 
-    stream = st.session_state.learning_stream
-    if stream is None:
-        st.info("Select PCM, PCB or PCMB to open your personalized dashboard.")
-        st.markdown("<div class='ld-panel'><h3 style='text-align:center;color:#17608a'>Your learning journey starts here</h3><p style='text-align:center;color:#365c7c'>Subject progress • Personalized practice • Learning reflection</p></div>", unsafe_allow_html=True)
+            stream_subjects = {
+                "PCM": [("Physics", "⚛️"), ("Chemistry", "🧪"), ("Mathematics", "📐"), ("English", "📖")],
+                "PCB": [("Physics", "⚛️"), ("Chemistry", "🧪"), ("Biology", "🧬"), ("English", "📖")],
+                "PCMB": [("Physics", "⚛️"), ("Chemistry", "🧪"), ("Mathematics", "📐"), ("Biology", "🧬"), ("English", "📖")],
+            }
+            subjects = stream_subjects[stream]
+
+            st.markdown("### 📚 Subject Performance")
+            st.caption("Enter your recent score (0–100) for each subject.")
+            score_values = {}
+            cols = st.columns(4)
+            for i, (subject, icon) in enumerate(subjects):
+                score_key = f"learning_score_{stream}_{subject}"
+                if score_key not in st.session_state:
+                    st.session_state[score_key] = 65
+                with cols[i % len(cols)]:
+                    st.markdown(f"<div class='ld-subject'><div style='font-size:28px'>{icon}</div><b style='color:#eaf6ff'>{subject}</b></div>", unsafe_allow_html=True)
+                    score_values[subject] = st.slider(subject, 0, 100, int(st.session_state[score_key]), key=f"learning_slider_{stream}_{subject}")
+                    st.session_state[score_key] = score_values[subject]
+                    value = score_values[subject]
+                    if value < 50:
+                        st.warning("Needs support")
+                    elif value < 75:
+                        st.info("Growing")
+                    else:
+                        st.success("Strong")
+
+            overall = round(sum(score_values.values()) / max(len(score_values), 1))
+            strong_count = sum(v >= 75 for v in score_values.values())
+            support_count = sum(v < 50 for v in score_values.values())
+            st.markdown("### 📊 Performance Snapshot")
+            metric_cols = st.columns(3)
+            metric_cols[0].metric("Overall Score", f"{overall}%")
+            metric_cols[1].metric("Strong Subjects", strong_count)
+            metric_cols[2].metric("Needs Support", support_count)
+
+            # Score visualization
+            score_df = pd.DataFrame([{"Subject": subject, "Score": value} for subject, value in score_values.items()])
+            score_chart = px.bar(score_df, x="Subject", y="Score", range_y=[0, 100], color="Score", color_continuous_scale=["#F28AA7", "#F3C66B", "#31B98A"], title="Current Subject Scores")
+            score_chart.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#173b62", height=330, margin=dict(t=45,b=15,l=15,r=15))
+            score_chart.update_yaxes(gridcolor="#d6e5f3")
+            st.plotly_chart(score_chart, use_container_width=True)
+
+            # Learning plan
+            st.markdown("<div class='ld-plan'><h3>✨ Build My Personalized Learning Plan</h3><p style='color:#b9d9ee'>Recommendations based on the scores you entered</p></div>", unsafe_allow_html=True)
+            if st.button("🚀 GENERATE MY LEARNING PLAN", type="primary", use_container_width=True, key="learning_build_plan"):
+                st.session_state.learning_plan_stream = stream
+                st.session_state.learning_plan_scores = dict(score_values)
+
+            if st.session_state.learning_plan_stream == stream and "learning_plan_scores" in st.session_state:
+                plan_scores = st.session_state.learning_plan_scores
+                st.markdown("### 🎯 Recommended Next Steps")
+                plan_rows = []
+                for subject, value in sorted(plan_scores.items(), key=lambda item: item[1]):
+                    if value < 50:
+                        status, next_step = "Needs support", "Review basics and practice guided questions"
+                        st.warning(f"🔴 **{subject} ({value}%)** — {next_step}")
+                    elif value < 75:
+                        status, next_step = "Growing", "Revise key concepts and try mixed questions"
+                        st.info(f"🟡 **{subject} ({value}%)** — {next_step}")
+                    else:
+                        status, next_step = "Strong", "Keep up revision and attempt challenge questions"
+                        st.success(f"🟢 **{subject} ({value}%)** — {next_step}")
+                    plan_rows.append({"Subject": subject, "Score": value, "Status": status, "Next Step": next_step})
+                plan_df = pd.DataFrame(plan_rows)
+                st.dataframe(plan_df, use_container_width=True, hide_index=True)
+                st.download_button("📥 Download Learning Plan CSV", data=plan_df.to_csv(index=False).encode("utf-8-sig"), file_name=f"learning_plan_{stream}.csv", mime="text/csv", key="learning_plan_csv")
+                st.caption("These are score-based study suggestions, not a trained AI prediction.")
+
+
+            # Weekly journey chart (illustrative values; not historical logs)
+            st.markdown("### 📅 Learning Journey Preview")
+            st.caption("Illustrative weekly chart. It is not yet connected to saved daily activity.")
+            week_days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+            demo_progress = [35, 42, 50, 47, 63, 67, overall]
+            journey_df = pd.DataFrame({"Day": week_days, "Progress": demo_progress})
+            journey_fig = px.line(journey_df, x="Day", y="Progress", markers=True, title="Illustrative Weekly Progress")
+            journey_fig.update_traces(line=dict(color="#168DFF", width=3), marker=dict(size=8, color="#22D3EE"))
+            journey_fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#173b62", height=300, margin=dict(t=40,b=15,l=15,r=15))
+            journey_fig.update_yaxes(range=[0,100], gridcolor="#d6e5f3")
+            st.plotly_chart(journey_fig, use_container_width=True)
+
+            # Focus suggestion
+            weakest_subject = min(score_values, key=score_values.get)
+            weakest_score = score_values[weakest_subject]
+            st.markdown("### 💡 Smart Study Focus")
+            st.markdown(f"<div class='ld-panel'><h3 style='color:#eaf6ff'>Current focus: {weakest_subject}</h3><p style='color:#b9d9ee'>Score: {weakest_score}%</p><p style='color:#b9d9ee'>Try reviewing key concepts, solving a few practice questions, and checking mistakes. Take regular breaks during study.</p></div>", unsafe_allow_html=True)
+
+            # Quick module pointers (visual, not linked navigation buttons)
+            st.markdown("### ⚡ Quick Actions")
+            qa, qb, qc, qd = st.columns(4)
+            qa.markdown("**🎮**  Quiz Generator")
+            qb.markdown("**🧠**  Mind Power")
+            qc.markdown("**📈**  Performance Analytics")
+            qd.markdown("**🌿**  Health Power")
     else:
-        st.caption(f"Selected stream: **{stream}**")
-        if st.button("↩ Change / Reset Stream", key="learning_reset_stream"):
-            st.session_state.learning_stream = None
-            st.session_state.learning_plan_stream = None
-            st.rerun()
+        st.info("Science Stream dashboard is available for Class 11 and Class 12 student accounts only.")
 
-        stream_subjects = {
-            "PCM": [("Physics", "⚛️"), ("Chemistry", "🧪"), ("Mathematics", "📐"), ("English", "📖")],
-            "PCB": [("Physics", "⚛️"), ("Chemistry", "🧪"), ("Biology", "🧬"), ("English", "📖")],
-            "PCMB": [("Physics", "⚛️"), ("Chemistry", "🧪"), ("Mathematics", "📐"), ("Biology", "🧬"), ("English", "📖")],
-        }
-        subjects = stream_subjects[stream]
-
-        st.markdown("### 📚 Subject Performance")
-        st.caption("Enter your recent score (0–100) for each subject.")
-        score_values = {}
-        cols = st.columns(4)
-        for i, (subject, icon) in enumerate(subjects):
-            score_key = f"learning_score_{stream}_{subject}"
-            if score_key not in st.session_state:
-                st.session_state[score_key] = 65
-            with cols[i % len(cols)]:
-                st.markdown(f"<div class='ld-subject'><div style='font-size:28px'>{icon}</div><b style='color:#173b62'>{subject}</b></div>", unsafe_allow_html=True)
-                score_values[subject] = st.slider(subject, 0, 100, int(st.session_state[score_key]), key=f"learning_slider_{stream}_{subject}")
-                st.session_state[score_key] = score_values[subject]
-                value = score_values[subject]
-                if value < 50:
-                    st.warning("Needs support")
-                elif value < 75:
-                    st.info("Growing")
-                else:
-                    st.success("Strong")
-
-        overall = round(sum(score_values.values()) / max(len(score_values), 1))
-        strong_count = sum(v >= 75 for v in score_values.values())
-        support_count = sum(v < 50 for v in score_values.values())
-        st.markdown("### 📊 Performance Snapshot")
-        metric_cols = st.columns(3)
-        metric_cols[0].metric("Overall Score", f"{overall}%")
-        metric_cols[1].metric("Strong Subjects", strong_count)
-        metric_cols[2].metric("Needs Support", support_count)
-
-        # Score visualization
-        score_df = pd.DataFrame([{"Subject": subject, "Score": value} for subject, value in score_values.items()])
-        score_chart = px.bar(score_df, x="Subject", y="Score", range_y=[0, 100], color="Score", color_continuous_scale=["#F28AA7", "#F3C66B", "#31B98A"], title="Current Subject Scores")
-        score_chart.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#173b62", height=330, margin=dict(t=45,b=15,l=15,r=15))
-        score_chart.update_yaxes(gridcolor="#d6e5f3")
-        st.plotly_chart(score_chart, use_container_width=True)
-
-        # Learning plan
-        st.markdown("<div class='ld-plan'><h3>✨ Build My Personalized Learning Plan</h3><p style='color:#426987'>Recommendations based on the scores you entered</p></div>", unsafe_allow_html=True)
-        if st.button("🚀 GENERATE MY LEARNING PLAN", type="primary", use_container_width=True, key="learning_build_plan"):
-            st.session_state.learning_plan_stream = stream
-            st.session_state.learning_plan_scores = dict(score_values)
-
-        if st.session_state.learning_plan_stream == stream and "learning_plan_scores" in st.session_state:
-            plan_scores = st.session_state.learning_plan_scores
-            st.markdown("### 🎯 Recommended Next Steps")
-            plan_rows = []
-            for subject, value in sorted(plan_scores.items(), key=lambda item: item[1]):
-                if value < 50:
-                    status, next_step = "Needs support", "Review basics and practice guided questions"
-                    st.warning(f"🔴 **{subject} ({value}%)** — {next_step}")
-                elif value < 75:
-                    status, next_step = "Growing", "Revise key concepts and try mixed questions"
-                    st.info(f"🟡 **{subject} ({value}%)** — {next_step}")
-                else:
-                    status, next_step = "Strong", "Keep up revision and attempt challenge questions"
-                    st.success(f"🟢 **{subject} ({value}%)** — {next_step}")
-                plan_rows.append({"Subject": subject, "Score": value, "Status": status, "Next Step": next_step})
-            plan_df = pd.DataFrame(plan_rows)
-            st.dataframe(plan_df, use_container_width=True, hide_index=True)
-            st.download_button("📥 Download Learning Plan CSV", data=plan_df.to_csv(index=False).encode("utf-8-sig"), file_name=f"learning_plan_{stream}.csv", mime="text/csv", key="learning_plan_csv")
-            st.caption("These are score-based study suggestions, not a trained AI prediction.")
-
-
-        # Weekly journey chart (illustrative values; not historical logs)
-        st.markdown("### 📅 Learning Journey Preview")
-        st.caption("Illustrative weekly chart. It is not yet connected to saved daily activity.")
-        week_days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        demo_progress = [35, 42, 50, 47, 63, 67, overall]
-        journey_df = pd.DataFrame({"Day": week_days, "Progress": demo_progress})
-        journey_fig = px.line(journey_df, x="Day", y="Progress", markers=True, title="Illustrative Weekly Progress")
-        journey_fig.update_traces(line=dict(color="#168DFF", width=3), marker=dict(size=8, color="#22D3EE"))
-        journey_fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#173b62", height=300, margin=dict(t=40,b=15,l=15,r=15))
-        journey_fig.update_yaxes(range=[0,100], gridcolor="#d6e5f3")
-        st.plotly_chart(journey_fig, use_container_width=True)
-
-        # Focus suggestion
-        weakest_subject = min(score_values, key=score_values.get)
-        weakest_score = score_values[weakest_subject]
-        st.markdown("### 💡 Smart Study Focus")
-        st.markdown(f"<div class='ld-panel'><h3 style='color:#17608a'>Current focus: {weakest_subject}</h3><p style='color:#365c7c'>Score: {weakest_score}%</p><p style='color:#365c7c'>Try reviewing key concepts, solving a few practice questions, and checking mistakes. Take regular breaks during study.</p></div>", unsafe_allow_html=True)
-
-        # Quick module pointers (visual, not linked navigation buttons)
-        st.markdown("### ⚡ Quick Actions")
-        qa, qb, qc, qd = st.columns(4)
-        qa.markdown("**🎮**  Quiz Generator")
-        qb.markdown("**🧠**  Mind Power")
-        qc.markdown("**📈**  Performance Analytics")
-        qd.markdown("**🌿**  Health Power")
 
 # =====================================================
 # END LEARNING DASHBOARD
