@@ -1,92 +1,245 @@
 import streamlit as st
-import pandas as pd
+import random
+import time
+
+# =========================================================
+# AB SCHOOL LOOP AI - WORD MEMORY GAME
+# Only Word Memory Game
+# =========================================================
 
 def show_mind_power():
 
-    st.title("🧠 Brain Analytics Dashboard")
+    st.title("🧠 Mind Power")
+    st.subheader("📚 Word Memory Challenge")
 
-    # Inputs
-    memory = st.slider("Memory", 0, 100, 75)
-    focus = st.slider("Focus", 0, 100, 70)
-    concentration = st.slider("Concentration", 0, 100, 80)
-    energy = st.slider("Energy", 0, 100, 85)
-    stress = st.slider("Stress", 0, 100, 25)
+    st.write("Remember the words and type them in the correct order.")
 
-    # Score
-    brain_score = (
-        memory + focus + concentration + energy + (100 - stress)
-    ) / 5
+    # -----------------------------------------------------
+    # WORD BANK
+    # -----------------------------------------------------
 
-    st.metric("🧠 Brain Power Score", f"{brain_score:.1f}%")
-    st.progress(int(brain_score))
+    word_bank = [
+        "Apple", "Tiger", "Ocean", "Book", "Mountain",
+        "River", "Planet", "School", "Flower", "Window",
+        "Rocket", "Camera", "Forest", "Orange", "Garden",
+        "Mirror", "Laptop", "Cloud", "Diamond", "Bridge",
+        "Shadow", "Sunlight", "Village", "Journey", "Rainbow",
+        "Thunder", "Elephant", "Butterfly", "Knowledge", "Universe",
+        "Adventure", "Energy", "Galaxy", "Freedom", "Creative",
+        "Science", "Mystery", "Courage", "Dream", "Future",
+        "Discovery", "Technology", "Imagine", "Brilliant", "Wisdom",
+        "Strategy", "Focus", "Learning", "Intelligence", "Success"
+    ]
 
-    # Analytics Cards
+    # -----------------------------------------------------
+    # SESSION STATE
+    # -----------------------------------------------------
+
+    if "wm_level" not in st.session_state:
+        st.session_state.wm_level = 1
+
+    if "wm_score" not in st.session_state:
+        st.session_state.wm_score = 0
+
+    if "wm_stage" not in st.session_state:
+        st.session_state.wm_stage = "start"
+
+    if "wm_words" not in st.session_state:
+        st.session_state.wm_words = []
+
+    if "wm_attempts" not in st.session_state:
+        st.session_state.wm_attempts = 0
+
+    # -----------------------------------------------------
+    # GAME INFORMATION
+    # -----------------------------------------------------
+
+    st.markdown("---")
+
     col1, col2, col3 = st.columns(3)
 
-    with col1:
-        st.metric("Memory", f"{memory}%")
+    col1.metric("🏆 Score", st.session_state.wm_score)
+    col2.metric("🚀 Level", st.session_state.wm_level)
+    col3.metric("🧠 Words", min(5 + st.session_state.wm_level - 1, 20))
 
-    with col2:
-        st.metric("Focus", f"{focus}%")
+    st.progress(min(st.session_state.wm_level / 20, 1.0))
 
-    with col3:
-        st.metric("Energy", f"{energy}%")
+    st.markdown("---")
 
-    st.divider()
+    # -----------------------------------------------------
+    # START GAME
+    # -----------------------------------------------------
 
-    # Performance Chart
-    st.subheader("📊 Brain Performance Analysis")
+    if st.session_state.wm_stage == "start":
 
-    chart_data = pd.DataFrame({
-        "Category": ["Memory", "Focus", "Concentration", "Energy", "Stress"],
-        "Score": [memory, focus, concentration, energy, stress]
-    })
+        st.info("Memorize the words carefully. Their order is important.")
 
-    st.bar_chart(
-        chart_data.set_index("Category")
-    )
+        if st.button("▶ Start Memory Challenge", use_container_width=True):
 
-    st.divider()
+            number_of_words = min(
+                5 + st.session_state.wm_level - 1,
+                20
+            )
 
-    # AI Analysis
-    st.subheader("🤖 AI Brain Report")
+            st.session_state.wm_words = random.sample(
+                word_bank,
+                number_of_words
+            )
 
-    if brain_score >= 85:
-        st.success(
-            "Excellent brain performance. You are ready for high-level study sessions."
+            st.session_state.wm_stage = "memorize"
+
+            st.rerun()
+
+    # -----------------------------------------------------
+    # MEMORIZATION STAGE
+    # -----------------------------------------------------
+
+    elif st.session_state.wm_stage == "memorize":
+
+        st.success("👀 Memorize these words!")
+
+        st.markdown(
+            """
+            <div style="
+                padding:20px;
+                border-radius:15px;
+                background:linear-gradient(135deg,#14243D,#253B60);
+                text-align:center;
+                color:white;
+                ">
+            """,
+            unsafe_allow_html=True
         )
 
-    elif brain_score >= 70:
-        st.info(
-            "Good performance. Maintain consistency and healthy habits."
+        for i, word in enumerate(st.session_state.wm_words, start=1):
+
+            st.markdown(
+                f"""
+                <h3 style="text-align:center;color:#5EEAD4;">
+                    {i}. {word}
+                </h3>
+                """,
+                unsafe_allow_html=True
+            )
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.warning("Remember all words and their exact order.")
+
+        if st.button("🙈 Hide Words & Continue", use_container_width=True):
+
+            st.session_state.wm_stage = "answer"
+
+            st.rerun()
+
+    # -----------------------------------------------------
+    # ANSWER STAGE
+    # -----------------------------------------------------
+
+    elif st.session_state.wm_stage == "answer":
+
+        st.info("Enter all remembered words in the correct order.")
+
+        st.write(
+            f"Number of words to remember: "
+            f"{len(st.session_state.wm_words)}"
         )
 
-    else:
-        st.warning(
-            "Brain efficiency is low. Improve sleep, hydration and focus."
-        )
+        with st.form("word_memory_form"):
 
-    st.divider()
+            user_answer = st.text_input(
+                "Enter words separated by commas",
+                placeholder="Apple, Tiger, Ocean, Book..."
+            )
 
-    # JEE Study Suggestion
-    st.subheader("🎯 JEE Preparation Suggestions")
+            submitted = st.form_submit_button(
+                "Submit Answer",
+                use_container_width=True
+            )
 
-    suggestions = []
+        if submitted:
 
-    if memory < 70:
-        suggestions.append("📚 Practice revision daily.")
+            user_words = [
+                word.strip().lower()
+                for word in user_answer.split(",")
+                if word.strip()
+            ]
 
-    if focus < 70:
-        suggestions.append("⏳ Use Pomodoro Method (25 + 5).")
+            correct_words = [
+                word.lower()
+                for word in st.session_state.wm_words
+            ]
 
-    if stress > 50:
-        suggestions.append("😌 Take short breaks and meditation.")
+            if user_words == correct_words:
 
-    if energy < 70:
-        suggestions.append("🥗 Sleep 7-8 hours and eat healthy.")
+                st.session_state.wm_score += (
+                    st.session_state.wm_level * 10
+                )
 
-    if not suggestions:
-        suggestions.append("🔥 Excellent! Keep studying like this.")
+                st.session_state.wm_level += 1
 
-    for item in suggestions:
-        st.write(item)
+                st.session_state.wm_stage = "success"
+
+                st.rerun()
+
+            else:
+
+                st.session_state.wm_attempts += 1
+
+                st.session_state.wm_stage = "failed"
+
+                st.rerun()
+
+    # -----------------------------------------------------
+    # SUCCESS STAGE
+    # -----------------------------------------------------
+
+    elif st.session_state.wm_stage == "success":
+
+        st.success("🎉 Excellent! All words are correct.")
+
+        st.balloons()
+
+        st.metric("Points Earned", (st.session_state.wm_level - 1) * 10)
+
+        st.write("Your memory is progressing to the next level!")
+
+        if st.button("➡ Next Level", use_container_width=True):
+
+            st.session_state.wm_stage = "start"
+
+            st.rerun()
+
+    # -----------------------------------------------------
+    # FAILED STAGE
+    # -----------------------------------------------------
+
+    elif st.session_state.wm_stage == "failed":
+
+        st.error("❌ Incorrect order or missing words.")
+
+        st.write("Correct word sequence:")
+
+        st.write(" → ".join(st.session_state.wm_words))
+
+        if st.button("🔄 Try Again", use_container_width=True):
+
+            st.session_state.wm_stage = "start"
+
+            st.rerun()
+
+    # -----------------------------------------------------
+    # RESTART
+    # -----------------------------------------------------
+
+    st.markdown("---")
+
+    if st.button("🔁 Restart Word Memory Game"):
+
+        st.session_state.wm_level = 1
+        st.session_state.wm_score = 0
+        st.session_state.wm_stage = "start"
+        st.session_state.wm_words = []
+        st.session_state.wm_attempts = 0
+
+        st.rerun()
