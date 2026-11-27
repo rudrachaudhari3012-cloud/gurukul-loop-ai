@@ -283,7 +283,7 @@ def color_strategy_game():
     colors = {
         "RED": "#FF4545",
         "GREEN": "#27D980",
-        "BLUE": "#3295FF,
+        "BLUE": "#3295FF",
         "YELLOW": "#FFD43B",
         "PURPLE": "#B58AFF"
     }
