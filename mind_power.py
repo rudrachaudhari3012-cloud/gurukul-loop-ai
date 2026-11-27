@@ -1,509 +1,92 @@
 import streamlit as st
-import random
-import time
-import html
-from datetime import datetime
+import pandas as pd
 
-# =========================================================
-# AB SCHOOL LOOP AI - MIND POWER MODULE
-# Mind Power 1.0
-# =========================================================
+def show_mind_power():
 
-BG = "#08111F"
-CARD = "#101F34"
-CYAN = "#22D3EE"
-MINT = "#5EEAD4"
-WHITE = "#F4F8FF"
-MUTED = "#B8C7D9"
-PURPLE = "#A78BFA"
+    st.title("🧠 Brain Analytics Dashboard")
 
-# ---------------------------------------------------------
-# SESSION STATE
-# ---------------------------------------------------------
+    # Inputs
+    memory = st.slider("Memory", 0, 100, 75)
+    focus = st.slider("Focus", 0, 100, 70)
+    concentration = st.slider("Concentration", 0, 100, 80)
+    energy = st.slider("Energy", 0, 100, 85)
+    stress = st.slider("Stress", 0, 100, 25)
 
-def init_mind_state():
-    defaults = {
-        "mp_history": [],
-        "mp_game": None,
-        "mp_words": [],
-        "mp_pattern": [],
-        "mp_pattern_selected": [],
-        "mp_game_started": False,
-        "mp_color_questions": [],
-        "mp_color_start": None,
-        "mp_color_submitted": False,
-        "mp_word_submitted": False,
-        "mp_pattern_submitted": False,
-        "mp_word_answers": "",
-        "mp_word_score": None,
-        "mp_color_score": None,
-        "mp_pattern_score": None,
-    }
+    # Score
+    brain_score = (
+        memory + focus + concentration + energy + (100 - stress)
+    ) / 5
 
-    for key, value in defaults.items():
-        if key not in st.session_state:
-            st.session_state[key] = value
+    st.metric("🧠 Brain Power Score", f"{brain_score:.1f}%")
+    st.progress(int(brain_score))
 
+    # Analytics Cards
+    col1, col2, col3 = st.columns(3)
 
-# ---------------------------------------------------------
-# DESIGN
-# ---------------------------------------------------------
+    with col1:
+        st.metric("Memory", f"{memory}%")
 
-def mind_power_css():
-    st.markdown("""
-    <style>
-    .mp-hero {
-        background: linear-gradient(120deg,#101F34,#172B4A,#123C4B);
-        border: 1px solid #22D3EE55;
-        border-radius: 22px;
-        padding: 30px;
-        margin-bottom: 22px;
-        box-shadow: 0 8px 35px #22D3EE15;
-    }
-    .mp-hero h1 {
-        color: #F4F8FF;
-        font-size: 34px;
-        font-weight: 850;
-        margin: 0;
-    }
-    .mp-hero p {
-        color: #B8C7D9;
-        margin-bottom: 0;
-    }
-    .mp-card {
-        background: linear-gradient(145deg,#101F34,#142941);
-        border: 1px solid #22D3EE40;
-        border-radius: 18px;
-        padding: 20px;
-        min-height: 145px;
-        margin-bottom: 12px;
-    }
-    .mp-card h3 {color:#5EEAD4;}
-    .mp-card p {color:#B8C7D9;}
-    .mp-word {
-        display:inline-block;
-        background:#172B45;
-        border:1px solid #22D3EE55;
-        border-radius:12px;
-        padding:14px 20px;
-        margin:5px;
-        color:#F4F8FF;
-        font-size:23px;
-        font-weight:800;
-    }
-    .mp-result {
-        background:linear-gradient(120deg,#123C4B,#101F34);
-        border:1px solid #5EEAD455;
-        border-radius:18px;
-        padding:22px;
-        text-align:center;
-    }
-    .mp-result h2 {color:#5EEAD4;}
-    div.stButton > button {
-        border-radius:12px;
-        border:1px solid #22D3EE66;
-        background:linear-gradient(90deg,#155E75,#0E7490);
-        color:white;
-        font-weight:700;
-        min-height:42px;
-    }
-    div.stButton > button:hover {
-        border:1px solid #5EEAD4;
-        color:#5EEAD4;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+    with col2:
+        st.metric("Focus", f"{focus}%")
 
+    with col3:
+        st.metric("Energy", f"{energy}%")
 
-def show_game_result(title, score, total, message):
-    percentage = round((score / total) * 100) if total else 0
+    st.divider()
 
-    st.markdown(f"""
-    <div class="mp-result">
-        <h2>{html.escape(title)}</h2>
-        <h1 style="color:#F4F8FF;font-size:42px;">
-            {score}/{total}
-        </h1>
-        <h3>{percentage}% Accuracy</h3>
-        <p style="color:#B8C7D9;">{html.escape(message)}</p>
-    </div>
-    """, unsafe_allow_html=True)
+    # Performance Chart
+    st.subheader("📊 Brain Performance Analysis")
 
-
-def save_result(game, score, total):
-    percentage = round(score / total * 100) if total else 0
-
-    st.session_state.mp_history.append({
-        "Game": game,
-        "Score": score,
-        "Total": total,
-        "Accuracy": percentage,
-        "Date": datetime.now().strftime("%d-%m-%Y %H:%M")
+    chart_data = pd.DataFrame({
+        "Category": ["Memory", "Focus", "Concentration", "Energy", "Stress"],
+        "Score": [memory, focus, concentration, energy, stress]
     })
 
-
-# ---------------------------------------------------------
-# GAME 1 - WORD MEMORY
-# ---------------------------------------------------------
-
-def word_memory_game():
-
-    st.subheader("🧠 Word Memory Challenge")
-
-    st.write(
-        "Remember: Five words will appear for 10 seconds. "
-        "Then you will have to write them in the correct sequence."
+    st.bar_chart(
+        chart_data.set_index("Category")
     )
 
-    if not st.session_state.mp_game_started:
+    st.divider()
 
-        if st.button("🚀 Start Memory Challenge",
-                     key="mp_start_word",
-                     use_container_width=True):
+    # AI Analysis
+    st.subheader("🤖 AI Brain Report")
 
-            words = random.sample([
-                "APPLE", "PLANET", "RIVER", "CAMERA",
-                "MOUNTAIN", "FLOWER", "OCEAN", "ROCKET",
-                "GARDEN", "CLOUD", "BRIDGE", "SUNRISE",
-                "MIRROR", "LANTERN", "FOREST", "DIAMOND"
-            ], 5)
-
-            st.session_state.mp_words = words
-            st.session_state.mp_game_started = True
-            st.session_state.mp_word_submitted = False
-            st.rerun()
-
-    if st.session_state.mp_game_started:
-
-        if not st.session_state.mp_word_submitted:
-
-            st.warning("Remember the exact order!")
-
-            word_placeholder = st.empty()
-
-            # Display words for 10 seconds
-            for remaining in range(10, 0, -1):
-
-                word_html = "".join(
-                    f'<span class="mp-word">{html.escape(w)}</span>'
-                    for w in st.session_state.mp_words
-                )
-
-                word_placeholder.markdown(
-                    f"""
-                    <div style="text-align:center;">
-                        <h2 style="color:#22D3EE;">
-                            {remaining} seconds
-                        </h2>
-                        {word_html}
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-
-                time.sleep(1)
-
-            word_placeholder.empty()
-
-            st.session_state.mp_word_submitted = True
-            st.rerun()
-
-        if st.session_state.mp_word_submitted:
-
-            st.info("⏳ Time finished! Enter the 5 words in the same order.")
-
-            with st.form("mp_word_form"):
-
-                answer = st.text_input(
-                    "Enter words separated by commas",
-                    placeholder="APPLE, RIVER, PLANET, ..."
-                )
-
-                submitted = st.form_submit_button(
-                    "Submit Answer",
-                    use_container_width=True
-                )
-
-            if submitted:
-
-                entered = [
-                    x.strip().upper()
-                    for x in answer.split(",")
-                    if x.strip()
-                ]
-
-                correct = st.session_state.mp_words
-
-                score = sum(
-                    1 for i in range(min(len(entered), len(correct)))
-                    if entered[i] == correct[i]
-                )
-
-                st.session_state.mp_word_score = score
-                save_result("Word Memory", score, 5)
-
-                show_game_result(
-                    "Memory Result",
-                    score,
-                    5,
-                    "Sequence memory practice completed."
-                )
-
-                if score == 5:
-                    st.success("Excellent! Perfect sequence!")
-                elif score >= 3:
-                    st.info("Good effort! Keep practising.")
-                else:
-                    st.info("Keep practising your sequence memory.")
-
-                with st.expander("View correct sequence"):
-                    st.write(" → ".join(correct))
-
-                if st.button("🔄 Play Again", key="mp_word_again"):
-                    st.session_state.mp_game_started = False
-                    st.session_state.mp_word_submitted = False
-                    st.session_state.mp_words = []
-                    st.session_state.mp_word_score = None
-                    st.rerun()
-
-
-# ---------------------------------------------------------
-# GAME 2 - COLOR STRATEGY / STROOP
-# ---------------------------------------------------------
-
-def color_strategy_game():
-
-    st.subheader("🎨 Color Strategy Challenge")
-
-    st.write(
-        "Not the meaning of the word, but in what color its letters "
-        "appear, identify that. "
-    )
-
-    colors = {
-        "RED": "#FF4545",
-        "GREEN": "#27D980",
-        "BLUE": "#3295FF",
-        "YELLOW": "#FFD43B",
-        "PURPLE": "#B58AFF"
-    }
-
-    if not st.session_state.mp_color_questions:
-
-        if st.button("🚀 Start Color Challenge",
-                     key="mp_start_color",
-                     use_container_width=True):
-
-            questions = []
-
-            for _ in range(10):
-                word = random.choice(list(colors.keys()))
-                font_color = random.choice(list(colors.keys()))
-
-                questions.append({
-                    "word": word,
-                    "font_color": font_color
-                })
-
-            st.session_state.mp_color_questions = questions
-            st.session_state.mp_color_start = time.time()
-            st.session_state.mp_color_submitted = False
-            st.rerun()
-
-    questions = st.session_state.mp_color_questions
-
-    if questions and not st.session_state.mp_color_submitted:
-
-        elapsed = time.time() - st.session_state.mp_color_start
-        remaining = max(0, 20 - int(elapsed))
-
-        st.progress(min(elapsed / 20, 1.0))
-        st.metric("Time Remaining", f"{remaining} seconds")
-
-        with st.form("mp_color_form"):
-
-            st.write("Select the FONT COLOR, not the written word.")
-
-            answers = []
-
-            for i, q in enumerate(questions):
-
-                st.markdown(
-                    f"""
-                    <div style="
-                        background:#101F34;
-                        padding:12px;
-                        border-radius:12px;
-                        margin:5px 0;
-                        text-align:center;
-                        border:1px solid #22D3EE44;">
-                        <h3 style="
-                            color:{colors[q['font_color']]};
-                            margin:0;">
-                            {html.escape(q['word'])}
-                        </h3>
-                        <small style="color:#B8C7D9;">
-                            Question {i+1}
-                        </small>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-
-                answers.append(
-                    st.selectbox(
-                        f"Choose font color — Q{i+1}",
-                        ["Select", "RED", "GREEN", "BLUE",
-                         "YELLOW", "PURPLE"],
-                        key=f"mp_color_answer_{i}"
-                    )
-                )
-
-            submitted = st.form_submit_button(
-                "Submit Color Answers",
-                use_container_width=True
-            )
-
-        if submitted:
-
-            elapsed = time.time() - st.session_state.mp_color_start
-
-            if elapsed > 20:
-                st.session_state.mp_color_submitted = True
-                st.session_state.mp_color_score = 0
-                st.error("Time is over! Challenge completed.")
-                st.rerun()
-
-            else:
-                score = sum(
-                    1 for i, q in enumerate(questions)
-                    if answers[i] == q["font_color"]
-                )
-
-                st.session_state.mp_color_score = score
-                st.session_state.mp_color_submitted = True
-
-                save_result("Color Strategy", score, 10)
-                st.rerun()
-
-    if st.session_state.mp_color_submitted:
-
-        score = st.session_state.mp_color_score or 0
-
-        show_game_result(
-            "Color Strategy Result",
-            score,
-            10,
-            "Color recognition challenge completed."
+    if brain_score >= 85:
+        st.success(
+            "Excellent brain performance. You are ready for high-level study sessions."
         )
 
-        if st.button("🔄 Restart Color Challenge",
-                     key="mp_color_again"):
-
-            st.session_state.mp_color_questions = []
-            st.session_state.mp_color_start = None
-            st.session_state.mp_color_submitted = False
-            st.session_state.mp_color_score = None
-            st.rerun()
-
-
-
-# ---------------------------------------------------------
-# MAIN MIND POWER PAGE
-# ---------------------------------------------------------
-
-def render_mind_power():
-
-    init_mind_state()
-    mind_power_css()
-
-    st.markdown("""
-    <div class="mp-hero">
-        <div style="color:#5EEAD4;font-weight:800;
-                    letter-spacing:3px;font-size:12px;">
-            AB SCHOOL LOOP AI • BRAIN TRAINING STUDIO
-        </div>
-        <br>
-        <h1>🧠 MIND POWER</h1>
-        <p>Train your memory. Improve your focus.
-           Challenge your thinking.</p>
-        <br>
-        <div style="color:#22D3EE;font-weight:700;">
-            MEMORY • COLOUR • LOGIC
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    history = st.session_state.mp_history
-
-    total_games = len(history)
-
-    total_score = sum(x["Score"] for x in history)
-    total_possible = sum(x["Total"] for x in history)
-
-    accuracy = (
-        round(total_score / total_possible * 100)
-        if total_possible else 0
-    )
-
-    c1, c2, c3 = st.columns(3)
-
-    c1.metric("🎮 Games Played", total_games)
-    c2.metric("🏆 Total Points", total_score)
-    c3.metric("🎯 Accuracy", f"{accuracy}%")
-
-    st.divider()
-
-    game = st.radio(
-        "Choose Your Brain Challenge",
-        [
-            "🧠 Word Memory",
-            "🎨 Color Strategy",
-        ],
-        horizontal=True,
-        key="mp_game_selector"
-    )
-
-    st.divider()
-
-    if game == "🧠 Word Memory":
-        word_memory_game()
-
-    elif game == "🎨 Color Strategy":
-        color_strategy_game()
-
-    st.divider()
-
-    st.subheader("📊 Your Mind Power History")
-
-    if history:
-
-        import pandas as pd
-
-        df = pd.DataFrame(history)
-
-        st.dataframe(
-            df,
-            use_container_width=True,
-            hide_index=True
-        )
-
-        st.bar_chart(
-            df,
-            x="Game",
-            y="Accuracy"
+    elif brain_score >= 70:
+        st.info(
+            "Good performance. Maintain consistency and healthy habits."
         )
 
     else:
-        st.info(
-            "Complete your first challenge to see your progress here."
+        st.warning(
+            "Brain efficiency is low. Improve sleep, hydration and focus."
         )
 
-    st.caption(
-        "AB SCHOOL LOOP AI • MIND POWER "
-        "Brain Training & Student Growth"
-    )
+    st.divider()
 
+    # JEE Study Suggestion
+    st.subheader("🎯 JEE Preparation Suggestions")
 
-# Optional direct testing:
-# render_mind_power()
+    suggestions = []
+
+    if memory < 70:
+        suggestions.append("📚 Practice revision daily.")
+
+    if focus < 70:
+        suggestions.append("⏳ Use Pomodoro Method (25 + 5).")
+
+    if stress > 50:
+        suggestions.append("😌 Take short breaks and meditation.")
+
+    if energy < 70:
+        suggestions.append("🥗 Sleep 7-8 hours and eat healthy.")
+
+    if not suggestions:
+        suggestions.append("🔥 Excellent! Keep studying like this.")
+
+    for item in suggestions:
+        st.write(item)
