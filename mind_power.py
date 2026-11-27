@@ -747,52 +747,145 @@ def render_mind_power():
     init_mind_state()
     mind_power_css()
 
-   st.markdown("""
-<div style="
-    background:linear-gradient(135deg,#0B1733,#142B55,#123C52);
-    padding:35px 40px;
-    border-radius:22px;
-    border:1px solid rgba(34,211,238,0.30);
-    box-shadow:0 10px 35px rgba(0,0,0,0.25);
-">
-
+    st.markdown("""
     <div style="
-        color:#5EEAD4;
-        font-weight:800;
-        letter-spacing:3px;
-        font-size:12px;">
-        AB SCHOOL LOOP AI • BRAIN TRAINING STUDIO
+        background:linear-gradient(135deg,#0B1733,#142B55,#123C52);
+        padding:35px 40px;
+        border-radius:22px;
+        border:1px solid rgba(34,211,238,0.30);
+        box-shadow:0 10px 35px rgba(0,0,0,0.25);
+    ">
+
+        <div style="
+            color:#5EEAD4;
+            font-weight:800;
+            letter-spacing:3px;
+            font-size:12px;">
+            AB SCHOOL LOOP AI • BRAIN TRAINING STUDIO
+        </div>
+
+        <br>
+
+        <h1 style="
+            color:#F4F8FF;
+            font-size:42px;
+            font-weight:900;
+            margin:0;">
+            🧠 MIND POWER
+        </h1>
+
+        <p style="
+            color:#D5E5FF;
+            font-size:17px;
+            margin-top:15px;">
+            Train your memory. Improve your focus.
+            Challenge your thinking.
+        </p>
+
+        <br>
+
+        <div style="
+            color:#22D3EE;
+            font-weight:700;
+            letter-spacing:2px;">
+            MEMORY • COLOUR • LOGIC
+        </div>
+
     </div>
+    """, unsafe_allow_html=True)
 
-    <br>
+    # -----------------------------------------------------
+    # ANALYTICS
+    # -----------------------------------------------------
 
-    <h1 style="
-        color:#F4F8FF;
-        font-size:42px;
-        font-weight:900;
-        margin:0;">
-        🧠 MIND POWER
-    </h1>
+    history = st.session_state.mp_history
 
-    <p style="
-        color:#D5E5FF;
-        font-size:17px;
-        margin-top:15px;">
-        Train your memory. Improve your focus.
-        Challenge your thinking.
-    </p>
+    total_games = len(history)
 
-    <br>
+    total_score = sum(x["Score"] for x in history)
 
-    <div style="
-        color:#22D3EE;
-        font-weight:700;
-        letter-spacing:2px;">
-        MEMORY • COLOUR • LOGIC
-    </div>
+    total_possible = sum(x["Total"] for x in history)
 
-</div>
-""", unsafe_allow_html=True)
+    accuracy = (
+        round(total_score / total_possible * 100)
+        if total_possible
+        else 0
+    )
+
+    c1, c2, c3 = st.columns(3)
+
+    c1.metric("🎮 Games Played", total_games)
+
+    c2.metric("🏆 Total Points", total_score)
+
+    c3.metric("🎯 Accuracy", f"{accuracy}%")
+
+    st.divider()
+
+    # -----------------------------------------------------
+    # GAME SELECTOR
+    # -----------------------------------------------------
+
+    game = st.radio(
+        "Choose Your Brain Challenge",
+        [
+            "🧠 Word Memory",
+            "🎨 Color Strategy",
+        ],
+        horizontal=True,
+        key="mp_game_selector"
+    )
+
+    st.divider()
+
+    # -----------------------------------------------------
+    # GAME ROUTING
+    # -----------------------------------------------------
+
+    if game == "🧠 Word Memory":
+
+        word_memory_game()
+
+    elif game == "🎨 Color Strategy":
+
+        color_strategy_game()
+
+    st.divider()
+
+    # -----------------------------------------------------
+    # HISTORY
+    # -----------------------------------------------------
+
+    st.subheader("📊 Your Mind Power History")
+
+    if history:
+
+        import pandas as pd
+
+        df = pd.DataFrame(history)
+
+        st.dataframe(
+            df,
+            use_container_width=True,
+            hide_index=True
+        )
+
+        st.bar_chart(
+            df,
+            x="Game",
+            y="Accuracy"
+        )
+
+    else:
+
+        st.info(
+            "Complete your first challenge to see your progress here."
+        )
+
+    st.caption(
+        "AB SCHOOL LOOP AI • MIND POWER "
+        "Brain Training & Student Growth"
+    )
     # -----------------------------------------------------
     # ANALYTICS
     # -----------------------------------------------------
