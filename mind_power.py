@@ -747,35 +747,52 @@ def render_mind_power():
     init_mind_state()
     mind_power_css()
 
-    st.markdown("""
-    <div class="mp-hero">
+   st.markdown("""
+<div style="
+    background:linear-gradient(135deg,#0B1733,#142B55,#123C52);
+    padding:35px 40px;
+    border-radius:22px;
+    border:1px solid rgba(34,211,238,0.30);
+    box-shadow:0 10px 35px rgba(0,0,0,0.25);
+">
 
-        <div style="
-            color:#5EEAD4;
-            font-weight:800;
-            letter-spacing:3px;
-            font-size:12px;">
-            AB SCHOOL LOOP AI • BRAIN TRAINING STUDIO
-        </div>
-
-        <br>
-
-        <h1>🧠 MIND POWER</h1>
-
-        <p>
-            Train your memory. Improve your focus.
-            Challenge your thinking.
-        </p>
-
-        <br>
-
-        <div style="color:#22D3EE;font-weight:700;">
-            MEMORY • COLOUR • LOGIC
-        </div>
-
+    <div style="
+        color:#5EEAD4;
+        font-weight:800;
+        letter-spacing:3px;
+        font-size:12px;">
+        AB SCHOOL LOOP AI • BRAIN TRAINING STUDIO
     </div>
-    """, unsafe_allow_html=True)
 
+    <br>
+
+    <h1 style="
+        color:#F4F8FF;
+        font-size:42px;
+        font-weight:900;
+        margin:0;">
+        🧠 MIND POWER
+    </h1>
+
+    <p style="
+        color:#D5E5FF;
+        font-size:17px;
+        margin-top:15px;">
+        Train your memory. Improve your focus.
+        Challenge your thinking.
+    </p>
+
+    <br>
+
+    <div style="
+        color:#22D3EE;
+        font-weight:700;
+        letter-spacing:2px;">
+        MEMORY • COLOUR • LOGIC
+    </div>
+
+</div>
+""", unsafe_allow_html=True)
     # -----------------------------------------------------
     # ANALYTICS
     # -----------------------------------------------------
