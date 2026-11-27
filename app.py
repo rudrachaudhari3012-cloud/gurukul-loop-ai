@@ -603,6 +603,29 @@ def make_pdf(user, results):
         pdf.drawString(48, y, line)
         y -= 18
 
+    if results:
+        subject_summary = {}
+        for result in results:
+            subject_name = str(result.get("subject", "Other"))
+            subject_summary.setdefault(subject_name, {"earned": 0, "total": 0, "attempts": 0})
+            subject_summary[subject_name]["earned"] += int(result.get("score", 0))
+            subject_summary[subject_name]["total"] += int(result.get("total", 0))
+            subject_summary[subject_name]["attempts"] += 1
+        y -= 10
+        pdf.setFont("Helvetica-Bold", 12)
+        pdf.drawString(42, y, "Subject-wise Performance")
+        y -= 20
+        pdf.setFont("Helvetica", 9)
+        for subject_name, summary in sorted(subject_summary.items()):
+            percent = round(summary["earned"] / max(summary["total"], 1) * 100, 1)
+            line = f"{subject_name}: {percent}% average | {summary['attempts']} attempt(s) | {summary['earned']}/{summary['total']}"
+            pdf.drawString(48, y, line[:100])
+            y -= 15
+            if y < 85:
+                pdf.showPage()
+                y = height - 55
+                pdf.setFont("Helvetica", 9)
+
     y -= 10
     pdf.setFont("Helvetica-Bold", 12)
     pdf.drawString(42, y, "Quiz History")
@@ -701,6 +724,26 @@ if st.session_state.user is None:
         color: #55DFFF !important;
         font-weight: 700 !important;
         letter-spacing: 1.5px !important;
+    }
+
+    /* Auth forms: replace default white surfaces with theme-matched panels */
+    [data-testid="stForm"],
+    [data-testid="stForm"] > div,
+    [data-testid="stTabs"] [data-testid="stVerticalBlock"] > div:has([data-testid="stForm"]),
+    [data-testid="stTabContent"] {
+        background: rgba(9, 24, 49, 0.92) !important;
+        border: 1px solid rgba(72, 210, 255, 0.35) !important;
+        border-radius: 16px !important;
+    }
+    [data-testid="stForm"] { padding: 18px !important; }
+    [data-testid="stForm"] label, [data-testid="stForm"] p,
+    [data-testid="stForm"] span, [data-testid="stForm"] [data-testid="stWidgetLabel"] {
+        color: #EAF4FF !important;
+    }
+    [data-testid="stForm"] input, [data-testid="stForm"] textarea,
+    [data-testid="stForm"] [data-baseweb="select"] > div {
+        background: #102443 !important; color: #FFFFFF !important;
+        border-color: #48A9FF !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -1495,6 +1538,49 @@ if page == T["learning"]:
     </div>
     """, unsafe_allow_html=True)
 
+
+    # Class-wise subjects and saved subject snapshot
+    class_subject_map = {
+        "Class 9": ["Mathematics", "Science", "English", "Gujarati", "Social Science"],
+        "Class 10": ["Mathematics", "Science", "English", "Gujarati", "Social Science"],
+        "Class 11": ["Physics", "Chemistry", "Mathematics", "Biology", "English", "Gujarati"],
+        "Class 12": ["Physics", "Chemistry", "Mathematics", "Biology", "English", "Gujarati"],
+    }
+    student_class = user.get("grade", "Not applicable")
+    class_subjects = class_subject_map.get(student_class, [])
+    if class_subjects:
+        st.markdown(f"### 📚 {student_class} — Subject Progress")
+        st.caption("Subjects are automatically shown according to the class selected during registration.")
+        class_scores = {}
+        class_cols = st.columns(3)
+        for i, subject_name in enumerate(class_subjects):
+            score_key = f"class_subject_score_{user['id']}_{student_class}_{subject_name}"
+            if score_key not in st.session_state:
+                st.session_state[score_key] = 65
+            with class_cols[i % len(class_cols)]:
+                class_scores[subject_name] = st.slider(
+                    subject_name, 0, 100, int(st.session_state[score_key]),
+                    key=score_key
+                )
+        class_average = round(sum(class_scores.values()) / max(len(class_scores), 1), 1)
+        st.metric(f"{student_class} Subject Average", f"{class_average}%")
+        class_df = pd.DataFrame([
+            {"Class": student_class, "Subject": sub, "Score (%)": score,
+             "Status": "Strong" if score >= 75 else ("Growing" if score >= 50 else "Needs support")}
+            for sub, score in class_scores.items()
+        ])
+        class_chart = px.bar(class_df, x="Subject", y="Score (%)", color="Status",
+                            range_y=[0, 100], title=f"{student_class} Subject-wise Progress")
+        class_chart.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                               font_color="#173b62", height=320, margin=dict(t=45,b=15,l=15,r=15))
+        st.plotly_chart(class_chart, use_container_width=True)
+        st.dataframe(class_df, use_container_width=True, hide_index=True)
+        st.download_button(
+            "📥 Download Class Subject Report",
+            data=class_df.to_csv(index=False).encode("utf-8-sig"),
+            file_name=f"{student_class.replace(' ', '_')}_subject_report.csv",
+            mime="text/csv", key=f"class_subject_report_{user['id']}"
+        )
 
     # Stream selection
     st.markdown("### 🚀 Choose Your Science Stream")
